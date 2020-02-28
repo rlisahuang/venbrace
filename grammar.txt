@@ -1,0 +1,35 @@
+⟨program⟩ := <lang_config>? <screen_workspace>+
+<lang_config> := `%`<lang>
+<screen_workspace> := <screen_separator><body>
+<screen_separator> := ===<screen_name>===
+<body> := <decl>*
+<decl> := `[` (<field_decl> | <procedure_decl> | <event_handler>) `]`
+<field_decl> := `$` <id> <- <expr>
+<procedure_decl> := <procedure_do> | <procedure_result>
+<procedure_do> := to <id> {<expr>  }* do <statement>+
+<procedure_result> := to <id> {<expr> }* result <expr>
+<event_handler> := 
+<statement> := `{` 
+(<if_statement> | <for_block> | <while_block> 
+| <evaluate_but_ignore> | <screen_control> | <app_control> 
+| <list_operation> | <local_statement> | <procedure_call>) 
+`}`
+<if_statement> := if <expr> then <statement> else 
+(<if_statement> | <statement>)
+
+<for_block> := <for_each_from_to> | <for_each_from_list>
+<for_each_from_to> := for each <id> from <expr> to <expr> by <expr> 
+do <statement>
+<for_each_from_list> := for each <id> in list <expr> do <statement>
+<while_block> := while test <expr> do <statement>
+<evaluate_but_ignore> := (evaluate but ignore result | evaluateButIgnore) 
+<expr>
+<screen_control> := <open_screen> | <close_screen>
+<open_screen> := open another screen 
+<app_control> 
+<list_operation> 
+<local_statement> 
+<procedure_call>
+<expr> := 
+<if_expr> := if <expr> then <expr> else <expr>
+<do_result> := do <statement> result <expr>

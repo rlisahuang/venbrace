@@ -1,0 +1,14 @@
+{
+  "name": "venbrace",
+  "version": "1.0.0",
+  "description": "venbrace grammar",
+  "main": "VenbraceLexer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "antlr4": "^4.8.0"
+  }
+}

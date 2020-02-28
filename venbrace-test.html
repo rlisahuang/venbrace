@@ -1,0 +1,202 @@
+<!Doctype HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script src='lib/require.js'></script>
+
+<!-- /* code for CodeMirror editor */ -->
+<link rel=stylesheet href="codemirror-5.49.2/doc/docs.css">
+<link rel="stylesheet" href="codemirror-5.49.2/lib/codemirror.css">
+<script src="codemirror-5.49.2/lib/codemirror.js"></script>
+<script src="codemirror-5.49.2/addon/edit/closebrackets.js"></script>
+<script src="codemirror-5.49.2/addon/edit/matchbrackets-copy.js"></script>
+<script src="codemirror-5.49.2/mode/scheme/scheme-copy.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+      .highlighted-scope { background-color: #e0e0e0; }
+
+    </style>
+</head>
+
+<body>
+  <textarea id="input" name="input" rows="10" cols="100"
+  placeholder="// Enter your input text to parse here..."></textarea>
+  <br>
+  <button id="submit" onClick="parse();">Parse Above Text!</button>
+  <pre id="output">Output will go here....</pre>
+  <pre id="raw">Raw input will go here....</pre>
+</body>
+
+<script type="text/javascript">
+  // Begin local JavaScript code for this page
+  
+  'use strict';
+  var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
+    mode: "scheme-copy",  
+    lineNumbers: true,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    cursorBlinkRate: 0}
+    );
+  
+  var loc = window.location.pathname;
+  console.log(loc);
+  
+  var antlr4 = require('../antlr4/index.js');
+  var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
+  var VenbraceParser = require('./VenbraceParser').VenbraceParser;
+  var VenbraceListener = require('./VenbraceListener').VenbraceListener;
+  var VenbraceVisitor = require('./VenbraceVisitor').VenbraceVisitor;
+  
+  // custom visitor
+  class Visitor {
+    visitChildren(ctx) {
+      if (!ctx) {
+        return;
+      }
+  
+      if (ctx.children) {
+        return ctx.children.map(child => {
+          if (child.children && child.children.length != 0) {
+            return child.accept(this);
+          } else {
+            return child.getText();
+          }
+        });
+      }
+    }
+  }
+  
+  //tree.accept(new Visitor());
+  
+  var parse = function () { 
+    // Attempt to parse the text in the input text area.
+    //var input = document.getElementById("input").value;
+    var input = editor.getValue();
+    console.log(input);
+    var cstream = new antlr4.InputStream(input);
+    var lexer = new VenbraceLexer(cstream);
+    var tstream = new antlr4.CommonTokenStream(lexer); 
+    var parser = new VenbraceParser(tstream);
+    var visitor = new VenbraceVisitor();
+  
+    // copied from readme.md
+    //parser.buildParseTrees = true;
+     // var tree = parser.program();
+  
+  
+    var dom = undefined;
+    var xml = undefined;
+    var visit = undefined;
+    if (lexer.getErrors().length === 0) {
+      try {  
+        console.log("Try to parse as expr.");
+        // Try to parse as expression first 
+        dom = parser.expr_block(); 
+        console.log("Parsing as expr succeeded!");
+      } catch (expErr) {
+        //TODO: write my own ErrorReportStrategy
+        console.log("Parsing as expr failed!");
+        console.log(expErr);
+        try {
+          console.log("Try to parse as statement.");
+          dom = parser.stat_block(); 
+          console.log("Parsing as statement succeeded!");
+        } catch (statError) {
+          console.log("Parsing as statement failed!");
+          console.log(statError);
+          try {
+            console.log("Try to parse as decl.");
+            dom = parser.decl_block(); 
+            console.log("Parsing as decl succeeded!");
+          } catch (declError) {
+              console.log("Parsing as decl failed!");
+              console.log(declError);
+          }
+        }
+      } 
+      console.log("Parsing successed!");
+      xml = dom.elt;
+     // console.log(xml);
+      var parserErrors = parser.getErrors();
+      console.log("Number of parser errors is " + parserErrors.length);
+      if (parserErrors.length === 0) {
+        if (dom === undefined) {
+          console.log("Unexpectedly, dom is still undefined.");
+        } else {
+          document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
+          //console.log(domToPrettyText(xml));      
+        }
+      } else {
+        console.log("Parser errors:");
+        parserErrors.forEach(function(error){
+          console.log(error);
+        });
+      }
+    } else {
+      console.log("Lexer errors:");
+      lexer.getErrors().forEach(function(error){
+        console.log(error);
+      });
+    }
+    document.getElementById("raw").innerHTML = input;
+  }
+  
+  
+  
+  // From Blockly core xml.js
+  /**
+   * Converts a DOM structure into properly indented text.
+   * @param {!Element} dom A tree of XML elements.
+   * @return {string} Text representation.
+   */
+  var domToPrettyText = function(dom) {
+    // This function is not guaranteed to be correct for all XML.
+    // But it handles the XML that Blockly generates.
+    var blob = domToText(dom);
+    // Place every open and close tag on its own line.
+    var lines = blob.split('<');
+    // Indent every line.
+    var indent = '';
+    for (var x = 1; x < lines.length; x++) {
+      var line = lines[x];
+      if (line[0] == '/') {
+        indent = indent.substring(2);
+      }
+      lines[x] = indent + '<' + line;
+      if (line[0] != '/' && line.slice(-2) != '/>') {
+        indent += '  ';
+      }
+    }
+    // Pull simple tags back together.
+    // E.g. <foo></foo>
+    var text = lines.join('\n');
+    text = text.replace(/(<(\w+)\b[^>]*>[^\n]*)\n *<\/\2>/g, '$1</$2>');
+    // Trim leading blank line.
+    return text.replace(/^\n/, '');
+  };
+  
+  /**
+   * Converts a DOM structure into plain text.
+   * Currently the text format is fairly ugly: all one line with no whitespace.
+   * @param {!Element} dom A tree of XML elements.
+   * @return {string} Text representation.
+   */
+  var domToText = function(dom) {
+    var oSerializer = new XMLSerializer();
+    return oSerializer.serializeToString(dom);
+  };
+  
+  // From http://forums.asp.net/t/1151879.aspx?HttpUtility+HtmlEncode+in+javaScript+                                              
+  function escapeHTML (str) {
+    var div = document.createElement('div');
+    var text = document.createTextNode(str);
+    div.appendChild(text);
+    return div.innerHTML;
+  }
+  // End local JavaScript for this page
+  </script>
+
+</html>
