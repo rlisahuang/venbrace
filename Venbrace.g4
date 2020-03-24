@@ -127,8 +127,8 @@ decl_block returns [var elt]
 /* Feb 28 2020: procedure decls removed from user study 1 */
 decl returns [var elt]
   : global_decl {$elt = $global_decl.elt;}
-//  | procedure_do {$elt = $procedure_do.elt;}
-//  | procedure_result {$elt = $procedure_result.elt;}
+  | procedure_do {$elt = $procedure_do.elt;}
+  | procedure_result {$elt = $procedure_result.elt;}
   | event_handler {$elt = $event_handler.elt;}
   ;
   catch [e] {throw e;}
@@ -144,13 +144,21 @@ global_decl returns [var elt]
 	var value = document.createVenbraceElement("value");
 	value.setAttribute("name","VALUE");
 }
-  : GLOBAL ID ASSIGN expr_block 
+  : (GLOBAL ID ASSIGN expr_block 
+  {
+		field.innerHTML = $ID.text;
+		value.appendChild($expr_block.elt);
+		$elt.appendChild(field);
+		$elt.appendChild(value);
+	})
+  | (INITIALIZE GLOBAL ID TO expr_block
   {
 		field.innerHTML = $ID.text;
 		value.appendChild($expr_block.elt);
 		$elt.appendChild(field);
 		$elt.appendChild(value);
 	}
+  )
   ;
   catch [e] {throw e;}
 
@@ -243,7 +251,6 @@ procedure_result returns [var elt]
 
 
 //TODO: ADD OTHER EVENT HANDLERS; HANDLE INVALID/VALID COMPONENTS
-// Now only supports Button.Click
 event_handler returns [var elt]
 @init {
   $elt = document.createVenbraceElement("block");
@@ -335,7 +342,7 @@ stat_block returns [var elt]
 
 stat returns [var elt]
   : (control_stat {$elt = $control_stat.elt;}
-//  | call_procedure_stat {$elt = $call_procedure_stat.elt;}
+  | call_procedure_stat {$elt = $call_procedure_stat.elt;}
   | var_stat {$elt = $var_stat.elt;}
   );
   catch [e] {throw e;}
@@ -492,25 +499,27 @@ close_application returns [var elt]
   ;
   catch [e] {throw e;}
 
-// TODO: QQ 02/06/20: this rule might be problematic -- see arg names
+// QQ 03/23/20: turning off the option of having arguments
 call_procedure_stat returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
 	$elt.setAttribute("type","call_procedure_stat");
+  var procname = "";
     //var argLabels = [];
-    var argExps = [];
+    //var argExps = [];
     // var pushArgLabel = function (label) {
     //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
     //   argLabels.push(labelWithoutTrailingColon);
     // };
-    var pushArgExp = function (elt) {
-      argExps.push(elt);
-    };
+    // var pushArgExp = function (elt) {
+    //   argExps.push(elt);
+    // };
 }
-  : CALL ID {var procname = $ID.text;}
-    (arg=expr_block
-    { pushArgExp($expr_block.elt);}
-    )* 
+  : CALL ((ID {procname = $ID.text;})
+    | (COMPONENT_PROPERTY {procname = $COMPONENT_PROPERTY.text;}))
+    // (arg=expr_block
+    // { pushArgExp($expr_block.elt);}
+    // )* 
     {
       //var mutation = document.createVenbraceElement("mutation");
       //mutation.setAttribute("name", procname);
@@ -521,7 +530,7 @@ call_procedure_stat returns [var elt]
       procnameField.innerHTML = procname;
    	  $elt.appendChild(procnameField);
 
-      for (var i = 0; i < argExps.length; i++) {
+      /*for (var i = 0; i < argExps.length; i++) {
         //var mutationArg = document.createVenbraceElement("arg");
         //mutationArg.setAttribute("name", argLabels[i]); 
         //mutation.appendChild(mutationArg);
@@ -529,7 +538,7 @@ call_procedure_stat returns [var elt]
         valueArg.setAttribute("name", "ARG" + i); 
         valueArg.appendChild(argExps[i]);
         $elt.appendChild(valueArg);
-      }
+      }*/
     }
     ;
     catch [e] {throw e;}
@@ -555,7 +564,11 @@ setter returns [var elt]
 	var value = document.createVenbraceElement("value");
 	value.setAttribute("name","VALUE");
 }
-  : SET ((GLOBAL {var_name += $GLOBAL.text;})? ID {var_name += $ID.text;}) 
+  : SET ((GLOBAL {var_name += $GLOBAL.text + " ";})? 
+  (ID {var_name += $ID.text;}
+  | COMPONENT_PROPERTY {var_name += $COMPONENT_PROPERTY.text;}
+    ) 
+  ) 
   TO expr_block {
     field.innerHTML = var_name;
 		$elt.appendChild(field);
@@ -626,7 +639,7 @@ expr returns [var elt]
     /* | component_expr*/
     | color_block {$elt = $color_block.elt;}
   //  | list_expr {$elt = $list_expr.elt;}
- //   | call_procedure_expr {$elt = $call_procedure_expr.elt;}
+   | call_procedure_expr {$elt = $call_procedure_expr.elt;}
     | atom {$elt = $atom.elt;}
     ;
     catch [e] {throw e;}
@@ -785,7 +798,7 @@ compare_eq_expr returns [var elt]
 	  valB.setAttribute("name","B");
 	  valB.appendChild($b.elt);
 
-	  $elt.appendChild(vaA);
+	  $elt.appendChild(valA);
 	  $elt.appendChild(field);
 	  $elt.appendChild(valB);
 	}
@@ -822,26 +835,26 @@ compare_math_expr returns [var elt]
 	  valB.setAttribute("name","B");
 	  valB.appendChild($b.elt);
 
-	  $elt.appendChild(vaA);
+	  $elt.appendChild(valA);
 	  $elt.appendChild(field);
 	  $elt.appendChild(valB);
 	}
   ;
   catch [e] {throw e;}
 
-//math_expr: num_literal | math_binop | math_op;
 math_expr returns [var elt]
-  : mutable_op {$elt = $mutable_op.elt;}
+  : neg_num {$elt = $neg_num.elt;}
+  | mutable_op {$elt = $mutable_op.elt;}
   | immutable_op {$elt = $immutable_op.elt;}
-  /*| rand_int {$elt = $rand_int.elt;}
-  | rand_frac {$elt = $rand_frac.elt;}*/
-  | /*rand_set_seed_to |*/ 
-  //| min_max {$elt = $min_max.elt;}
+  | min_max {$elt = $min_max.elt;}
   | unary_op {$elt = $unary_op.elt;}
   | mod {$elt = $mod.elt;}
   | remainder {$elt = $remainder.elt;}
   | quotient {$elt = $quotient.elt;}
   | trig {$elt = $trig.elt;}
+    /*| rand_int {$elt = $rand_int.elt;}
+  | rand_frac {$elt = $rand_frac.elt;}*/
+  //| /*rand_set_seed_to |*/ 
   /*| rad_to_deg {$elt = $rad_to_deg.elt;}
   //| deg_to_rad {$elt = $deg_to_rad.elt;}
   //| format_as_dec {$elt = $format_as_dec.elt;}*/
@@ -849,9 +862,21 @@ math_expr returns [var elt]
   ;
   catch [e] {throw e;}
 
-// abandoned
-//num_literal: MINUS? num;
-//num: (DIGIT+ | (DIGIT+ DOT DIGIT+)) ;
+neg_num returns [var elt]
+@init{
+	$elt = document.createVenbraceElement("block");
+	var field = document.createVenbraceElement("field");
+}
+  : MINUS NUMBER
+  {
+		$elt.setAttribute("type","math_number");
+
+		field.setAttribute("name","NUM");
+		field.innerHTML = "-" + $NUMBER.text;
+		$elt.appendChild(field);
+	}
+  ;
+  catch [e] {throw e;}
 
 mutable_op returns [var elt]
 @init{
@@ -974,7 +999,7 @@ unary_op returns [var elt]
 }
   : (SQRT {operation = "ROOT";}
   | ABS {operation = "ABS";}
-  | MINUS {operation = "NEG";}
+  | NEG {operation = "NEG";}
   | LOG {operation = "LN";}
   | EULER {operation = "EXP";}
   | ROUND {operation = "ROUND";}
@@ -1139,7 +1164,7 @@ getter returns [var elt]
 
 	var variable = "";
 }
-  : (GET)? (GLOBAL {variable += "$";})? ID
+  : (GET)? (((GLOBAL {variable += "global ";})? ID
   {
     variable += $ID.text;
     var field = document.createVenbraceElement("field");
@@ -1147,7 +1172,17 @@ getter returns [var elt]
     field.innerHTML = variable;
 
     $elt.appendChild(field);
+  })
+  | COMPONENT_PROPERTY
+  {
+    variable += $COMPONENT_PROPERTY.text;
+    var field = document.createVenbraceElement("field");
+    field.setAttribute("name","VAR");
+    field.innerHTML = variable;
+
+    $elt.appendChild(field);
   }
+  )
   ;
   catch [e] {throw e;}
 
@@ -1290,18 +1325,20 @@ call_procedure_expr returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
 	$elt.setAttribute("type","procedures_callreturn");
-  var argLabels = [];
-  var argExps = [];
-  var pushArgLabel = function (label) {
-    var labelWithoutTrailingColon = label.substring(0,label.length - 1);
-    argLabels.push(labelWithoutTrailingColon);
-  };
-  var pushArgExp = function (elt) {
-    argExps.push(elt);
-  };
+  var procname = "";
+  // var argLabels = [];
+  // var argExps = [];
+  // var pushArgLabel = function (label) {
+  //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
+  //   argLabels.push(labelWithoutTrailingColon);
+  // };
+  // var pushArgExp = function (elt) {
+  //   argExps.push(elt);
+  // };
 }
-  : CALL ID {var procname = $ID.text;} 
-  (expr_block {pushArgExp($expr_block.elt);})*
+  : CALL ((ID {procname = $ID.text;})
+  | (COMPONENT_PROPERTY) {procname = $COMPONENT_PROPERTY.text;})
+  //(expr_block {pushArgExp($expr_block.elt);})*
   {
     // TODO: add more line according to
     var mutation = document.createVenbraceElement("mutation");
@@ -1313,7 +1350,7 @@ call_procedure_expr returns [var elt]
     procnameField.innerHTML = procname;
     $elt.appendChild(procnameField);
 
-    for (var i = 0; i < argExps.length; i++) {
+    /*for (var i = 0; i < argExps.length; i++) {
         // var mutationArg = document.createVenbraceElement("arg");
         // mutationArg.setAttribute("name", argLabels[i]); 
         // mutation.appendChild(mutationArg);
@@ -1321,7 +1358,7 @@ call_procedure_expr returns [var elt]
         valueArg.setAttribute("name", "ARG" + i); 
         valueArg.appendChild(argExps[i]);
         $elt.appendChild(valueArg);
-    }
+    }*/
   }
   ;
   catch [e] {throw e;}
@@ -1332,7 +1369,8 @@ atom returns [var elt]
 	$elt = document.createVenbraceElement("block");
 	var field = document.createVenbraceElement("field");
 }
-  : NUMBER {
+  : NUMBER // TODO: fix negative numbers
+  {
 		$elt.setAttribute("type","math_number");
 
 		field.setAttribute("name","NUM");
@@ -1369,6 +1407,14 @@ atom returns [var elt]
     field.innerHTML = variable;
     $elt.appendChild(field);
 	  }
+  | COMPONENT_PROPERTY {
+    var variable = $COMPONENT_PROPERTY.text;
+		$elt.setAttribute("type","component_property");
+    var field = document.createVenbraceElement("field");
+    field.setAttribute("name","VAR");
+    field.innerHTML = variable;
+    $elt.appendChild(field);
+  }
   ;
 
 //dotted_name: ID '.' ID;
@@ -1422,7 +1468,8 @@ INIT_GLOBAL_VAR: 'initialize_global';
 INIT_LOCAL_VAR: 'initialize_local';
 GET: 'get';
 SET: 'set';
-GLOBAL: '$';
+//GLOBAL: '$';
+GLOBAL: 'global';
  
 IN: 'in';
 BY: 'by';
@@ -1461,8 +1508,9 @@ DIV: '/';
 POW: '^';
 
 //Unary Ops
-SQRT: 'sqrt';
-ABS: 'abs';
+SQRT: 'sqrt'; // to be tested in the preference task
+ABS: 'absolute';
+NEG: 'neg';
 LOG: 'log';
 EULER: 'e^';
 ROUND: 'round';
@@ -1524,7 +1572,7 @@ LIST: 'list';
 fragment DIGIT : ('0'..'9');
 fragment HEX_DIGIT : (DIGIT | 'a'..'f' | 'A'..'F');
 // INT : ((DIGIT)+ | '0x' (HEX_DIGIT)+);
-NUMBER : (DIGIT* DOT DIGIT+ | DIGIT+ (DOT)? | '0x' (HEX_DIGIT)+);
+NUMBER : ((DIGIT* DOT DIGIT+) | (DIGIT+ (DOT)?) | ('0x' (HEX_DIGIT)+));
 
 fragment ALPHA : ('a' .. 'z' | 'A' .. 'Z');
 fragment ALPHA_NUM: ALPHA | DIGIT;
@@ -1534,6 +1582,7 @@ fragment ESC :  '\\' .;
 
 // identifiers
 ID : (ALPHA | '_') (ALPHA | '_' | DIGIT)*;
+COMPONENT_PROPERTY: ID DOT ID;
 
 
 
