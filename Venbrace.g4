@@ -55,6 +55,7 @@ options
         return element;
     }
 
+
   // VenbraceException = function(msg) {
   //   VenbraceException.superclass.constructor.call(this, msg);
   //   this.message = msg;
@@ -302,7 +303,7 @@ event_handler returns [var elt]
 
 // KEY ELEMENTS
 expr_block returns [var elt]
-  : (LPAREN RPAREN) {$elt = null;}
+  : (LPAREN RPAREN) {$elt = null;} //TODO: fix $elt --> empty socket type
   | atom {$elt = $atom.elt;}
   | (LPAREN expr RPAREN) {$elt = $expr.elt;};
   catch[e] {throw e;}
@@ -1363,19 +1364,32 @@ call_procedure_expr returns [var elt]
   ;
   catch [e] {throw e;}
 
+int_literal returns [var elt]
+@init {
+  $elt = document.createVenbraceElement("block");
+	var field = document.createVenbraceElement("field");
+  var minus = false;
+} : (MINUS{minus = true;})? NUMBER
+  {
+      $elt.setAttribute("type","math_number");
+      field.setAttribute("name","NUM");
+      if (minus) 
+        field.innerHTML = "-" + $NUMBER.text;
+      else field.innerHTML = $NUMBER.text;
+      $elt.appendChild(field);
+  }
+  ;
+  catch [e] {throw e;}
+
 // OTHER ELEMENTS
 atom returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
 	var field = document.createVenbraceElement("field");
 }
-  : NUMBER // TODO: fix negative numbers
+  : int_literal // TODO: fix negative numbers
   {
-		$elt.setAttribute("type","math_number");
-
-		field.setAttribute("name","NUM");
-		field.innerHTML = $NUMBER.text;
-		$elt.appendChild(field);
+		$elt = $int_literal.elt;
 	}
   | STRING {
 		$elt.setAttribute("type","text");
@@ -1464,8 +1478,6 @@ DO: 'do';
 RESULT: 'result';
 TO: 'to';
 CALL: 'call';
-INIT_GLOBAL_VAR: 'initialize_global';
-INIT_LOCAL_VAR: 'initialize_local';
 GET: 'get';
 SET: 'set';
 //GLOBAL: '$';

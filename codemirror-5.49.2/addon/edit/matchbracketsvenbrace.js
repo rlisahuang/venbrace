@@ -92,10 +92,8 @@
           marks.push(cm.markText(match.to, Pos(match.to.line, match.to.ch + 1), {className: style}));
           //added for highlighting scope
           if (match.from.line < match.to.line || (match.from.line == match.to.line && match.from.ch < match.to.ch)) {
-            console.log("if clause");
             marks.push(cm.markText(match.from, Pos(match.to.line, match.to.ch+1), {className: "highlighted-scope"}));
-          } else {
-            console.log("else clause");
+          } else if (match.to) { // if there's a match
             marks.push(cm.markText(match.to, Pos(match.from.line, match.from.ch + 1), {className: "highlighted-scope"}));
           }
 

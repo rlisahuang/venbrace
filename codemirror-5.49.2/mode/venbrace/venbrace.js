@@ -5,6 +5,8 @@
  * Author: Koh Zi Han, based on implementation by Koh Zi Chun
  */
 
+
+
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     mod(require("../../lib/codemirror"));
@@ -20,15 +22,47 @@ CodeMirror.defineMode("venbrace", function () {
         ATOM = "atom", NUMBER = "number", BRACKET = "bracket";
     var INDENT_WORD_SKIP = 2;
 
-    function makeKeywords(str) {
-        var obj = {}, words = str.split(" ");
-        for (var i = 0; i < words.length; ++i) obj[words[i]] = true;
+    function makeKeywords(words) {
+        var obj = {};//, words = str.split(" ");
+        var brackets = ["'{'", "'}'", "'('", "')'", "'['", "']'", 
+        "','", "'==='", "'.'", "'<-'", "':'"]
+        for (var i = 0; i < words.length; ++i) {
+            if (words[i] != null && !(words[i] in brackets)) {
+                // get rid of the single quotation marks
+                var word = words[i].substr(1, (words[i].length-2));
+                obj[word] = true;
+            }
+        }
         return obj;
     }
 
-    // TODO: only keywords for the control blocks have been added
-    var keywords = makeKeywords("if then else for each in while do result evaluate open close get");
-    var indentKeys = makeKeywords("to call when");
+    //TODO: automate this
+    var VenbraceKeywords = [ null, null, "'{'", "'}'", "'('", "')'", "'['", "']'", 
+                     "','", "'==='", "'.'", "'<-'", "':'", "'true'", "'false'", 
+                     "'when'", "'if'", "'then'", "'else'", "'else if'", 
+                     "'forEach'", "'do'", "'result'", "'to'", "'call'", 
+                     "'get'", "'set'", "'global'", "'in'", "'by'", "'from'", 
+                     "'while'", "'test'", "'evaluateButIgnoreResult'", "'openAnotherScreen'", 
+                     "'closeScreen'", "'closeApplication'", "'initialize'", 
+                     "'local'", "'getStartValue'", "'getPlainStartText'", 
+                     "'not'", "'and'", "'or'", "'<'", "'>'", "'<='", "'>='", 
+                     "'equals'", "'not_equals'", "'='", "'!='", "'+'", "'-'", 
+                     "'*'", "'/'", "'^'", "'sqrt'", "'absolute'", "'neg'", 
+                     "'log'", "'e^'", "'round'", "'ceiling'", "'floor'", 
+                     "'randomInteger'", "'randomFraction'", "'min'", "'max'", 
+                     "'moduloOf'", "'remainderOf'", "'quotientOf'", "'radiansToDegrees'", 
+                     "'degreesToRadians'", "'formatAsDecimal'", "'isNumber'", 
+                     "'sin'", "'cos'", "'tan'", "'asin'", "'acos'", "'atan'", 
+                     "'color'", "'make_color'", "'black'", "'blue'", "'white'", 
+                     "'magenta'", "'red'", "'light_gray'", "'pink'", "'gray'", 
+                     "'orange'", "'dark_gray'", "'yellow'", "'green'", "'cyan'", 
+                     "'make_a_list'", "'list'" ];
+
+
+    var keywords = makeKeywords(VenbraceKeywords);
+    // hardcoded for now
+    var indentKeys = ["forEach", "do", "result", "to", "initialize",
+                        "while"];
 
     function stateStack(indent, type, prev) { // represents a state stack object
         this.indent = indent;
@@ -74,8 +108,8 @@ CodeMirror.defineMode("venbrace", function () {
                 indentStack: null,
                 indentation: 0,
                 mode: false,
-                //singleComment: false,
-                //sExprQuote: false
+                sExprComment: false,
+                sExprQuote: false
             };
         },
 
@@ -107,26 +141,26 @@ CodeMirror.defineMode("venbrace", function () {
                 case "comment": // comment parsing mode
                     var next, maybeEnd = false;
                     while ((next = stream.next()) != null) {
-                        if (next == "/" && maybeEnd) {
+                        if (next == "#" && maybeEnd) {
 
                             state.mode = false;
                             break;
                         }
-                        maybeEnd = (next == "*");
+                        maybeEnd = (next == "|");
                     }
                     returnType = COMMENT;
                     break;
-                /*case "single-comment": // single-line commenting mode
+                case "s-expr-comment": // s-expr commenting mode
                     state.mode = false;
-                    if(stream.peek() == ";"){
-                        // actually start venbrace single-line commenting mode
-                        state.singleComment = 0;
+                    if(stream.peek() == "(" || stream.peek() == "["){
+                        // actually start scheme s-expr commenting mode
+                        state.sExprComment = 0;
                     }else{
                         // if not we just comment the entire of the next token
                         stream.eatWhile(/[^\s\(\)\[\]]/); // eat symbol atom
                         returnType = COMMENT;
                         break;
-                    }*/
+                    }
                 default: // default parsing mode
                     var ch = stream.next();
 
@@ -134,29 +168,26 @@ CodeMirror.defineMode("venbrace", function () {
                         state.mode = "string";
                         returnType = STRING;
 
-                    } /*else if (ch == "'") {
+                    } else if (ch == "'") {
                         if (stream.peek() == "(" || stream.peek() == "["){
                             if (typeof state.sExprQuote != "number") {
                                 state.sExprQuote = 0;
                             } // else already in a quoted expression
                             returnType = ATOM;
                         } else {
-                            stream.eatWhile(/[\w_\-!$%&*+\.\/:<=>?@\^~]/);
+                            stream.eatWhile(/[\w_\-!$%&*+\.:<=>?@\^~]/);
                             returnType = ATOM;
                         }
-                    } */
-                    else if (ch == '/') {
-                        if (stream.eat("*")) {                    // Multi-line comment
+                    } else if (ch == '#') {
+                        if (stream.eat("|")) {                    // Multi-line comment
                             state.mode = "comment"; // toggle to comment mode
                             returnType = COMMENT;
                         } else if (stream.eat(/[tf]/i)) {            // #t/#f (atom)
                             returnType = ATOM;
-                        } /*else if (stream.eat('/')) {                // single-line comment
-                            state.mode = "single-comment";
+                        } else if (stream.eat(';')) {                // S-Expr comment
+                            state.mode = "s-expr-comment";
                             returnType = COMMENT;
-                        } 
-                        */
-                       else {
+                        } else {
                             var numTest = null, hasExactness = false, hasRadix = true;
                             if (stream.eat(/[ei]/i)) {
                                 hasExactness = true;
@@ -189,7 +220,7 @@ CodeMirror.defineMode("venbrace", function () {
                         }
                     } else if (/^[-+0-9.]/.test(ch) && isDecimalNumber(stream, true)) { // match non-prefixed number, must be decimal
                         returnType = NUMBER;
-                    } else if (ch == "/" && stream.eat("/")) { // comment
+                    } else if (ch == "/" && stream.eat('/')) { // comment
                         stream.skipToEnd(); // rest of the line is a comment
                         returnType = COMMENT;
                     } else if (ch == "(" || ch == "[" || ch == "{") {
@@ -201,7 +232,7 @@ CodeMirror.defineMode("venbrace", function () {
                         (;something else, bracket, etc.
                         */
 
-                        while ((letter = stream.eat(/[^\s\(\[\;\)\]]/)) != null) {
+                        while ((letter = stream.eat(/[^\s\(\[\{\;\)\]\}]/)) != null) {
                             keyWord += letter;
                         }
 
@@ -211,7 +242,7 @@ CodeMirror.defineMode("venbrace", function () {
                         } else { // non-indent word
                             // we continue eating the spaces
                             stream.eatSpace();
-                            if (stream.eol() || stream.peek() == ";") { //TODO: do we want explicit eol marker `;'?
+                            if (stream.eol() || stream.peek() == ";") {
                                 // nothing significant after
                                 // we restart indentation 1 space after
                                 pushStack(state, indentTemp + 1, ch);
@@ -221,8 +252,8 @@ CodeMirror.defineMode("venbrace", function () {
                         }
                         stream.backUp(stream.current().length - 1); // undo all the eating
 
-                        //if(typeof state.sExprComment == "number") state.sExprComment++;
-                        //if(typeof state.sExprQuote == "number") state.sExprQuote++;
+                        if(typeof state.sExprComment == "number") state.sExprComment++;
+                        if(typeof state.sExprQuote == "number") state.sExprQuote++;
 
                         returnType = BRACKET;
                     } else if (ch == ")" || ch == "]" || ch == "}") {
@@ -244,30 +275,16 @@ CodeMirror.defineMode("venbrace", function () {
                         
                         if (state.indentStack != null && state.indentStack.type == matchBracket) {
                             popStack(state);
-
-                            /*if(typeof state.sExprComment == "number"){
-                                if(--state.sExprComment == 0){
-                                    returnType = COMMENT; // final closing bracket
-                                    state.sExprComment = false; // turn off s-expr commenting mode
-                                }
-                            }
-                            if(typeof state.sExprQuote == "number"){
-                                if(--state.sExprQuote == 0){
-                                    returnType = ATOM; // final closing bracket
-                                    state.sExprQuote = false; // turn off s-expr quote mode
-                                }
-                            }*/
                         }
                     } else {
-                        stream.eatWhile(/[\w_\-!$%&*+\.\/:<=>?@\^~]/);
+                        stream.eatWhile(/[\w_\-!$%&*+\.:<=>?@\^~]/);
 
                         if (keywords && keywords.propertyIsEnumerable(stream.current())) {
                             returnType = BUILTIN;
                         } else returnType = "variable";
                     }
             }
-            //return (typeof state.sExprComment == "number") ? COMMENT : ((typeof state.sExprQuote == "number") ? ATOM : returnType);
-            return returnType;
+            return (typeof state.sExprComment == "number") ? COMMENT : ((typeof state.sExprQuote == "number") ? ATOM : returnType);
         },
 
         indent: function (state) {
@@ -276,11 +293,10 @@ CodeMirror.defineMode("venbrace", function () {
         },
 
         closeBrackets: {pairs: "()[]{}\"\""},
-        lineComment: "//",
-        dontIndentStates: ["comment"]
+        lineComment: "//"
     };
 });
 
-CodeMirror.defineMIME("text/x-venbrace", "venbrace");
+CodeMirror.defineMIME("text/x-scheme", "venbrace");
 
 });

@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="codemirror-5.49.2/lib/codemirror.css">
 <script src="codemirror-5.49.2/lib/codemirror.js"></script>
 <script src="codemirror-5.49.2/addon/edit/closebrackets.js"></script>
-<script src="codemirror-5.49.2/addon/edit/matchbrackets-copy.js"></script>
-<script src="codemirror-5.49.2/mode/scheme/scheme-copy.js"></script>
+<script src="codemirror-5.49.2/addon/edit/matchbracketsvenbrace.js"></script>
+<script src="codemirror-5.49.2/mode/venbrace/venbrace.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style>
       .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
@@ -31,45 +31,24 @@
 
 <script type="text/javascript">
   // Begin local JavaScript code for this page
-  
-  'use strict';
-  var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
-    mode: "scheme-copy",  
-    lineNumbers: true,
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    cursorBlinkRate: 0}
-    );
-  
-  var loc = window.location.pathname;
-  console.log(loc);
-  
+
   var antlr4 = require('./antlr4/index.js');
   var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
   var VenbraceParser = require('./VenbraceParser').VenbraceParser;
   var VenbraceListener = require('./VenbraceListener').VenbraceListener;
   var VenbraceVisitor = require('./VenbraceVisitor').VenbraceVisitor;
   
-  // custom visitor
-  class Visitor {
-    visitChildren(ctx) {
-      if (!ctx) {
-        return;
-      }
+  'use strict';
+  var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
+    mode: "venbrace",  
+    lineNumbers: true,
+    autoCloseBrackets: true, // do we still want to enable this?
+    matchBrackets: true,
+    cursorBlinkRate: 0}
+    );
   
-      if (ctx.children) {
-        return ctx.children.map(child => {
-          if (child.children && child.children.length != 0) {
-            return child.accept(this);
-          } else {
-            return child.getText();
-          }
-        });
-      }
-    }
-  }
-  
-  //tree.accept(new Visitor());
+  var loc = window.location.pathname;
+  console.log(loc);
   
   var parse = function () { 
     // Attempt to parse the text in the input text area.
@@ -81,10 +60,6 @@
     var tstream = new antlr4.CommonTokenStream(lexer); 
     var parser = new VenbraceParser(tstream);
     var visitor = new VenbraceVisitor();
-  
-    // copied from readme.md
-    //parser.buildParseTrees = true;
-     // var tree = parser.program();
   
   
     var dom = undefined;
@@ -119,7 +94,6 @@
       } 
       console.log("Parsing successed!");
       xml = dom.elt;
-     // console.log(xml);
       var parserErrors = parser.getErrors();
       console.log("Number of parser errors is " + parserErrors.length);
       if (parserErrors.length === 0) {
@@ -127,7 +101,6 @@
           console.log("Unexpectedly, dom is still undefined.");
         } else {
           document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
-          //console.log(domToPrettyText(xml));      
         }
       } else {
         console.log("Parser errors:");

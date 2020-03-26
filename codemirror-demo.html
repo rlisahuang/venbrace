@@ -1,0 +1,75 @@
+<!doctype html>
+
+<title>Venbrace Online Editor</title>
+<meta charset="utf-8"/>
+
+<link rel=stylesheet href="codemirror-5.49.2/doc/docs.css">
+<link rel="stylesheet" href="codemirror-5.49.2/lib/codemirror.css">
+<script src="codemirror-5.49.2/lib/codemirror.js"></script>
+<script src="codemirror-5.49.2/addon/edit/closebrackets.js"></script>
+<script src="codemirror-5.49.2/addon/edit/matchbracketsvenbrace.js"></script>
+<script src="codemirror-5.49.2/mode/venbrace/venbrace.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="dataCollection.js"></script>
+<style>
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+      .highlighted-scope { background-color: #e0e0e0; }
+
+    </style>
+<div id=nav>
+  <a href=""><h1>Venbrace: A Textual Representation of MIT App Inventor</h1></a>
+</div>
+
+
+<article>
+<h2>Editor Demo (modified from Codemirror Closebrackets Demo)</h2>
+<form action="../cgi-bin/codemirror-demo.cgi" method="post">
+    <input type="hidden" name="changes" id="changes" value="">
+    Your token: <input type="text" name="token" id="token" value="">
+    <textarea id="code" name="code">
+
+// this is a comment
+/* some block comment
+*/
+
+[$nums <- (list)]
+[when EnterNum.Click
+ do	{if (isNumber? NumBox.Text)
+	   then {addItemsToList $nums NumBox.Text}
+    }
+    {NumBox.Text <- ""}]
+
+[when ProcessNums.Click
+  do {SumLabel.Text <- (call process $nums ScaleValue.Text)}]
+
+[to process ns scale
+ result (local 总和 <- 0, numNegs <- 0
+ 			 	in (do {for n in ns
+                do {if (n = OtherScreenValue.Text)
+                    then {openScreen "Screen2" 总和}
+                    else if (n < 0)
+                    then {numNegs <- (1 + numNegs)}
+                    else {总和 <- (总和 + (n * scale))}
+                }}
+					      {NegsLabel.Text <- numNegs}
+			 result 总和))]
+</textarea>
+<input type="submit" id="submit" value="Submit">
+</form>
+
+    <script>
+    'use strict';
+      var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: "venbrace",  
+        lineNumbers: true,
+        autoCloseBrackets: true,
+        matchBrackets: true,
+        cursorBlinkRate: 0}
+        );
+
+        //start tracking
+        track(editor);
+       
+
+    </script>
+  </article>

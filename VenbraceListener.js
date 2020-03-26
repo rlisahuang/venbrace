@@ -470,6 +470,15 @@ VenbraceListener.prototype.exitCall_procedure_expr = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceParser#int_literal.
+VenbraceListener.prototype.enterInt_literal = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceParser#int_literal.
+VenbraceListener.prototype.exitInt_literal = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceParser#atom.
 VenbraceListener.prototype.enterAtom = function(ctx) {
 };
