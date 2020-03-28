@@ -211,6 +211,7 @@ function track (editor) {
 
     function updateData() {
         $("#changes").val(JSON.stringify(buffers));
+        // TODO: check if JSON.stringify preserves prototypes
     }
 
 

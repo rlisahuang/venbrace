@@ -514,6 +514,17 @@ function VenbraceParser (input) {
 
 
 		var errors = [];
+	  // var tokens = [];
+
+	  // VenbraceParser.prototype.match = function(ttype) {
+	  //   tokens.push(antlr4.Parser.prototype.getCurrentToken());
+	  //   //antlr4.Parser.prototype.match(ttype);
+	  // }
+
+	  // VenbraceParser.prototype.getAllTokens = function() {
+	  //   return tokens;
+	  // }
+
 	  VenbraceParser.prototype.emitErrorMessage = function(error) {
 	        //var hdr = getErrorHeader(e);
 	        //var msg = getErrorMessage(e, tokenNames);

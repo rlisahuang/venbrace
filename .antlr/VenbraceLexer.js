@@ -776,6 +776,19 @@ VenbraceLexer.prototype.grammarFileName = "Venbrace.g4";
 
 
 	var errors = [];
+  // var tokens = [];
+
+  // VenbraceLexer.prototype.nextToken = function() {
+  //     var t = antlr4.Lexer.prototype.nextToken();
+  //     if (t.type !== antlr4.Token.EOF)
+  //       tokens.push(t);
+  //     return t;
+  // }
+
+  // VenbraceLexer.prototype.getAllTokens = function() {
+  //   return tokens;
+  // }
+
   VenbraceLexer.prototype.emitErrorMessage = function(error) {
   	    //var hdr = getErrorHeader(e);
         //var msg = getErrorMessage(e, tokenNames);
@@ -784,6 +797,10 @@ VenbraceLexer.prototype.grammarFileName = "Venbrace.g4";
   VenbraceLexer.prototype.getErrors = function() {
         return errors;
     }
+
+  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
+    factory = newFactory;
+  }
 
 
 

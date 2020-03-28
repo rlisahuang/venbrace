@@ -35,9 +35,7 @@
   var antlr4 = require('./antlr4/index.js');
   var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
   var VenbraceParser = require('./VenbraceParser').VenbraceParser;
-  var VenbraceListener = require('./VenbraceListener').VenbraceListener;
-  var VenbraceVisitor = require('./VenbraceVisitor').VenbraceVisitor;
-  
+
   'use strict';
   var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
     mode: "venbrace",  
@@ -57,15 +55,20 @@
     console.log(input);
     var cstream = new antlr4.InputStream(input);
     var lexer = new VenbraceLexer(cstream);
+
     var tstream = new antlr4.CommonTokenStream(lexer); 
+
+    tstream.fill(); //test code
+    var tokens = tstream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;})
+
     var parser = new VenbraceParser(tstream);
-    var visitor = new VenbraceVisitor();
   
   
     var dom = undefined;
     var xml = undefined;
     var visit = undefined;
     if (lexer.getErrors().length === 0) {
+      console.log(tokens);
       try {  
         console.log("Try to parse as expr.");
         // Try to parse as expression first 
@@ -93,9 +96,17 @@
         }
       } 
       console.log("Parsing successed!");
+
       xml = dom.elt;
       var parserErrors = parser.getErrors();
       console.log("Number of parser errors is " + parserErrors.length);
+
+      // trace tokens from the parse tree
+      // dom.accept(new Visitor());
+      
+
+
+
       if (parserErrors.length === 0) {
         if (dom === undefined) {
           console.log("Unexpectedly, dom is still undefined.");
@@ -114,7 +125,7 @@
         console.log(error);
       });
     }
-    document.getElementById("raw").innerHTML = input;
+    
   }
   
   

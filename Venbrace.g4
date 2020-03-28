@@ -15,10 +15,24 @@ grammar Venbrace;
 options
 {
   language = 'JavaScript';
+  tokenVocab=VenbraceLexer;
 }
 
 @lexer::members{
 	var errors = [];
+  // var tokens = [];
+
+  // VenbraceLexer.prototype.nextToken = function() {
+  //     var t = antlr4.Lexer.prototype.nextToken();
+  //     if (t.type !== antlr4.Token.EOF)
+  //       tokens.push(t);
+  //     return t;
+  // }
+
+  // VenbraceLexer.prototype.getAllTokens = function() {
+  //   return tokens;
+  // }
+
   VenbraceLexer.prototype.emitErrorMessage = function(error) {
   	    //var hdr = getErrorHeader(e);
         //var msg = getErrorMessage(e, tokenNames);
@@ -27,11 +41,26 @@ options
   VenbraceLexer.prototype.getErrors = function() {
         return errors;
     }
+
+  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
+    factory = newFactory;
+  }
 }
 
 @parser::members{
 
 	var errors = [];
+  // var tokens = [];
+
+  // VenbraceParser.prototype.match = function(ttype) {
+  //   tokens.push(antlr4.Parser.prototype.getCurrentToken());
+  //   //antlr4.Parser.prototype.match(ttype);
+  // }
+
+  // VenbraceParser.prototype.getAllTokens = function() {
+  //   return tokens;
+  // }
+
   VenbraceParser.prototype.emitErrorMessage = function(error) {
         //var hdr = getErrorHeader(e);
         //var msg = getErrorMessage(e, tokenNames);
