@@ -1,6 +1,6 @@
 // Generated from Venbrace.g4 by ANTLR 4.7.2
 // jshint ignore: start
-var antlr4 = require('antlr4/index');
+var antlr4 = require('./antlr4/index');
 var VenbraceListener = require('./VenbraceListener').VenbraceListener;
 var grammarFileName = "Venbrace.g4";
 
