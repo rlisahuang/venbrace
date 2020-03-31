@@ -873,8 +873,7 @@ compare_math_expr returns [var elt]
   catch [e] {throw e;}
 
 math_expr returns [var elt]
-  : neg_num {$elt = $neg_num.elt;}
-  | mutable_op {$elt = $mutable_op.elt;}
+  : mutable_op {$elt = $mutable_op.elt;}
   | immutable_op {$elt = $immutable_op.elt;}
   | min_max {$elt = $min_max.elt;}
   | unary_op {$elt = $unary_op.elt;}
@@ -889,22 +888,6 @@ math_expr returns [var elt]
   //| deg_to_rad {$elt = $deg_to_rad.elt;}
   //| format_as_dec {$elt = $format_as_dec.elt;}*/
   //| is_num {$elt = $is_num.elt;}
-  ;
-  catch [e] {throw e;}
-
-neg_num returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	var field = document.createVenbraceElement("field");
-}
-  : MINUS NUMBER
-  {
-		$elt.setAttribute("type","math_number");
-
-		field.setAttribute("name","NUM");
-		field.innerHTML = "-" + $NUMBER.text;
-		$elt.appendChild(field);
-	}
   ;
   catch [e] {throw e;}
 
@@ -958,7 +941,7 @@ immutable_op returns [var elt]
 	//type will get a value inside the rule
 	$elt.setAttribute("inline","true");
 }  
-  : a=expr_block
+  :( a=expr_block
   (
     MINUS {$elt.setAttribute("type", "math_subtract");}
     | DIV {$elt.setAttribute("type", "math_division");}
@@ -976,7 +959,24 @@ immutable_op returns [var elt]
 
 	  $elt.appendChild(valA);
 	  $elt.appendChild(valB);
-	}
+	})
+  | (a=expr_block NEG_NUM
+  {
+    var valA = document.createVenbraceElement("value");
+	  valA.setAttribute("name","A");
+	  valA.appendChild($a.elt);
+
+	  var valB = document.createVenbraceElement("value");
+    var field = document.createVenbraceElement("field");
+    valB.setAttribute("type","math_number");
+    valB.setAttribute("name", "B");
+    field.innerHTML = $NEG_NUM.text.substring(1); //excluding the neg sign
+    valB.appendChild(field);
+
+    $elt.setAttribute("type", "math_subtract");
+	  $elt.appendChild(valA);
+	  $elt.appendChild(valB);
+  })
   ;
 
  // TODO: 
@@ -1393,22 +1393,22 @@ call_procedure_expr returns [var elt]
   ;
   catch [e] {throw e;}
 
-int_literal returns [var elt]
-@init {
-  $elt = document.createVenbraceElement("block");
-	var field = document.createVenbraceElement("field");
-  var minus = false;
-} : (MINUS{minus = true;})? NUMBER
-  {
-      $elt.setAttribute("type","math_number");
-      field.setAttribute("name","NUM");
-      if (minus) 
-        field.innerHTML = "-" + $NUMBER.text;
-      else field.innerHTML = $NUMBER.text;
-      $elt.appendChild(field);
-  }
-  ;
-  catch [e] {throw e;}
+// int_literal returns [var elt]
+// @init {
+//   $elt = document.createVenbraceElement("block");
+// 	var field = document.createVenbraceElement("field");
+//   var minus = false;
+// } : (MINUS{minus = true;})? NUMBER
+//   {
+//       $elt.setAttribute("type","math_number");
+//       field.setAttribute("name","NUM");
+//       if (minus) 
+//         field.innerHTML = "-" + $NUMBER.text;
+//       else field.innerHTML = $NUMBER.text;
+//       $elt.appendChild(field);
+//   }
+//   ;
+//   catch [e] {throw e;}
 
 // OTHER ELEMENTS
 atom returns [var elt]
@@ -1416,10 +1416,20 @@ atom returns [var elt]
 	$elt = document.createVenbraceElement("block");
 	var field = document.createVenbraceElement("field");
 }
-  : int_literal // TODO: fix negative numbers
+  : NUMBER//int_literal $elt = $int_literal.elt; ORIGINAL CODE FOR int_literal
   {
-		$elt = $int_literal.elt;
+    $elt.setAttribute("type","math_number");
+    field.setAttribute("name","NUM");
+    field.innerHTML = $NUMBER.text;
+    $elt.appendChild(field);
 	}
+  | NEG_NUM
+  {
+    $elt.setAttribute("type","math_number");
+    field.setAttribute("name","NUM");
+    field.innerHTML = $NEG_NUM.text;
+    $elt.appendChild(field);
+  }
   | STRING {
 		$elt.setAttribute("type","text");
 
@@ -1614,6 +1624,8 @@ fragment DIGIT : ('0'..'9');
 fragment HEX_DIGIT : (DIGIT | 'a'..'f' | 'A'..'F');
 // INT : ((DIGIT)+ | '0x' (HEX_DIGIT)+);
 NUMBER : ((DIGIT* DOT DIGIT+) | (DIGIT+ (DOT)?) | ('0x' (HEX_DIGIT)+));
+NEG_NUM : MINUS NUMBER;
+
 
 fragment ALPHA : ('a' .. 'z' | 'A' .. 'Z');
 fragment ALPHA_NUM: ALPHA | DIGIT;

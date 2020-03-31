@@ -308,15 +308,6 @@ VenbraceListener.prototype.exitMath_expr = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceParser#neg_num.
-VenbraceListener.prototype.enterNeg_num = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceParser#neg_num.
-VenbraceListener.prototype.exitNeg_num = function(ctx) {
-};
-
-
 // Enter a parse tree produced by VenbraceParser#mutable_op.
 VenbraceListener.prototype.enterMutable_op = function(ctx) {
 };
@@ -467,15 +458,6 @@ VenbraceListener.prototype.enterCall_procedure_expr = function(ctx) {
 
 // Exit a parse tree produced by VenbraceParser#call_procedure_expr.
 VenbraceListener.prototype.exitCall_procedure_expr = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceParser#int_literal.
-VenbraceListener.prototype.enterInt_literal = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceParser#int_literal.
-VenbraceListener.prototype.exitInt_literal = function(ctx) {
 };
 
 
