@@ -537,8 +537,8 @@ call_procedure_stat returns [var elt]
   var procname = "";
     //var argLabels = [];
     //var argExps = [];
-    // var pushArgLabel = function (label) {
-    //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
+    // var pushArgLabel = function (ID) {
+    //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
     //   argLabels.push(labelWithoutTrailingColon);
     // };
     // var pushArgExp = function (elt) {
@@ -1358,8 +1358,8 @@ call_procedure_expr returns [var elt]
   var procname = "";
   // var argLabels = [];
   // var argExps = [];
-  // var pushArgLabel = function (label) {
-  //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
+  // var pushArgLabel = function (ID) {
+  //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
   //   argLabels.push(labelWithoutTrailingColon);
   // };
   // var pushArgExp = function (elt) {
@@ -1632,12 +1632,9 @@ fragment ALPHA_NUM: ALPHA | DIGIT;
 // OTHER CHARACTERS
 fragment ESC :  '\\' .;
 
-
 // identifiers
 ID : (ALPHA | '_') (ALPHA | '_' | DIGIT)*;
 COMPONENT_PROPERTY: ID DOT ID;
-
-
 
 // STRING
 STRING: ('\'' (ESC | ~('\\' | '\n' | '\''))* '\'')

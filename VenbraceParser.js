@@ -2621,8 +2621,8 @@ VenbraceParser.prototype.call_procedure_stat = function() {
       var procname = "";
         //var argLabels = [];
         //var argExps = [];
-        // var pushArgLabel = function (label) {
-        //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
+        // var pushArgLabel = function (ID) {
+        //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
         //   argLabels.push(labelWithoutTrailingColon);
         // };
         // var pushArgExp = function (elt) {
@@ -6232,8 +6232,8 @@ VenbraceParser.prototype.call_procedure_expr = function() {
       var procname = "";
       // var argLabels = [];
       // var argExps = [];
-      // var pushArgLabel = function (label) {
-      //   var labelWithoutTrailingColon = label.substring(0,label.length - 1);
+      // var pushArgLabel = function (ID) {
+      //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
       //   argLabels.push(labelWithoutTrailingColon);
       // };
       // var pushArgExp = function (elt) {
