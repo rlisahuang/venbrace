@@ -19,6 +19,7 @@ options
 }
 
 @lexer::members{
+  var idType = "label";
 	var errors = [];
   // var tokens = [];
 
@@ -163,6 +164,7 @@ decl returns [var elt]
   ;
   catch [e] {throw e;}
 
+// 04/20/20: only keep the verbose version
 global_decl returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
@@ -174,14 +176,16 @@ global_decl returns [var elt]
 	var value = document.createVenbraceElement("value");
 	value.setAttribute("name","VALUE");
 }
-  : (GLOBAL ID ASSIGN expr_block 
-  {
-		field.innerHTML = $ID.text;
-		value.appendChild($expr_block.elt);
-		$elt.appendChild(field);
-		$elt.appendChild(value);
-	})
-  | (INITIALIZE GLOBAL ID TO expr_block
+  : 
+//   (GLOBAL LABEL ASSIGN expr_block 
+//   {
+// 		field.innerHTML = $LABEL.text;
+// 		value.appendChild($expr_block.elt);
+// 		$elt.appendChild(field);
+// 		$elt.appendChild(value);
+// 	})
+//   | 
+  (INITIALIZE GLOBAL ID TO expr_block
   {
 		field.innerHTML = $ID.text;
 		value.appendChild($expr_block.elt);
@@ -292,10 +296,10 @@ event_handler returns [var elt]
 	var field = document.createVenbraceElement("field");
 	field.setAttribute("name","COMPONENT_SELECTOR");
 }
-  : WHEN component=ID DOT event=ID 
+  : WHEN COMPONENT_PROPERTY //component=ID DOT event=ID 
   {
-		var componentName = $component.text;
-		var eventName = $event.text;
+		var componentName = $COMPONENT_PROPERTY.text.split(".")[0];
+		var eventName = $COMPONENT_PROPERTY.text.split(".")[1];
 		//var componentInstance = Blockly.ComponentInstances[componentName];
 		//var componentType;
 		//if (this.isValidComponentName(componentName)){
@@ -332,11 +336,13 @@ event_handler returns [var elt]
 
 // KEY ELEMENTS
 expr_block returns [var elt]
-  : (LPAREN RPAREN) {$elt = null;} //TODO: fix $elt --> empty socket type
+  : (LPAREN RPAREN) {$elt = document.createVenbraceElement("empty_expr");} //04/20/20: fix $elt --> empty socket type
   | atom {$elt = $atom.elt;}
-  | (LPAREN expr RPAREN) {$elt = $expr.elt;};
+  // | (LPAREN expr RPAREN) 
+  | expr {$elt = $expr.elt;};
   catch[e] {throw e;}
 
+// 04/20/20: made empty statement {}
 suite returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("suite_begin");
@@ -359,7 +365,8 @@ suite returns [var elt]
 		  }
 		  count++;
 		}
-  )*;
+  )*
+ | LCURLY RCURLY;
   catch [e] {throw e;}
 
 stat_block returns [var elt]
@@ -530,6 +537,7 @@ close_application returns [var elt]
   catch [e] {throw e;}
 
 // QQ 03/23/20: turning off the option of having arguments
+// 04/20/20: made `call' optional
 call_procedure_stat returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
@@ -545,8 +553,9 @@ call_procedure_stat returns [var elt]
     //   argExps.push(elt);
     // };
 }
-  : CALL ((ID {procname = $ID.text;})
-    | (COMPONENT_PROPERTY {procname = $COMPONENT_PROPERTY.text;}))
+  : (CALL? ((ID {procname = $ID.text;})
+    //((PROC_DECL {procname = $PROC_DECL.text;})
+    | (component=ID DOT event=ID {procname = $component.text + "." + $event.text;}))
     // (arg=expr_block
     // { pushArgExp($expr_block.elt);}
     // )* 
@@ -570,6 +579,7 @@ call_procedure_stat returns [var elt]
         $elt.appendChild(valueArg);
       }*/
     }
+  )
     ;
     catch [e] {throw e;}
 
@@ -594,10 +604,8 @@ setter returns [var elt]
 	var value = document.createVenbraceElement("value");
 	value.setAttribute("name","VALUE");
 }
-  : SET ((GLOBAL {var_name += $GLOBAL.text + " ";})? 
-  (ID {var_name += $ID.text;}
-  | COMPONENT_PROPERTY {var_name += $COMPONENT_PROPERTY.text;}
-    ) 
+  : SET ((GLOBAL {var_name += $GLOBAL.text + " ";})? (ID {var_name += $ID.text;})
+  | (COMPONENT_PROPERTY {var_name += $COMPONENT_PROPERTY.text;}) 
   ) 
   TO expr_block {
     field.innerHTML = var_name;
@@ -658,19 +666,21 @@ local_init_stat returns [var elt]
 // EXPR BLOCKS
 /* Feb 28, 2020: remove call_procedure_expr (maybe also list_expr?) from User Study 1 */
 expr returns [var elt]
-  : 
-    control_expr {$elt = $control_expr.elt;}
-    | logic_expr {$elt = $logic_expr.elt;}
-    | not_expr {$elt = $not_expr.elt;}
-    | compare_eq_expr {$elt = $compare_eq_expr.elt;}
-    | compare_math_expr {$elt = $compare_math_expr.elt;}
-    | math_expr {$elt = $math_expr.elt;}
-    | var_expr {$elt = $var_expr.elt;}
-    /* | component_expr*/
-    | color_block {$elt = $color_block.elt;}
-  //  | list_expr {$elt = $list_expr.elt;}
-   | call_procedure_expr {$elt = $call_procedure_expr.elt;}
-    | atom {$elt = $atom.elt;}
+  : var_expr {$elt = $var_expr.elt;}
+    | (LPAREN
+        (control_expr {$elt = $control_expr.elt;}
+        | logic_expr {$elt = $logic_expr.elt;}
+        | not_expr {$elt = $not_expr.elt;}
+        | compare_eq_expr {$elt = $compare_eq_expr.elt;}
+        | compare_math_expr {$elt = $compare_math_expr.elt;}
+        | math_expr {$elt = $math_expr.elt;}
+        
+        /* | component_expr*/
+        | color_block {$elt = $color_block.elt;}
+        //  | list_expr {$elt = $list_expr.elt;}
+        | call_procedure_expr {$elt = $call_procedure_expr.elt;}
+        | atom {$elt = $atom.elt;}) 
+      RPAREN)
     ;
     catch [e] {throw e;}
 
@@ -1187,6 +1197,7 @@ var_expr returns [var elt]
   ;
   catch [e] {throw e;}
 
+// 04/20/20: made GET mandatory
 getter returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
@@ -1194,7 +1205,8 @@ getter returns [var elt]
 
 	var variable = "";
 }
-  : (GET)? (((GLOBAL {variable += "global ";})? ID
+  : (ID
+  | (LPAREN GET (GLOBAL {variable += "global ";})? ID RPAREN)
   {
     variable += $ID.text;
     var field = document.createVenbraceElement("field");
@@ -1202,18 +1214,18 @@ getter returns [var elt]
     field.innerHTML = variable;
 
     $elt.appendChild(field);
-  })
-  | COMPONENT_PROPERTY
-  {
-    variable += $COMPONENT_PROPERTY.text;
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR");
-    field.innerHTML = variable;
+  });
+  // | COMPONENT_PROPERTY
+  // {
+  //   variable += $COMPONENT_PROPERTY.text;
+  //   var field = document.createVenbraceElement("field");
+  //   field.setAttribute("name","VAR");
+  //   field.innerHTML = variable;
 
-    $elt.appendChild(field);
-  }
-  )
-  ;
+  //   $elt.appendChild(field);
+  // }
+  //)
+  
   catch [e] {throw e;}
 
 local_init_expr returns [var elt]
@@ -1351,6 +1363,8 @@ list_expr returns [var elt]
 //TODO: comment block
 
 // TODO: var name
+
+// 04/20/20: made `call' optional
 call_procedure_expr returns [var elt]
 @init{
 	$elt = document.createVenbraceElement("block");
@@ -1366,8 +1380,8 @@ call_procedure_expr returns [var elt]
   //   argExps.push(elt);
   // };
 }
-  : CALL ((ID {procname = $ID.text;})
-  | (COMPONENT_PROPERTY) {procname = $COMPONENT_PROPERTY.text;})
+  : CALL? ((ID {procname = $ID.text;})
+  | (component=ID DOT event=ID {procname = $component.text + "." + $event.text;})
   //(expr_block {pushArgExp($expr_block.elt);})*
   {
     // TODO: add more line according to
@@ -1390,25 +1404,25 @@ call_procedure_expr returns [var elt]
         $elt.appendChild(valueArg);
     }*/
   }
-  ;
+  );
   catch [e] {throw e;}
 
-// int_literal returns [var elt]
-// @init {
-//   $elt = document.createVenbraceElement("block");
-// 	var field = document.createVenbraceElement("field");
-//   var minus = false;
-// } : (MINUS{minus = true;})? NUMBER
-//   {
-//       $elt.setAttribute("type","math_number");
-//       field.setAttribute("name","NUM");
-//       if (minus) 
-//         field.innerHTML = "-" + $NUMBER.text;
-//       else field.innerHTML = $NUMBER.text;
-//       $elt.appendChild(field);
-//   }
-//   ;
-//   catch [e] {throw e;}
+// 04/20/20: separate rule for variables
+variable returns [var elt]
+@init {
+	$elt = document.createVenbraceElement("block");
+	var field = document.createVenbraceElement("field");
+}
+  : id_var=ID {
+    //$id_var.type = VAR;
+    var variable = $ID.text;
+		$elt.setAttribute("type","lexical_variable_get");
+    var field = document.createVenbraceElement("field");
+    field.setAttribute("name","VAR");
+    field.innerHTML = variable;
+    $elt.appendChild(field);
+	  };
+  catch [e] {throw e;}
 
 // OTHER ELEMENTS
 atom returns [var elt]
@@ -1452,14 +1466,6 @@ atom returns [var elt]
 		field.innerHTML = "FALSE";
 		$elt.appendChild(field);
 	}
-  | ID {
-    var variable = $ID.text;
-		$elt.setAttribute("type","lexical_variable_get");
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR");
-    field.innerHTML = variable;
-    $elt.appendChild(field);
-	  }
   | COMPONENT_PROPERTY {
     var variable = $COMPONENT_PROPERTY.text;
 		$elt.setAttribute("type","component_property");
@@ -1469,6 +1475,7 @@ atom returns [var elt]
     $elt.appendChild(field);
   }
   ;
+  catch [e] {throw e;}
 
 //dotted_name: ID '.' ID;
 
@@ -1632,9 +1639,14 @@ fragment ALPHA_NUM: ALPHA | DIGIT;
 // OTHER CHARACTERS
 fragment ESC :  '\\' .;
 
+
+
 // identifiers
-ID : (ALPHA | '_') (ALPHA | '_' | DIGIT)*;
 COMPONENT_PROPERTY: ID DOT ID;
+//PROC_DECL: CALL? ID;
+//VAR: ID;
+ID : (ALPHA | '_') (ALPHA | '_' | DIGIT)*;
+
 
 // STRING
 STRING: ('\'' (ESC | ~('\\' | '\n' | '\''))* '\'')

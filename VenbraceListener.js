@@ -461,6 +461,15 @@ VenbraceListener.prototype.exitCall_procedure_expr = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceParser#variable.
+VenbraceListener.prototype.enterVariable = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceParser#variable.
+VenbraceListener.prototype.exitVariable = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceParser#atom.
 VenbraceListener.prototype.enterAtom = function(ctx) {
 };

@@ -74,30 +74,41 @@
         // Try to parse as expression first 
         dom = parser.expr_block(); 
         console.log("Parsing as expr succeeded!");
+        
+        console.log("Parsing succeeded!");
+        xml = dom.elt;
       } catch (expErr) {
         //TODO: write my own ErrorReportStrategy
         console.log("Parsing as expr failed!");
         console.log(expErr);
-        try {
-          console.log("Try to parse as statement.");
-          dom = parser.stat_block(); 
-          console.log("Parsing as statement succeeded!");
-        } catch (statError) {
-          console.log("Parsing as statement failed!");
-          console.log(statError);
-          try {
-            console.log("Try to parse as decl.");
-            dom = parser.decl_block(); 
-            console.log("Parsing as decl succeeded!");
-          } catch (declError) {
-              console.log("Parsing as decl failed!");
-              console.log(declError);
-          }
-        }
-      } 
-      console.log("Parsing successed!");
+      }
+      try {
+        console.log("Try to parse as statement.");
+        dom = parser.stat_block(); 
+        console.log("Parsing as statement succeeded!");
+        
+        console.log("Parsing succeeded!");
+        xml = dom.elt;
+      } catch (statError) {
+        console.log("Parsing as statement failed!");
+        console.log(statError);
+      }
+      try {
+        console.log("Try to parse as decl.");
+        dom = parser.decl_block(); 
+        console.log("Parsing as decl succeeded!");
+        
+        console.log("Parsing succeeded!");
+        xml = dom.elt;
+      } catch (declError) {
+          console.log("Parsing as decl failed!");
+          console.log(declError);
+      }
+        
+       
+      // console.log("Parsing succeeded!");
 
-      xml = dom.elt;
+      // xml = dom.elt;
       var parserErrors = parser.getErrors();
       console.log("Number of parser errors is " + parserErrors.length);
 
@@ -109,7 +120,8 @@
 
       if (parserErrors.length === 0) {
         if (dom === undefined) {
-          console.log("Unexpectedly, dom is still undefined.");
+          console.log("Unable to parse due to parsing errors.");
+          document.getElementById("output").innerHTML = "Parsing failed.";
         } else {
           document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
         }
