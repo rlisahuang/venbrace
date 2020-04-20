@@ -674,6 +674,7 @@ expr returns [var elt]
         | compare_eq_expr {$elt = $compare_eq_expr.elt;}
         | compare_math_expr {$elt = $compare_math_expr.elt;}
         | math_expr {$elt = $math_expr.elt;}
+        | str_expr {$elt = $str_expr.elt;}
         
         /* | component_expr*/
         | color_block {$elt = $color_block.elt;}
@@ -943,6 +944,7 @@ mutable_op returns [var elt]
     }
   }
   ;
+  catch [e] {throw e;}
 
 // not allowing a + b * c + d
 immutable_op returns [var elt]
@@ -988,6 +990,7 @@ immutable_op returns [var elt]
 	  $elt.appendChild(valB);
   })
   ;
+  catch [e] {throw e;}
 
  // TODO: 
  //| convert_num;
@@ -1189,7 +1192,67 @@ is_num returns [var elt]
   : IS_NUM expr_block {$elt.appendChild($expr_block.elt);};
   catch [e] {throw e;}
 
-// =======TODO: add string operations=======
+str_expr returns [var elt]
+  : str_join {$elt = $str_join.elt;}
+  | str_length {$elt = $str_length.elt;}
+  ;
+  catch [e] {throw e;}
+
+str_length returns [var elt]
+@init{
+	$elt = document.createVenbraceElement("block");
+	$elt.setAttribute("type","text_length");
+	$elt.setAttribute("inline","false");
+}
+  : LENGTH
+  expr_block
+  {
+    var value = document.createVenbraceElement("value");
+		value.setAttribute("name","STRING");
+		value.appendChild($expr_block.elt);
+
+		$elt.appendChild(value);
+	}
+  ;
+  catch [e] {throw e;}
+
+str_join returns [var elt]
+@init{
+	$elt = document.createVenbraceElement("block");
+	//type will get a value inside the rule
+	$elt.setAttribute("inline","true");
+
+	//initalizing these in advance to be used later
+	var mutation = document.createVenbraceElement("mutation");
+	var itemCount = 0;
+	var valArr = [];
+
+	var addValue = function(element){
+		var value = document.createVenbraceElement("value");
+		value.setAttribute("name", "STRING" + itemCount);
+		value.appendChild(element);
+		valArr.push(value);
+		itemCount++;
+	}
+}
+  : JOIN a=expr_block 
+  {
+    addValue($a.elt);
+  }
+    (
+     b=expr_block {addValue($b.elt);}
+    )+ 
+  {
+    $elt.setAttribute("type", "text_join");
+    mutation.setAttribute("items",itemCount);
+    $elt.appendChild(mutation);
+
+    for (var i = 0; i<valArr.length; i++){
+      $elt.appendChild(valArr[i]);
+    }
+  }
+  ;
+  catch [e] {throw e;}
 
 var_expr returns [var elt]
   : getter {$elt = $getter.elt;}
@@ -1574,6 +1637,8 @@ EULER: 'e^';
 ROUND: 'round';
 CEILING: 'ceiling';
 FLOOR: 'floor';
+JOIN: 'join';
+LENGTH: 'length';
 
 //Math Ops
 RANDOM_INTEGER: 'randomInteger';

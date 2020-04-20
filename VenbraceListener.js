@@ -389,6 +389,33 @@ VenbraceListener.prototype.exitIs_num = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceParser#str_expr.
+VenbraceListener.prototype.enterStr_expr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceParser#str_expr.
+VenbraceListener.prototype.exitStr_expr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceParser#str_length.
+VenbraceListener.prototype.enterStr_length = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceParser#str_length.
+VenbraceListener.prototype.exitStr_length = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceParser#str_join.
+VenbraceListener.prototype.enterStr_join = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceParser#str_join.
+VenbraceListener.prototype.exitStr_join = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceParser#var_expr.
 VenbraceListener.prototype.enterVar_expr = function(ctx) {
 };
