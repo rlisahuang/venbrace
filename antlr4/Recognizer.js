@@ -37,6 +37,7 @@ Recognizer.prototype.removeErrorListeners = function() {
 
 Recognizer.prototype.getTokenTypeMap = function() {
     var tokenNames = this.getTokenNames();
+    // var tokenNames = this.getVocabulary();
     if (tokenNames===null) {
         throw("The current recognizer does not provide a list of token names.");
     }

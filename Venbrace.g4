@@ -1,12 +1,15 @@
 /*
-Venbrace grammar v1.1: complete verbose form
-logs:
--- v1.0: complete translation from original design draft
--- v1.1: migrated and modified the TAIL grammar
--- v1.2: only supports non-ambiguous blocks
+Venbrace grammar (simplified version)
+
 Author: Ruanqianqian Huang
-Date: Jan 3, 2020
-Modified: Feb 27, 2020
+Modified: Jun 7, 2020
+
+FEATURES:
+- Text representations for *some* App Inventor blocks
+
+NOT INCLUDED:
+- Venbrace-to-XML (only for testing purposes, still work-in-progress)
+- New rules currently under development that are not covered in the thesis body
 */
 
 // ==========GRAMMAR MACROS==========
@@ -15,24 +18,11 @@ grammar Venbrace;
 options
 {
   language = 'JavaScript';
-  tokenVocab=VenbraceLexer;
+  // tokenVocab=VenbraceLexer;
 }
 
 @lexer::members{
-  var idType = "label";
 	var errors = [];
-  // var tokens = [];
-
-  // VenbraceLexer.prototype.nextToken = function() {
-  //     var t = antlr4.Lexer.prototype.nextToken();
-  //     if (t.type !== antlr4.Token.EOF)
-  //       tokens.push(t);
-  //     return t;
-  // }
-
-  // VenbraceLexer.prototype.getAllTokens = function() {
-  //   return tokens;
-  // }
 
   VenbraceLexer.prototype.emitErrorMessage = function(error) {
   	    //var hdr = getErrorHeader(e);
@@ -51,25 +41,17 @@ options
 @parser::members{
 
 	var errors = [];
-  // var tokens = [];
-
-  // VenbraceParser.prototype.match = function(ttype) {
-  //   tokens.push(antlr4.Parser.prototype.getCurrentToken());
-  //   //antlr4.Parser.prototype.match(ttype);
-  // }
-
-  // VenbraceParser.prototype.getAllTokens = function() {
-  //   return tokens;
-  // }
 
   VenbraceParser.prototype.emitErrorMessage = function(error) {
         //var hdr = getErrorHeader(e);
         //var msg = getErrorMessage(e, tokenNames);
         errors.push(error);
     };
+
   VenbraceParser.prototype.getErrors = function() {
         return errors;
     };
+
   VenbraceParser.prototype.recoverFromMismatchedToken = function(input, ttype, follow){
   	throw new antlr4.runtime.MismatchedTokenException(ttype, input);
   }
@@ -84,35 +66,9 @@ options
         };
         return element;
     }
-
-
-  // VenbraceException = function(msg) {
-  //   VenbraceException.superclass.constructor.call(this, msg);
-  //   this.message = msg;
-  // };
-  // antlr4.error.extend(VenbraceException, Error, {
-  //   name: "antlr4.runtime.VenbraceException"
-  // });  
-
-  // VenbraceParser.prototype.isValidComponentName = function(componentName){
-  // 	var componentInstance = Blockly.ComponentInstances[componentName];
-  // 	//from appinventor/blocklyeditor/src/component.js
-  // 	return (typeof componentInstance == "object" && componentInstance.uid != null);
-  // };
-  // VenbraceParser.prototype.isValidComponentFieldName = function(fields, componentType, fieldName){
-  // 	//I am using "field" as a general name for event, property or method
-  // 	//fields should be of the form "events", "properties", or "methods"
-  // 	var componentInfo = Blockly.ComponentTypes[componentType].componentInfo;
-	// 	var componentFields = componentInfo[fields];
-	// 	for (var i = 0; i<componentFields.length; i++){
-	// 		if(componentFields[i].name === fieldName){
-	// 			return true;
-	// 		}
-	// 	}
-	// 	return false;
-  // };
 }
 
+// catching grammar rule errors
 @rulecatch{
 	catch (re){
 		throw re;
@@ -120,1432 +76,693 @@ options
 }
 
 
+/* ================================
+ * ==========PARSER RULES==========
+ * ================================ */
 
-// ==========PARSER RULES==========
+program returns [var tokens]
+@init {$tokens = [];}
+  : (decl_block {$tokens.push(...($decl_block.tokens))})* EOF;
 
-program returns [var elt]
-@init{
-  $elt = document.createVenbraceElement("xml");
-}
-: (decl_block {$elt.appendChild($decl_block.elt);})* EOF;
-catch [e] {throw e;}
+// rule for testing single blocks
+test_program returns [var tokens]
+@init {$tokens = [];}
+  : (decl_block {$tokens.push(...($decl_block.tokens));})
+  | (stat_block {$tokens.push(...($stat_block.tokens));})
+  | (expr_block {$tokens.push(...($expr_block.tokens));});
 
-//program: /* lang_config */ screen* EOF;
-//lang_config: '%' lang;
-
-// SCREEN ELEMENTS
-//
-// ===Jan 27, 2020===
-// - has to have screen dividers as for now
-// 
-//screen: screen_divider decl* ;
-//screen_divider: DIVIDER ID DIVIDER;
-
-// FOR TESTING
-//screen: decl+;
-
-// TOP-LEVEL DECL BLOCKS
-/* Examples:
-1. [to proc arg do {}]
-2. [to proc arg result ()]
-3. [$ id <- ()]
- */
-decl_block returns [var elt]
-  : LSQR decl RSQR {$elt = $decl.elt;}
-  ;
-  catch [e] {throw e;}
-
-/* Feb 28 2020: procedure decls removed from user study 1 */
-decl returns [var elt]
-  : global_decl {$elt = $global_decl.elt;}
-  | procedure_do {$elt = $procedure_do.elt;}
-  | procedure_result {$elt = $procedure_result.elt;}
-  | event_handler {$elt = $event_handler.elt;}
-  ;
-  catch [e] {throw e;}
-
-// 04/20/20: only keep the verbose version
-global_decl returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","global_declaration");
-	$elt.setAttribute("inline","false");
-
-	var field = document.createVenbraceElement("field");
-	field.setAttribute("name","NAME");
-	var value = document.createVenbraceElement("value");
-	value.setAttribute("name","VALUE");
-}
-  : 
-//   (GLOBAL LABEL ASSIGN expr_block 
-//   {
-// 		field.innerHTML = $LABEL.text;
-// 		value.appendChild($expr_block.elt);
-// 		$elt.appendChild(field);
-// 		$elt.appendChild(value);
-// 	})
-//   | 
-  (INITIALIZE GLOBAL ID TO expr_block
+decl_block returns [var tokens]
+@init {$tokens = [];}
+  : (LSQR decl RSQR
   {
-		field.innerHTML = $ID.text;
-		value.appendChild($expr_block.elt);
-		$elt.appendChild(field);
-		$elt.appendChild(value);
-	}
-  )
+    $tokens.push($LSQR);
+    $tokens.push(...($decl.tokens));
+    $tokens.push($RSQR);
+  }
+  );
+
+decl returns [var tokens]: 
+    global_decl {$tokens = $global_decl.tokens;}
+  | procedure_do {$tokens = $procedure_do.tokens;}
+  | procedure_result {$tokens = $procedure_result.tokens;}
+  | event_handler {$tokens = $event_handler.tokens;}
   ;
-  catch [e] {throw e;}
 
-
-procedure_do returns [var elt]
+global_decl returns [var tokens]
 @init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","procedures_defnoreturn");
-
-	var hasMutations = false;
-	var mutation = document.createVenbraceElement("mutation");
-	var argsCount = 0;
-
-	var name = document.createVenbraceElement("field");
-	name.setAttribute("name","NAME");
-
-	var var_field_arr = [];
+  $tokens = [];
 }
-  : TO proc_name=ID {name.innerHTML = $proc_name.text;}
-  (arg_name=ID {
-        hasMutations = true;
-        var arg = document.createVenbraceElement("arg");
-        arg.setAttribute("name",$arg_name.text);
-        mutation.appendChild(arg);
-        var var_field = document.createVenbraceElement("field");
-        var_field.setAttribute("name","VAR"+argsCount);
-        var_field.innerHTML = $arg_name.text;
-        var_field_arr.push(var_field);
-        argsCount++;
-      }
-  )* 
-  DO suite {
-      if(hasMutations){
-        $elt.appendChild(mutation);
-      }
-      $elt.appendChild(name);
-      for(var i=0; i<var_field_arr.length; i++){
-        $elt.appendChild(var_field_arr[i]);
-      }
-      var seq = $suite.elt;
-      seq.setAttribute("name","STACK");
-      $elt.appendChild(seq);
-    }
-  ;
-  catch [e] {throw e;}
-  
+  : INITIALIZE GLOBAL ID TO 
+  {
+    $tokens.push($INITIALIZE);
+    $tokens.push($GLOBAL);
+    $tokens.push($ID);
+    $tokens.push($TO);
+  }
+  expr_block {$tokens.push(...$expr_block.tokens);};
 
-procedure_result returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","procedures_defreturn");
-
-	var hasMutations = false;
-	var mutation = document.createVenbraceElement("mutation");
-	var argsCount = 0;
-
-	var name = document.createVenbraceElement("field");
-	name.setAttribute("name","NAME");
-
-	var var_field_arr = [];
-
-	var value = document.createVenbraceElement("value");
-	value.setAttribute("name","RETURN");
-}
-  : TO proc_name=ID {name.innerHTML = $proc_name.text;}
-  (arg_name=ID {
-	 	  hasMutations = true;
-	 	  var arg = document.createVenbraceElement("arg");
-	 	  arg.setAttribute("name",$arg_name.text);
-	 	  mutation.appendChild(arg);
-	 	  var var_field = document.createVenbraceElement("field");
-	 	  var_field.setAttribute("name","VAR"+argsCount);
-	 	  var_field.innerHTML = $arg_name.text;
-	 	  var_field_arr.push(var_field);
-	 	  argsCount++;
-	 	})* 
-  RESULT expr_block {
-	 	if(hasMutations){
-	 		$elt.appendChild(mutation);
-	 	}
-	 	$elt.appendChild(name);
-	 	for(var i=0; i<var_field_arr.length; i++){
-	 		$elt.appendChild(var_field_arr[i]);
-	 	}
-	 	value.appendChild($expr_block.elt);
-	 	$elt.appendChild(value);
-	 }
-  ;
-  catch [e] {throw e;}
-
-
-//TODO: ADD OTHER EVENT HANDLERS; HANDLE INVALID/VALID COMPONENTS
-event_handler returns [var elt]
+procedure_do returns [var tokens]
 @init {
-  $elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","component_event");
-	var mutation = document.createVenbraceElement("mutation");
-	//mutation.setAttribute("component_type",)
-	//mutation attributes will be set inside the body of the rule
-	//dotted names allow spaces...which we don't want allowed...
-	var field = document.createVenbraceElement("field");
-	field.setAttribute("name","COMPONENT_SELECTOR");
+  $tokens = [];
 }
-  : WHEN COMPONENT_PROPERTY //component=ID DOT event=ID 
-  {
-		var componentName = $COMPONENT_PROPERTY.text.split(".")[0];
-		var eventName = $COMPONENT_PROPERTY.text.split(".")[1];
-		//var componentInstance = Blockly.ComponentInstances[componentName];
-		//var componentType;
-		//if (this.isValidComponentName(componentName)){
-			//componentType = Blockly.Component.instanceNameToTypeName(componentName);
-			//mutation.setAttribute("component_type", componentType);
-      mutation.setAttribute("component_type", "Button"); //hard-coded
-			mutation.setAttribute("instance_name", componentName);
-			field.innerHTML = componentName;
-		//} else {
-			//throw new TAILException("Invalid component name: " + componentName);
-			//this.emitErrorMessage("Invalid component name: " + componentName);
-			//the parser will continue even after this error because syntactically this is still correct...
-		//}
-		//if(this.isValidComponentFieldName("events", componentType, eventName)){
-			mutation.setAttribute("event_name", eventName);
-		//}else{
-		//	throw new VenbraceException("Invalid event name: " + eventName);
-			//this.emitErrorMessage("Invalid event name: " + eventName);
-		//} //no need for else case, we've already added an error to the errors array above
+  : TO {$tokens.push($TO);}
+  proc_name=ID {$tokens.push($proc_name);}
+  (arg_name=ID {$tokens.push($arg_name);})* 
+  (DO {
+    $DO['optional'] = true;
+    $tokens.push($DO);
+    })? 
+  suite {$tokens.push(...$suite.tokens);};
 
-	}
-  DO suite
-  {
-    var statements = $suite.elt;
-    statements.setAttribute("name","DO");
+procedure_result returns [var tokens]
+@init {
+ $tokens = []; 
+}
+  : TO {$tokens.push($TO);}
+  proc_name=ID {$tokens.push($proc_name);}
+  (arg_name=ID {$tokens.push($arg_name);})* 
+  (RESULT {
+    $RESULT['optional'] = true;
+    $tokens.push($RESULT);
+  })? expr_block {$tokens.push(...$expr_block.tokens);};
 
-    $elt.appendChild(mutation);
-    $elt.appendChild(field);
-    $elt.appendChild(statements);
+
+// only supports event handlers without built-in parameters
+event_handler returns [var tokens]
+@init {
+  $tokens = [];
+}
+  : WHEN COMPONENT_PROPERTY 
+  {
+    $tokens.push($WHEN);
+    $tokens.push($COMPONENT_PROPERTY);
+  }
+  (param_name=ID {$tokens.push($param_name);})* 
+  (DO {
+    $DO['optional'] = true;
+    $tokens.push($DO);
+  })? suite {$tokens.push(...$suite.tokens);};
+
+suite returns [var tokens]
+@init {
+  $tokens = [];
+}
+  : (stat_block {$tokens.push(...$stat_block.tokens);})*
+ | (LCURLY RCURLY {
+   $tokens.push($LCURLY);
+  $tokens.push($RCURLY);
+  }); // empty statement sequence
+
+stat_block returns [var tokens]
+@init {
+  $tokens = [];
+}
+  : LCURLY stat RCURLY
+  {
+    $tokens.push($LCURLY);
+    $tokens.push(...$stat.tokens);
+    $tokens.push($RCURLY);
   }
   ;
-  catch [e] {throw e;}
 
-
-// KEY ELEMENTS
-expr_block returns [var elt]
-  : (LPAREN RPAREN) {$elt = document.createVenbraceElement("empty_expr");} //04/20/20: fix $elt --> empty socket type
-  | atom {$elt = $atom.elt;}
-  // | (LPAREN expr RPAREN) 
-  | expr {$elt = $expr.elt;};
-  catch[e] {throw e;}
-
-// 04/20/20: made empty statement {}
-suite returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("suite_begin");
-	var count = 0;
-	var prevStatementBlock;
-	var currentStatementBlock;
-	var stmt_arr = [];
-}
-  : (stat_block
-    {
-		  if (count === 0){ // this is the very first statement
-		  	prevStatementBlock = $stat_block.elt;
-		  	$elt.appendChild(prevStatementBlock);
-		  }else{ //all of the rest of the statement blocks
-		  	var next = document.createVenbraceElement("next");
-		  	var currentStmt = $stat_block.elt;
-		  	next.appendChild(currentStmt);
-		  	prevStatementBlock.appendChild(next);
-		  	prevStatementBlock = currentStmt;
-		  }
-		  count++;
-		}
-  )*
- | LCURLY RCURLY;
-  catch [e] {throw e;}
-
-stat_block returns [var elt]
-: LCURLY (stat
-    {$elt = $stat.elt;}
-  ) RCURLY
-  ;
-  catch[e] {throw e;}
-
-
-stat returns [var elt]
-  : (control_stat {$elt = $control_stat.elt;}
-  | call_procedure_stat {$elt = $call_procedure_stat.elt;}
-  | var_stat {$elt = $var_stat.elt;}
-  );
-  catch [e] {throw e;}
-
+stat returns [var tokens]
+  : control_stat {$tokens = $control_stat.tokens;}
+  | call_procedure_stat {$tokens = $call_procedure_stat.tokens;}
+  | var_stat {$tokens = $var_stat.tokens;};
 
 // STATEMENT BLOCKS
-/* Feb 28, 2020: keep only if_stat and while_stat for study 1 */
+/* Feb 28, 2020: keep only if_stat for study 1 */
 
-control_stat returns [var elt]
-  : if_stat {$elt = $if_stat.elt;}
-  //| for_stat {$elt = $for_stat.elt;}
-  | while_stat {$elt = $while_stat.elt;}
-  //| evaluate_but_ignore {$elt = $evaluate_but_ignore.elt;}
- // | open_screen {$elt = $open_screen.elt;}
- // | close_screen {$elt = $close_screen.elt;}
- // | close_application {$elt = $close_application.elt;}
-  ;
-  catch [e] {throw e;}
+// list_stat: ADD_ITEMS_TO_LIST label? expr_block label? expr_block;
 
-if_stat returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("inline","false");
-	$elt.setAttribute("type","if_stat");
+control_stat returns [var tokens]
+  : if_stat {$tokens = $if_stat.tokens;}
+  | for_each_from_to {$tokens = $for_each_from_to.tokens;}
+  | while_stat {$tokens = $while_stat.tokens;};
 
-	var mutation = document.createVenbraceElement("mutation");
-	var mutations = false;
-	var else_if_count = 0;
-	var else_count = 0;
-}
-  : IF e1=expr_block {
-		var val = document.createVenbraceElement("value");
-		val.setAttribute("name","IF0");
-		val.appendChild($e1.elt);
-		$elt.appendChild(val);
-	} 
-  THEN s1=suite {
-		var then_stmts = $s1.elt;
-		then_stmts.setAttribute("name", "THEN0");
-		//then_stmts.appendChild($s1.elt);
-		$elt.appendChild(then_stmts);
-	}
-  ((ELSE_IF {mutations = true; else_if_count++;} 
-    e2=expr_block{
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name","IF"+else_if_count);
-		value.appendChild($e2.elt);
-		$elt.appendChild(value);
-	} THEN s2=suite {
-		var else_if_stmts = $s2.elt;
-		else_if_stmts.setAttribute("name","THEN"+else_if_count);
-		// else_if_stmts.appendChild($s2.elt);
-		$elt.appendChild(else_if_stmts);
-	})* (ELSE s3=suite {
-		mutations = true;
-		else_count++;
-
-		var else_stmts = $s3.elt;
-		else_stmts.setAttribute("name","ELSE");
-		// else_stmts.appendChild($s3.elt);
-		$elt.appendChild(else_stmts);
-	})?)?
-	{
-		if(mutations){
-			if (else_if_count !== 0){
-				mutation.setAttribute("elseif",else_if_count);
-			}
-			if (else_count !== 0){
-				mutation.setAttribute("else",else_count);
-			}
-			$elt.insertBefore(mutation, $elt.firstElementChild);
-		}
-	}
-  ;
-  catch [e] {throw e;}
-
-// TODO: xml
-//for_stat: for_each_from_to | for_each_in_list;
-//for_each_from_to: FOREACH ID FROM expr_block TO expr_block BY expr_block DO suite;
-//for_each_in_list: FOREACH ID IN LIST expr_block DO suite;
-while_stat returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("inline","false");
-	$elt.setAttribute("type","controls_while");
-}
-  : WHILE TEST expr_block 
-  {
-		var val = document.createVenbraceElement("value");
-		val.setAttribute("name","TEST_COND");
-		val.appendChild($expr_block.elt);
-		$elt.appendChild(val);
-	} 
-  DO suite
-  {
-		var while_stats = $suite.elt;
-		while_stats.setAttribute("name", "DO");
-		$elt.appendChild(while_stats);
-	} 
-  ;
-  catch [e] {throw e;}
-
-evaluate_but_ignore returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("inline","false");
-	$elt.setAttribute("type","evaluate_but_ignore");
-}
-  : EVAL_BUT_IGNORE_RESULT expr_block 
-    {
-      var val = document.createVenbraceElement("value");
-      val.appendChild($expr_block.elt);
-      $elt.appendChild(val);
-    } 
-  ;
-  catch [e] {throw e;}
-
-// TODO: xml
-open_screen returns [var elt]
+if_stat returns [var tokens]
 @init {
-    $elt = document.createVenbraceElement("block");
-	  $elt.setAttribute("inline","false");
-	  $elt.setAttribute("type","open_screen");
-    var operation = "";
-    var withValue = false;
-  }
-  : OPEN_ANOTHER_SCREEN name=expr_block {$elt.appendChild($name.elt);}
-  (val=expr_block {
-    withValue = true;
-    $elt.appendChild($name.elt);
-  })? 
-  {
-    operation = withValue ? "open_screen_with_value" : "open_screen"; 
-    $elt.setAttribute("type",operation);
-  }
-  ; //NOTE: arbitrarily abbreviated here
-  catch [e] {throw e;}
-
-close_screen returns [var elt]
-  : CLOSE_SCREEN {
-    $elt = document.createVenbraceElement("block");
-	  $elt.setAttribute("inline","false");
-	  $elt.setAttribute("type","close_screen");
-  }
-  ;
-  catch [e] {throw e;}
-
-close_application returns [var elt]
-  : CLOSE_APPLICATION {
-    $elt = document.createVenbraceElement("block");
-	  $elt.setAttribute("inline","false");
-	  $elt.setAttribute("type","close_application");
-  }
-  ;
-  catch [e] {throw e;}
-
-// QQ 03/23/20: turning off the option of having arguments
-// 04/20/20: made `call' optional
-call_procedure_stat returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","call_procedure_stat");
-  var procname = "";
-    //var argLabels = [];
-    //var argExps = [];
-    // var pushArgLabel = function (ID) {
-    //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
-    //   argLabels.push(labelWithoutTrailingColon);
-    // };
-    // var pushArgExp = function (elt) {
-    //   argExps.push(elt);
-    // };
+  $tokens = [];
 }
-  : (CALL? ((ID {procname = $ID.text;})
-    //((PROC_DECL {procname = $PROC_DECL.text;})
-    | (component=ID DOT event=ID {procname = $component.text + "." + $event.text;}))
-    // (arg=expr_block
-    // { pushArgExp($expr_block.elt);}
-    // )* 
+  : IF e1=expr_block THEN s1=suite 
     {
-      //var mutation = document.createVenbraceElement("mutation");
-      //mutation.setAttribute("name", procname);
-   	  //$elt.appendChild(mutation);
-
-      var procnameField = document.createVenbraceElement("field");
-      procnameField.setAttribute("name", "PROCNAME");
-      procnameField.innerHTML = procname;
-   	  $elt.appendChild(procnameField);
-
-      /*for (var i = 0; i < argExps.length; i++) {
-        //var mutationArg = document.createVenbraceElement("arg");
-        //mutationArg.setAttribute("name", argLabels[i]); 
-        //mutation.appendChild(mutationArg);
-        var valueArg = document.createVenbraceElement("value");
-        valueArg.setAttribute("name", "ARG" + i); 
-        valueArg.appendChild(argExps[i]);
-        $elt.appendChild(valueArg);
-      }*/
+      $tokens.push($IF);
+      $tokens.push(...$e1.tokens);
+      $tokens.push($THEN);
+      $tokens.push(...$s1.tokens);
     }
-  )
-    ;
-    catch [e] {throw e;}
+  (
+    (ELSE_IF e2=expr_block THEN s2=suite
+    {
+      $tokens.push($ELSE_IF);
+      $tokens.push(...$e2.tokens);
+      $tokens.push($THEN);
+      $tokens.push(...$s2.tokens);
+    }
+    )* 
+    (ELSE s3=suite
+      {
+        $tokens.push($ELSE);
+        $tokens.push(...$s3.tokens);
+      }
+    )?
+  )?;
+
+for_each_from_to returns [var tokens]
+@init {
+  $tokens = [];
+}
+  : FOREACH ID 
+  {
+    $tokens.push($FOREACH);
+    $tokens.push($ID);
+  } (FROM
+  {
+    $FROM['optional'] = true;
+    $tokens.push($FROM);
+  }
+  )? from=expr_block {$tokens.push(...$from.tokens);}
+  (TO
+  {
+    $TO['optional'] = true;
+    $tokens.push($TO);
+  }
+  )? to=expr_block {$tokens.push(...$to.tokens);}
+  (BY
+  {
+    $BY['optional'] = true;
+    $tokens.push($BY);
+  })? by=expr_block {$tokens.push(...$by.tokens);}
+  (DO
+  {
+    $DO['optional'] = true;
+    $tokens.push($DO); 
+  })? suite {$tokens.push(...$suite.tokens);}
+  ;
+
+while_stat returns [var tokens]
+@init {
+  $tokens = [];
+}
+: WHILE {$tokens.push($WHILE);}
+(TEST {
+  $TEST['optional'] = true;
+  $tokens.push($TEST);
+})? expr_block {$tokens.push(...$expr_block.tokens);}
+(DO {
+  $DO['optional'] = true;
+  $tokens.push($DO);
+})? suite {$tokens.push(...$suite.tokens);};
+
+// 03/23/20: only allows procedure calls w/o arguments
+// 04/20/20: made `call' optional
+call_procedure_stat returns [var tokens]
+@init {
+  $tokens = [];
+}
+: (CALL
+{
+  $CALL['optional'] = true;
+  $tokens.push($CALL);
+})? ((ID {$tokens.push($ID);}) | (component=ID DOT event=ID 
+{
+  $tokens.push($ID);
+  $tokens.push($DOT);
+  $tokens.push($event);
+})) ((label
+{
+  // label only has one token
+  var label_token = $label.tokens[0];
+  label_token['optional'] = true;
+  $tokens.push(label_token);
+}
+)? arg=expr_block {$tokens.push(...$arg.tokens);})*;
 
 /* Feb 28 2020: remove local_init_stat from the first user study */
-var_stat returns [var elt]
-  : setter {$elt = $setter.elt;}
- // | local_init_stat {$elt = $local_init_stat.elt;}
-  ;
-  catch [e] {throw e;}
+var_stat returns [var tokens]: setter {$tokens = $setter.tokens;};
 
-setter returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","var_stat");
-	$elt.setAttribute("inline","false");
-
-	var field = document.createVenbraceElement("field");
-	field.setAttribute("name","VAR");
-
-	var var_name = "";
-
-	var value = document.createVenbraceElement("value");
-	value.setAttribute("name","VALUE");
+// 05/04/2020: although GLOBAL setter is implemented, it is not used in the translation tasks of study 1
+setter returns [var tokens]
+@init {
+  $tokens = [];
 }
-  : SET ((GLOBAL {var_name += $GLOBAL.text + " ";})? (ID {var_name += $ID.text;})
-  | (COMPONENT_PROPERTY {var_name += $COMPONENT_PROPERTY.text;}) 
-  ) 
-  TO expr_block {
-    field.innerHTML = var_name;
-		$elt.appendChild(field);
-		value.appendChild($expr_block.elt);
-		$elt.appendChild(value);
-  };
-  catch [e] {throw e;}
+  : SET {$tokens.push($SET);}
+  (((GLOBAL {$tokens.push($GLOBAL);})? ID {$tokens.push($ID);}) 
+  | (COMPONENT_PROPERTY {$tokens.push($COMPONENT_PROPERTY);})) 
+  (TO {
+    $TO['optional'] = true;
+    $tokens.push($TO);
+  })? expr_block {$tokens.push(...$expr_block.tokens);};
 
-local_init_stat returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","local_init_stat");
-	var mutation = document.createVenbraceElement("mutation");
-	var localName;
-	var fieldArr = [];
-	var field;
-	var count = 0;
-	var valArr = [];
-	var value;
+expr_block returns [var tokens]
+@init {
+  $tokens = [];
 }
-  : INITIALIZE LOCAL (ID TO expr_block
-  {
-			localName = document.createVenbraceElement("localname");
-			localName.setAttribute("name",$ID.text);
-			mutation.appendChild(localName);
-
-			field = document.createVenbraceElement("field");
-			field.setAttribute("name","VAR" + count);
-			field.innerHTML = $ID.text;
-			fieldArr.push(field);
-
-			value = document.createVenbraceElement("value");
-			value.setAttribute("name", "DECL"+count);
-			value.appendChild($expr_block.elt);
-			valArr.push(value);
-			count++;
-		}
-  )+
-  {
-    $elt.appendChild(mutation);
-    fieldArr.forEach(function(field){
-      $elt.appendChild(field);
-    });
-    valArr.forEach(function(value){
-      $elt.appendChild(value);
-    });
-  }
-  IN suite
-  {
-  var seq = $suite.elt;
-  seq.setAttribute("name","STACK");
-  $elt.appendChild(seq);
-  }
-  ;
-  catch [e] {throw e;}
+  : (LPAREN RPAREN {
+   $tokens.push($LPAREN);
+   $tokens.push($RPAREN); 
+  }) //empty expr
+  | atom {$tokens.push(...$atom.tokens);}
+  | expr {$tokens.push(...$expr.tokens);};
 
 // EXPR BLOCKS
-/* Feb 28, 2020: remove call_procedure_expr (maybe also list_expr?) from User Study 1 */
-expr returns [var elt]
-  : var_expr {$elt = $var_expr.elt;}
-    | (LPAREN
-        (control_expr {$elt = $control_expr.elt;}
-        | logic_expr {$elt = $logic_expr.elt;}
-        | not_expr {$elt = $not_expr.elt;}
-        | compare_eq_expr {$elt = $compare_eq_expr.elt;}
-        | compare_math_expr {$elt = $compare_math_expr.elt;}
-        | math_expr {$elt = $math_expr.elt;}
-        | str_expr {$elt = $str_expr.elt;}
-        
-        /* | component_expr*/
-        | color_block {$elt = $color_block.elt;}
-        //  | list_expr {$elt = $list_expr.elt;}
-        | call_procedure_expr {$elt = $call_procedure_expr.elt;}
-        | atom {$elt = $atom.elt;}) 
-      RPAREN)
-    ;
-    catch [e] {throw e;}
-
-control_expr returns [var elt]
-  : if_expr {$elt = $if_expr.elt;}
-  | do_expr {$elt = $do_expr.elt;}
-  //| get_screen_val {$elt = $get_screen_val.elt;}
-  //| get_screen_text {$elt = $get_screen_text.elt;}
+expr returns [var tokens]
+  : getter {$tokens = $getter.tokens;}
+  | control_expr {$tokens = $control_expr.tokens;}
+  | logic_expr {$tokens = $logic_expr.tokens;}
+  | not_expr {$tokens = $not_expr.tokens;}
+  | compare_eq_expr {$tokens = $compare_eq_expr.tokens;}
+  | compare_math_expr {$tokens = $compare_math_expr.tokens;}
+  | math_expr {$tokens = $math_expr.tokens;}
+  | str_expr {$tokens = $str_expr.tokens;}
+  | call_procedure_expr {$tokens = $call_procedure_expr.tokens;}
+  | atom {$tokens = $atom.tokens;}
   ;
-  catch [e] {throw e;}
 
-if_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","if_expr");
-	$elt.setAttribute("inline","false");
+control_expr returns [var tokens]
+  : if_expr {$tokens = $if_expr.tokens;}
+  | do_expr {$tokens = $do_expr.tokens;};
+
+if_expr returns [var tokens]
+@init {
+  $tokens = [];
 }
-  : IF c=expr_block THEN e1=expr_block ELSE e2=expr_block
+  : LPAREN IF c=expr_block THEN e1=expr_block ELSE e2=expr_block RPAREN
   {
-		var testVal = document.createVenbraceElement("value");
-		testVal.setAttribute("name","TEST");
-		testVal.appendChild($c.elt);
-
-		var thenVal = document.createVenbraceElement("value");
-		thenVal.setAttribute("name","THENRETURN");
-		thenVal.appendChild($e1.elt);
-
-		var elseVal = document.createVenbraceElement("value");
-		elseVal.setAttribute("name","ELSERETURN");
-		elseVal.appendChild($e2.elt);
-
-		$elt.appendChild(testVal);
-		$elt.appendChild(thenVal);
-		$elt.appendChild(elseVal);
-	}
-  ;
-  catch [e] {throw e;}
-
-do_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","do_expr");
-	$elt.setAttribute("inline","false");
-}
-  : DO suite {
-    var seq = $suite.elt;
-    seq.setAttribute("name","STACK");
-    $elt.appendChild(seq);
-    }
-  RESULT expr_block {
-      $elt.appendChild($expr_block.elt);
-    }
-  ;
-  catch [e] {throw e;}
-
-
-get_screen_val returns [var elt]
-  : GET_START_VALUE 
-    {
-      $elt = document.createVenbraceElement("block");
-      $elt.setAttribute("type","get_screen_val");
-	    $elt.setAttribute("inline","false");
-    }
-  ;
-  catch [e] {throw e;}
-
-
-get_screen_text returns [var elt]
-  : GET_PLAIN_START_TEXT
-  {
-    $elt = document.createVenbraceElement("block");
-    $elt.setAttribute("type","get_screen_val");
-    $elt.setAttribute("inline","false");
-  }
-  ;
-  catch [e] {throw e;}
-
-logic_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-
-	$elt.setAttribute("type","logic_operation");
-	$elt.setAttribute("inline","true");
-
-	var operation = "";
-}
-  : a=expr_block
-  (AND {operation = "AND";}| OR {operation="OR";}) 
-  b=expr_block
-  {
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","OP");
-    field.innerHTML = operation;
-
-    var valA = document.createVenbraceElement("value");
-    valA.setAttribute("name","A");
-    valA.appendChild($a.elt);
-
-    var valB = document.createVenbraceElement("value");
-    valB.setAttribute("name","B");
-    valB.appendChild($b.elt);
-
-    $elt.appendChild(valA);
-    $elt.appendChild(field);
-    $elt.appendChild(valB);
+    $tokens.push($LPAREN);
+    $tokens.push($IF);
+    $tokens.push(...$c.tokens);
+    $tokens.push($THEN);
+    $tokens.push(...$e1.tokens);
+    $tokens.push($ELSE);
+    $tokens.push(...$e2.tokens);
+    $tokens.push($RPAREN);
   }
   ;
 
-not_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-
-	$elt.setAttribute("type","logic_negate");
-	$elt.setAttribute("inline","false");
+do_expr returns [var tokens]
+@init {
+  $tokens = [];
 }
-  : NOT expr_block
+: LPAREN DO suite RESULT expr_block RPAREN
   {
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","OP");
-    field.innerHTML = "NOT";
-
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name","BOOL");
-		value.appendChild($expr_block.elt);
-
-		$elt.appendChild(field);
-    $elt.appendChild(value);
-	}
-  ;
-  catch [e] {throw e;}
-
-
-compare_eq_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-
-	$elt.setAttribute("type","logic_compare");
-	$elt.setAttribute("inline","true");
-
-	var operation = "";
-}
-  : a=expr_block (LOGIC_EQ {operation = "EQ";}
-  | LOGIC_NOT_EQ {operation = "NEQ";}) 
-  b=expr_block
-  {
-		var field = document.createVenbraceElement("field");
-	  field.setAttribute("name","OP");
-	  field.innerHTML = operation;
-
-	  var valA = document.createVenbraceElement("value");
-	  valA.setAttribute("name","A");
-	  valA.appendChild($a.elt);
-
-	  var valB = document.createVenbraceElement("value");
-	  valB.setAttribute("name","B");
-	  valB.appendChild($b.elt);
-
-	  $elt.appendChild(valA);
-	  $elt.appendChild(field);
-	  $elt.appendChild(valB);
-	}
-  ;
-
-compare_math_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-
-	$elt.setAttribute("type","math_compare"); 
-	//this is the only difference between this rule and the rule above
-	$elt.setAttribute("inline","true");
-
-	var operation = "";
-}
-  : a=expr_block 
-  (EQ {operation = "EQ";}
-  | NEQ {operation = "NEQ";}
-  | GT {operation = "GT";}
-  | GE {operation = "GE";}
-  | LT {operation = "LT";}
-  | LE {operation = "LE";}
-  ) b=expr_block
-  {
-		var field = document.createVenbraceElement("field");
-	  field.setAttribute("name","OP");
-	  field.innerHTML = operation;
-
-	  var valA = document.createVenbraceElement("value");
-	  valA.setAttribute("name","A");
-	  valA.appendChild($a.elt);
-
-	  var valB = document.createVenbraceElement("value");
-	  valB.setAttribute("name","B");
-	  valB.appendChild($b.elt);
-
-	  $elt.appendChild(valA);
-	  $elt.appendChild(field);
-	  $elt.appendChild(valB);
-	}
-  ;
-  catch [e] {throw e;}
-
-math_expr returns [var elt]
-  : mutable_op {$elt = $mutable_op.elt;}
-  | immutable_op {$elt = $immutable_op.elt;}
-  | min_max {$elt = $min_max.elt;}
-  | unary_op {$elt = $unary_op.elt;}
-  | mod {$elt = $mod.elt;}
-  | remainder {$elt = $remainder.elt;}
-  | quotient {$elt = $quotient.elt;}
-  | trig {$elt = $trig.elt;}
-    /*| rand_int {$elt = $rand_int.elt;}
-  | rand_frac {$elt = $rand_frac.elt;}*/
-  //| /*rand_set_seed_to |*/ 
-  /*| rad_to_deg {$elt = $rad_to_deg.elt;}
-  //| deg_to_rad {$elt = $deg_to_rad.elt;}
-  //| format_as_dec {$elt = $format_as_dec.elt;}*/
-  //| is_num {$elt = $is_num.elt;}
-  ;
-  catch [e] {throw e;}
-
-mutable_op returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	//type will get a value inside the rule
-	$elt.setAttribute("inline","true");
-
-	//initalizing these in advance to be used later
-	var mutation = document.createVenbraceElement("mutation");
-	var itemCount = 0;
-	var valArr = [];
-
-	var addValue = function(element){
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name", "NUM" + itemCount);
-		value.appendChild(element);
-		valArr.push(value);
-		itemCount++;
-	}
-}
-  : a=expr_block 
-  {
-    addValue($a.elt);
+    $tokens.push($LPAREN);
+    $tokens.push($DO);
+    $tokens.push(...$suite.tokens);
+    $tokens.push($RESULT);
+    $tokens.push(...$expr_block.tokens);
+    $tokens.push($RPAREN);
   }
-  (
-    (
-    PLUS b=expr_block {addValue($b.elt);}
-    )+ 
-    {$elt.setAttribute("type", "math_add");}
-  | (
-    MUL c=expr_block {addValue($c.elt);}
-    )+
-    {$elt.setAttribute("type", "math_multiply");}
-  )
-  {
-    mutation.setAttribute("items",itemCount);
-    $elt.appendChild(mutation);
+;
 
-    for (var i = 0; i<valArr.length; i++){
-      $elt.appendChild(valArr[i]);
-    }
-  }
-  ;
-  catch [e] {throw e;}
+logic_expr returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN a=expr_block 
+{
+  $tokens.push($LPAREN);
+  $tokens.push(...$a.tokens);
+}
+(AND {$tokens.push($AND);}| OR {$tokens.push($OR);}) 
+b=expr_block RPAREN
+{
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+not_expr returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN NOT expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($NOT);
+  $tokens.push(...$expr_block.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+compare_eq_expr returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN a=expr_block 
+{
+  $tokens.push($LPAREN);
+  $tokens.push(...$a.tokens);
+}
+(LOGIC_EQ {$tokens.push($LOGIC_EQ);}| LOGIC_NOT_EQ {$tokens.push($LOGIC_NOT_EQ);}) 
+b=expr_block RPAREN
+{
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+};
+
+compare_math_expr returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN a=expr_block 
+{
+  $tokens.push($LPAREN);
+  $tokens.push(...$a.tokens);
+}
+(EQ {$tokens.push($EQ);}
+| NEQ {$tokens.push($NEQ);}
+| GT {$tokens.push($GT);}
+| GE {$tokens.push($GE);}
+| LT {$tokens.push($LT);}
+| LE {$tokens.push($LE);}) 
+b=expr_block RPAREN
+{
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+// only contains blocks that have no long sequences of helper words
+math_expr returns [var tokens]
+  : mutable_op {$tokens = $mutable_op.tokens;}
+  | immutable_op {$tokens = $immutable_op.tokens;}
+  | min_max {$tokens = $min_max.tokens;}
+  | unary_op {$tokens = $unary_op.tokens;}
+  | mod {$tokens = $mod.tokens;}
+  | remainder  {$tokens = $remainder.tokens;}
+  | quotient  {$tokens = $quotient.tokens;}
+  | trig {$tokens = $trig.tokens;}
+  | atan2 {$tokens = $atan2.tokens;};
+
+mutable_op returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN a=expr_block 
+{
+  $tokens.push($LPAREN);
+  $tokens.push(...$a.tokens);
+}
+((PLUS b=expr_block
+{
+  $tokens.push($PLUS);
+  $tokens.push(...$b.tokens);
+}
+)+ 
+| (MUL c=expr_block
+{
+  $tokens.push($MUL);
+  $tokens.push(...$c.tokens);
+}
+)+) RPAREN {$tokens.push($RPAREN);};
 
 // not allowing a + b * c + d
-immutable_op returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	//type will get a value inside the rule
-	$elt.setAttribute("inline","true");
-}  
-  :( a=expr_block
-  (
-    MINUS {$elt.setAttribute("type", "math_subtract");}
-    | DIV {$elt.setAttribute("type", "math_division");}
-    | POW {$elt.setAttribute("type", "math_power");}
-  ) 
-  b=expr_block
-  {
-		var valA = document.createVenbraceElement("value");
-	  valA.setAttribute("name","A");
-	  valA.appendChild($a.elt);
-
-	  var valB = document.createVenbraceElement("value");
-	  valB.setAttribute("name","B");
-	  valB.appendChild($b.elt);
-
-	  $elt.appendChild(valA);
-	  $elt.appendChild(valB);
-	})
-  | (a=expr_block NEG_NUM
-  {
-    var valA = document.createVenbraceElement("value");
-	  valA.setAttribute("name","A");
-	  valA.appendChild($a.elt);
-
-	  var valB = document.createVenbraceElement("value");
-    var field = document.createVenbraceElement("field");
-    valB.setAttribute("type","math_number");
-    valB.setAttribute("name", "B");
-    field.innerHTML = $NEG_NUM.text.substring(1); //excluding the neg sign
-    valB.appendChild(field);
-
-    $elt.setAttribute("type", "math_subtract");
-	  $elt.appendChild(valA);
-	  $elt.appendChild(valB);
-  })
-  ;
-  catch [e] {throw e;}
-
- // TODO: 
- //| convert_num;
-//rand_int: RANDOM_INTEGER FROM expr_block TO expr_block;
-//rand_frac: RANDOM_FRACTION;
-//TODO: statement -- rand_set_seed_to: 
-
-min_max returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	//$elt.setAttribute("type","math_minmax");
-	$elt.setAttribute("inline","false");
-
-  var operation = "";
-
-  var mutation = document.createVenbraceElement("mutation");
-	var itemCount = 0;
-	var valArr = [];
-
-	var addValue = function(element){
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name", "NUM" + itemCount);
-		value.appendChild(element);
-		valArr.push(value);
-		itemCount++;
-	}
-}
-  : (MIN {operation = "math_min";} | MAX {operation="math_max";}) 
-  a=expr_block {addValue($a.elt);}
-  (b=expr_block {addValue($b.elt);})+
-  {
-    $elt.setAttribute("type",operation);
-    mutation.setAttribute("items",itemCount);
-    $elt.appendChild(mutation);
-    for (var i = 0; i<valArr.length; i++){
-      $elt.appendChild(valArr[i]);
-    }
-  }
-  ;
-  catch [e] {throw e;}
-
-unary_op returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_single");
-	$elt.setAttribute("inline","false");
-
-	var operation = "";
-}
-  : (SQRT {operation = "ROOT";}
-  | ABS {operation = "ABS";}
-  | NEG {operation = "NEG";}
-  | LOG {operation = "LN";}
-  | EULER {operation = "EXP";}
-  | ROUND {operation = "ROUND";}
-  | CEILING {operation = "CEILING";}
-  | FLOOR {operation = "FLOOR";}
-  ) 
-  expr_block
-  {
-		var field = document.createVenbraceElement("field");
-		field.setAttribute("name","OP");
-		field.innerHTML = operation;
-
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name","NUM");
-		value.appendChild($expr_block.elt);
-
-		$elt.appendChild(field);
-		$elt.appendChild(value);
-	}
-  ;
-  catch [e] {throw e;}
-
-mod returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_divide");
-	$elt.setAttribute("inline","true");
-}
-  : MOD_OF a=expr_block DIV b=expr_block
-  {
-		var field = document.createVenbraceElement("field");
-		field.setAttribute("name","OP");
-		field.innerHTML = "MODULO";
-
-		var dividend = document.createVenbraceElement("value");
-		dividend.setAttribute("name","DIVIDEND");
-		dividend.appendChild($a.elt);
-
-		var divisor = document.createVenbraceElement("value");
-		divisor.setAttribute("name","DIVISOR");
-		divisor.appendChild($b.elt); 
-
-		$elt.appendChild(field);
-		$elt.appendChild(dividend);
-		$elt.appendChild(divisor);
-	}
-  ;
-  catch [e] {throw e;}
-
-remainder returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_divide");
-	$elt.setAttribute("inline","true");
-}
-  : REMAINDER_OF a=expr_block DIV b=expr_block
-  {
-		var field = document.createVenbraceElement("field");
-		field.setAttribute("name","OP");
-		field.innerHTML = "REMAINDER";
-
-		var dividend = document.createVenbraceElement("value");
-		dividend.setAttribute("name","DIVIDEND");
-		dividend.appendChild($a.elt);
-
-		var divisor = document.createVenbraceElement("value");
-		divisor.setAttribute("name","DIVISOR");
-		divisor.appendChild($b.elt); 
-
-		$elt.appendChild(field);
-		$elt.appendChild(dividend);
-		$elt.appendChild(divisor);
-	}  
-  ;
-  catch [e] {throw e;}
-
-quotient returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_divide");
-	$elt.setAttribute("inline","true");
-}  
-  : QUOTIENT_OF a=expr_block DIV b=expr_block
-  {
-		var field = document.createVenbraceElement("field");
-		field.setAttribute("name","OP");
-		field.innerHTML = "QUOTIENT";
-
-		var dividend = document.createVenbraceElement("value");
-		dividend.setAttribute("name","DIVIDEND");
-		dividend.appendChild($a.elt);
-
-		var divisor = document.createVenbraceElement("value");
-		divisor.setAttribute("name","DIVISOR");
-		divisor.appendChild($b.elt); 
-
-		$elt.appendChild(field);
-		$elt.appendChild(dividend);
-		$elt.appendChild(divisor);
-	}   
-  ;
-  catch [e] {throw e;}
-
-trig returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_trig");
-	$elt.setAttribute("inline","false");
-
-	var operation = "";
-}
-  : (SIN {operation="SIN";}
-  | COS {operation="COS";}
-  | TAN {operation="TAN";}
-  | ASIN {operation="ASIN";}
-  | ACOS {operation="ACOS";}
-  | ATAN {operation="ATAN";}
-  ) 
-  expr_block
-  {
-		var field = document.createVenbraceElement("field");
-		field.setAttribute("name","OP");
-		field.innerHTML = operation;
-
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name","NUM");
-		value.appendChild($expr_block.elt);
-
-		$elt.appendChild(field);
-		$elt.appendChild(value);
-	}
-  ;
-  catch [e] {throw e;}
-
-// TODO
-//rad_to_deg: RAD_TO_DEG expr_block;
-//deg_to_rad: RAD_TO_DEG expr_block;
-//format_as_dec: FORMAT_AS_DEC number=expr_block places=expr_block;
-
-// TODO: is hex, base 10, ... see app inventor document
-is_num returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","math_isNum");
-	$elt.setAttribute("inline","false");
-}
-  : IS_NUM expr_block {$elt.appendChild($expr_block.elt);};
-  catch [e] {throw e;}
-
-str_expr returns [var elt]
-  : str_join {$elt = $str_join.elt;}
-  | str_length {$elt = $str_length.elt;}
-  ;
-  catch [e] {throw e;}
-
-str_length returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","text_length");
-	$elt.setAttribute("inline","false");
-}
-  : LENGTH
-  expr_block
-  {
-    var value = document.createVenbraceElement("value");
-		value.setAttribute("name","STRING");
-		value.appendChild($expr_block.elt);
-
-		$elt.appendChild(value);
-	}
-  ;
-  catch [e] {throw e;}
-
-str_join returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	//type will get a value inside the rule
-	$elt.setAttribute("inline","true");
-
-	//initalizing these in advance to be used later
-	var mutation = document.createVenbraceElement("mutation");
-	var itemCount = 0;
-	var valArr = [];
-
-	var addValue = function(element){
-		var value = document.createVenbraceElement("value");
-		value.setAttribute("name", "STRING" + itemCount);
-		value.appendChild(element);
-		valArr.push(value);
-		itemCount++;
-	}
-}
-  : JOIN a=expr_block 
-  {
-    addValue($a.elt);
-  }
-    (
-     b=expr_block {addValue($b.elt);}
-    )+ 
-  {
-    $elt.setAttribute("type", "text_join");
-    mutation.setAttribute("items",itemCount);
-    $elt.appendChild(mutation);
-
-    for (var i = 0; i<valArr.length; i++){
-      $elt.appendChild(valArr[i]);
-    }
-  }
-  ;
-  catch [e] {throw e;}
-
-var_expr returns [var elt]
-  : getter {$elt = $getter.elt;}
-  //| local_init_expr {$elt = $local_init_expr.elt;}
-  ;
-  catch [e] {throw e;}
-
-// 04/20/20: made GET mandatory
-getter returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","lexical_variable_get");
-
-	var variable = "";
-}
-  : (ID
-  | (LPAREN GET (GLOBAL {variable += "global ";})? ID RPAREN)
-  {
-    variable += $ID.text;
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR");
-    field.innerHTML = variable;
-
-    $elt.appendChild(field);
-  });
-  // | COMPONENT_PROPERTY
-  // {
-  //   variable += $COMPONENT_PROPERTY.text;
-  //   var field = document.createVenbraceElement("field");
-  //   field.setAttribute("name","VAR");
-  //   field.innerHTML = variable;
-
-  //   $elt.appendChild(field);
-  // }
-  //)
-  
-  catch [e] {throw e;}
-
-local_init_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","local_declaration_expression");
-	var mutation = document.createVenbraceElement("mutation");
-	var localName;
-	var fieldArr = [];
-	var field;
-	var count = 0;
-	var valArr = [];
-	var value;
-}
-  : INITIALIZE (LOCAL ID TO a=expr_block
-  {
-    localName = document.createVenbraceElement("localname");
-    localName.setAttribute("name",$ID.text);
-    mutation.appendChild(localName);
-
-    field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR" + count);
-    field.innerHTML = $ID.text;
-    fieldArr.push(field);
-
-    value = document.createVenbraceElement("value");
-    value.setAttribute("name", "DECL"+count);
-    value.appendChild($a.elt);
-    valArr.push(value);
-    count++;
-  }
-  )+ 
-  {
-    $elt.appendChild(mutation);
-    fieldArr.forEach(function(field){
-      $elt.appendChild(field);
-    });
-    valArr.forEach(function(value){
-      $elt.appendChild(value);
-    });
-  }
-  IN b=expr_block
-  {
-    var returnVal = document.createVenbraceElement("value");
-    returnVal.setAttribute("name","RETURN");
-    returnVal.appendChild($b.elt);
-    $elt.appendChild(returnVal);
-  }
-  ;
-  catch [e] {throw e;}
-
-// TODO: custom color (hex)
-color_block returns [var elt]
-  : color {$elt = $color.elt;}
-  //| make_color {$elt = $make_color.elt;}
-  ;
-  catch [e] {throw e;}
-
-color returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	var field = document.createVenbraceElement("field");
-	field.setAttribute("name","COLOR");
-
-	var type = "color_";
-}
-: (BLACK {field.innerHTML="#000000"; type += $BLACK.text;}
-		| BLUE {field.innerHTML="#0000ff"; type += $BLUE.text;}
-    | WHITE {field.innerHTML="#ffffff"; type += $WHITE.text;}
-    | MAGENTA {field.innerHTML="#ff00ff"; type += $MAGENTA.text;}
-    | RED {field.innerHTML="#ff0000"; type += $RED.text;}
-    | LIGHT_GRAY {field.innerHTML="#cccccc"; type += $LIGHT_GRAY.text;}
-    | PINK {field.innerHTML="#ffafaf"; type += $PINK.text;}
-    | GRAY {field.innerHTML="#888888"; type += $GRAY.text;}
-    | ORANGE {field.innerHTML="#ffc800"; type += $ORANGE.text;}
-    | DARK_GRAY {field.innerHTML="#444444"; type += $DARK_GRAY.text;}
-    | YELLOW {field.innerHTML="#ffff00"; type += $YELLOW.text;}
-    | GREEN {field.innerHTML="#00ff00"; type += $GREEN.text;}
-    | CYAN {field.innerHTML="#00ffff"; type += $CYAN.text;}
-		)
-  {
-    $elt.setAttribute("type",type);
-    $elt.appendChild(field);
-  }  
-  ;
-  catch [e] {throw e;}
-
-
-make_color returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-}
-  : MAKE_COLOR expr_block
-  {
-    $elt.setAttribute("type","color_make_color");
-    $elt.setAttribute("inline","false");
-    var value = document.createVenbraceElement("value");
-    value.setAttribute("name","COLORLIST");
-    value.appendChild($expr_block.elt);
-    $elt.appendChild(value);
-  }
-  ;
-  catch [e] {throw e;}
-
-list_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","lists_create_with");
-
-	var mutation = document.createVenbraceElement("mutation");
-	var item_count = 0;
-
-	var val_block_arr = [];
-	var val_block;
-}
-  : (LIST | MAKE_LIST) /*(options: {greedy=true;}*/ (expr_block
-    {
-	      	item_count++; 
-	      	val_block = document.createVenbraceElement("value");
-	      	val_block.setAttribute("name", ("ADD" + (item_count-1)));
-	      	val_block.appendChild($expr_block.elt);
-	      	val_block_arr.push(val_block);
-	      } 
-  )*
-  {
-		mutation.setAttribute("items",item_count);
-		$elt.appendChild(mutation);
-		val_block_arr.forEach(function (block) {
-			$elt.appendChild(block);
-		});
-	}
-  ;
-  catch [e] {throw e;}
-//TODO: component_expr
-//TODO: comment block
-
-// TODO: var name
-
-// 04/20/20: made `call' optional
-call_procedure_expr returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	$elt.setAttribute("type","procedures_callreturn");
-  var procname = "";
-  // var argLabels = [];
-  // var argExps = [];
-  // var pushArgLabel = function (ID) {
-  //   var labelWithoutTrailingColon = ID.substring(0,ID.length - 1);
-  //   argLabels.push(labelWithoutTrailingColon);
-  // };
-  // var pushArgExp = function (elt) {
-  //   argExps.push(elt);
-  // };
-}
-  : CALL? ((ID {procname = $ID.text;})
-  | (component=ID DOT event=ID {procname = $component.text + "." + $event.text;})
-  //(expr_block {pushArgExp($expr_block.elt);})*
-  {
-    // TODO: add more line according to
-    var mutation = document.createVenbraceElement("mutation");
-    mutation.setAttribute("name", procname);
-    $elt.appendChild(mutation);
-
-    var procnameField = document.createVenbraceElement("field");
-    procnameField.setAttribute("name", "PROCNAME");
-    procnameField.innerHTML = procname;
-    $elt.appendChild(procnameField);
-
-    /*for (var i = 0; i < argExps.length; i++) {
-        // var mutationArg = document.createVenbraceElement("arg");
-        // mutationArg.setAttribute("name", argLabels[i]); 
-        // mutation.appendChild(mutationArg);
-        var valueArg = document.createVenbraceElement("value");
-        valueArg.setAttribute("name", "ARG" + i); 
-        valueArg.appendChild(argExps[i]);
-        $elt.appendChild(valueArg);
-    }*/
-  }
-  );
-  catch [e] {throw e;}
-
-// 04/20/20: separate rule for variables
-variable returns [var elt]
+immutable_op returns [var tokens]
 @init {
-	$elt = document.createVenbraceElement("block");
-	var field = document.createVenbraceElement("field");
+  $tokens = [];
 }
-  : id_var=ID {
-    //$id_var.type = VAR;
-    var variable = $ID.text;
-		$elt.setAttribute("type","lexical_variable_get");
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR");
-    field.innerHTML = variable;
-    $elt.appendChild(field);
-	  };
-  catch [e] {throw e;}
+: LPAREN {$tokens.push($LPAREN);}
+((a=expr_block {$tokens.push(...$a.tokens);}
+(MINUS {$tokens.push($MINUS);}
+| DIV {$tokens.push($DIV);}
+| POW {$tokens.push($POW);}) 
+b=expr_block {$tokens.push(...$b.tokens);})
+| (a=expr_block NEG_NUM
+{
+  var num = $NEG_NUM;
+
+  var neg = $NEG_NUM.clone();
+  neg.type = 63; // hard-coded
+  neg.stop = neg.start;
+  neg.text = $MINUS.text;
+
+  num.text = num.text.substring(1);
+  num.type = num.type - 1; // NUMBER = 121, NEG_NUM = 122
+  num.start = num.start + 1;
+  num.column = num.column + 1;
+
+
+  $tokens.push(...$a.tokens);
+  //$tokens.push($NEG_NUM);
+  $tokens.push(neg);
+  $tokens.push(num);
+}
+)) 
+RPAREN {$tokens.push($RPAREN);}; // special hack handling a -b
+
+min_max returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN {$tokens.push($LPAREN);}
+(MIN {$tokens.push($MIN);}| MAX {$tokens.push($MAX);}) 
+a=expr_block {$tokens.push(...$a.tokens);}
+(b=expr_block {$tokens.push(...$b.tokens);})+ 
+RPAREN {$tokens.push($RPAREN);};
+
+// only contains blocks without long sequences of helper words
+unary_op returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN {$tokens.push($LPAREN);} 
+(SQRT {$tokens.push($SQRT);}
+| ABS {$tokens.push($ABS);}
+| NEG {$tokens.push($NEG);}
+| LOG {$tokens.push($LOG);}
+| EULER {$tokens.push($EULER);}
+| ROUND {$tokens.push($ROUND);}
+| CEILING {$tokens.push($CEILING);}
+| FLOOR {$tokens.push($FLOOR);})
+ expr_block {$tokens.push(...$expr_block.tokens);}
+ RPAREN {$tokens.push($RPAREN);};
+
+mod returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN MODULO OF a=expr_block DIV b=expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($MODULO);
+  $tokens.push($OF);
+  $tokens.push(...$a.tokens);
+  $tokens.push($DIV);
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+remainder returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN REMAINDER OF a=expr_block DIV b=expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($REMAINDER);
+  $tokens.push($OF);
+  $tokens.push(...$a.tokens);
+  $tokens.push($DIV);
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+};
+
+quotient returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN QUOTIENT OF a=expr_block DIV b=expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($QUOTIENT);
+  $tokens.push($OF);
+  $tokens.push(...$a.tokens);
+  $tokens.push($DIV);
+  $tokens.push(...$b.tokens);
+  $tokens.push($RPAREN);
+};
+
+trig returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN {$tokens.push($LPAREN);}
+(SIN {$tokens.push($SIN);}
+| COS {$tokens.push($COS);}
+| TAN {$tokens.push($TAN);}
+| ASIN {$tokens.push($ASIN);}
+| ACOS {$tokens.push($ACOS);}
+| ATAN {$tokens.push($ATAN);}) 
+expr_block RPAREN
+{
+  $tokens.push(...$expr_block.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+atan2 returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN ATAN2 
+{
+  $tokens.push($LPAREN);
+  $tokens.push($ATAN2);
+}
+(y='y' 
+{
+  $y['optiona'] = true;
+  $tokens.push($y);  
+})? 
+y_expr=expr_block {$tokens.push(...$y_expr.tokens);}
+(x='x'
+{
+  $x['optiona'] = true;
+  $tokens.push($x);  
+}
+)? x_expr=expr_block RPAREN 
+{
+  $tokens.push(...$x_expr.tokens);
+  $tokens.push($RPAREN);  
+};
+
+str_expr returns [var tokens]
+  : str_join {$tokens = $str_join.tokens;}
+  | str_length  {$tokens = $str_length.tokens;}
+  | str_reverse  {$tokens = $str_reverse.tokens;}
+  | str_split_at_spaces {$tokens = $str_split_at_spaces.tokens;};
+
+str_length returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN LENGTH expr_block RPAREN 
+{
+  $tokens.push($LPAREN);
+  $tokens.push($LENGTH);
+  $tokens.push(...$expr_block.tokens);
+  $tokens.push($RPAREN);
+}
+;
+
+str_join returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN JOIN a=expr_block 
+{
+  $tokens.push($LPAREN);
+  $tokens.push($JOIN);
+  $tokens.push(...$a.tokens);
+}
+(b=expr_block {$tokens.push(...$b.tokens);})+ RPAREN{$tokens.push($RPAREN);}
+;
+
+str_reverse returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN REVERSE expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($REVERSE);
+  $tokens.push(...$expr_block.tokens);
+  $tokens.push($RPAREN);
+};
+
+str_split_at_spaces returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN SPLIT_AT_SPACES expr_block RPAREN
+{
+  $tokens.push($LPAREN);
+  $tokens.push($SPLIT_AT_SPACES);
+  $tokens.push(...$expr_block.tokens);
+  $tokens.push($RPAREN);
+};
+
+getter returns [var tokens]
+@init {
+  $tokens = [];
+}
+: (ID {$tokens.push($ID);}) 
+| (LPAREN GET 
+  {
+    $LPAREN['optional'] = true;
+    $GET['optional'] = true;
+    $tokens.push($LPAREN);
+    $tokens.push($GET);
+  } 
+  (GLOBAL {$tokens.push($GLOBAL);})? ID {$tokens.push($ID);} 
+  RPAREN
+  {
+    $RPAREN['optional'] = true;
+    $tokens.push($RPAREN);
+  });
+
+// 04/20/20: made `call' optional; only supports zero-argument calls
+call_procedure_expr returns [var tokens]
+@init {
+  $tokens = [];
+}
+: LPAREN {$tokens.push(LPAREN);}
+(CALL {
+ $CALL['optional'] = true;
+ $tokens.push($CALL); 
+})? 
+(ID {$tokens.push($ID);}
+| (component=ID DOT event=ID {
+ $tokens.push($component);
+ $tokens.push($DOT);
+ $tokens.push($event); 
+})) 
+((label
+{
+ var label_token = $label.tokens[0];
+ label_token['optional'] = true;
+ $tokens.push(label_token); 
+})? arg=expr_block {$tokens.push(...$arg.tokens);}
+)* RPAREN {$tokens.push(RPAREN);};
 
 // OTHER ELEMENTS
-atom returns [var elt]
-@init{
-	$elt = document.createVenbraceElement("block");
-	var field = document.createVenbraceElement("field");
+
+atom returns [var tokens]
+@init {
+  $tokens = [];
 }
-  : NUMBER//int_literal $elt = $int_literal.elt; ORIGINAL CODE FOR int_literal
-  {
-    $elt.setAttribute("type","math_number");
-    field.setAttribute("name","NUM");
-    field.innerHTML = $NUMBER.text;
-    $elt.appendChild(field);
-	}
-  | NEG_NUM
-  {
-    $elt.setAttribute("type","math_number");
-    field.setAttribute("name","NUM");
-    field.innerHTML = $NEG_NUM.text;
-    $elt.appendChild(field);
-  }
-  | STRING {
-		$elt.setAttribute("type","text");
+  : atom_elements {$tokens.push(...$atom_elements.tokens);}
+| (LPAREN atom_elements RPAREN 
+{
+  $LPAREN['optional'] = true;
+  $tokens.push($LPAREN);
+  $tokens.push(...$atom_elements.tokens);
+  $RPAREN['optional'] = true;
+  $tokens.push($RPAREN);
+  });
 
-		field.setAttribute("name","TEXT");
-		var text = $STRING.text;
-		field.innerHTML = text.substring(1,text.length-1);
-		$elt.appendChild(field);
-	}
-  | TRUE {
-		$elt.setAttribute("type","logic_boolean");
+atom_elements returns [var tokens]
+@init {
+  $tokens = [];
+}
+  : NUMBER {$tokens.push($NUMBER);}
+  | NEG_NUM {$tokens.push($NEG_NUM);} 
+  | STRING {$tokens.push($STRING);} 
+  | TRUE {$tokens.push($TRUE);} 
+  | FALSE {$tokens.push($FALSE);} 
+  | COMPONENT_PROPERTY {$tokens.push($COMPONENT_PROPERTY);};
 
-		field.setAttribute("name","BOOL");
-		field.innerHTML = "TRUE";
-		$elt.appendChild(field);
-	}
-  | FALSE {
-		$elt.setAttribute("type","logic_boolean");
+label returns [var tokens]
+@init {
+  $tokens = [];
+}
+: ID {$tokens.push($ID);};
 
-		field.setAttribute("name","BOOL");
-		field.innerHTML = "FALSE";
-		$elt.appendChild(field);
-	}
-  | COMPONENT_PROPERTY {
-    var variable = $COMPONENT_PROPERTY.text;
-		$elt.setAttribute("type","component_property");
-    var field = document.createVenbraceElement("field");
-    field.setAttribute("name","VAR");
-    field.innerHTML = variable;
-    $elt.appendChild(field);
-  }
-  ;
-  catch [e] {throw e;}
-
-//dotted_name: ID '.' ID;
-
-
-
-
-// ==========***LEXER RULES***==========
+/* ================================
+ * ==========LEXER RULES==========
+ * ================================ */
 
 
 WS  :   ( ' '
@@ -1579,18 +796,22 @@ WHEN: 'when';
 IF: 'if';
 THEN: 'then';
 ELSE: 'else';
-//ELSE_IF: 'else_if';
 ELSE_IF: 'else if';
-FOREACH: 'forEach';
+FOREACH: 'for each';
 
 DO: 'do';
 RESULT: 'result';
 TO: 'to';
 CALL: 'call';
+
+// variables
 GET: 'get';
 SET: 'set';
-//GLOBAL: '$';
 GLOBAL: 'global';
+INITIALIZE: 'initialize';
+LOCAL: 'local';
+
+// control statements
  
 IN: 'in';
 BY: 'by';
@@ -1598,29 +819,34 @@ FROM: 'from';
 WHILE: 'while';
 TEST: 'test';
 
-EVAL_BUT_IGNORE_RESULT: 'evaluateButIgnoreResult';
-OPEN_ANOTHER_SCREEN: 'openAnotherScreen';
-CLOSE_SCREEN: 'closeScreen';
-CLOSE_APPLICATION: 'closeApplication';
- 
-INITIALIZE: 'initialize';
-LOCAL: 'local';
+EVAL_BUT_IGNORE_RESULT: 'evaluate but ignore';
+OPEN_ANOTHER_SCREEN: 'open another screen';
+OPEN_ANOTHER_SCREEN_WITH_START_VALUE: 'open another screen with start value';
+CLOSE_SCREEN: 'close screen';
+CLOSE_SCREEN_WITH_VALUE: 'close screen with value';
+CLOSE_SCREEN_WITH_PLAIN_TEXT: 'close screen with plain text';
+CLOSE_APPLICATION: 'close application';
+SCREEN_NAME: 'screenName';
+START_VALUE: 'startValue';
+TEXT: 'text';
+BREAK: 'break';
 
-GET_START_VALUE: 'getStartValue';
-GET_PLAIN_START_TEXT: 'getPlainStartText';
+GET_START_VALUE: 'get start value';
+GET_PLAIN_START_TEXT: 'get plain start text';
 
 //OPERATORS
 NOT: 'not';
 AND: 'and';
 OR: 'or';
+XOR: 'xor';
 LT: '<';
 GT: '>';
 LE: '<=';
 GE: '>=';
-LOGIC_EQ: 'equals';
-LOGIC_NOT_EQ: 'not_equals';
 EQ: '=';
 NEQ: '!=';
+LOGIC_EQ: EQ;
+LOGIC_NOT_EQ: NEQ;
 
 PLUS: '+';
 MINUS: '-';
@@ -1628,8 +854,15 @@ MUL: '*';
 DIV: '/';
 POW: '^';
 
-//Unary Ops
-SQRT: 'sqrt'; // to be tested in the preference task
+
+
+//Math Ops
+DECIMAL: 'decimal';
+BINARY: 'binary';
+OCTAL: 'octal';
+HEXADECIMAL: 'hexadecimal';
+BITWISE: 'bitwise';
+SQRT: 'square root';
 ABS: 'absolute';
 NEG: 'neg';
 LOG: 'log';
@@ -1637,51 +870,115 @@ EULER: 'e^';
 ROUND: 'round';
 CEILING: 'ceiling';
 FLOOR: 'floor';
-JOIN: 'join';
-LENGTH: 'length';
-
-//Math Ops
-RANDOM_INTEGER: 'randomInteger';
-RANDOM_FRACTION: 'randomFraction';
+RANDOM_INTEGER: 'random integer';
+RANDOM_FRACTION: 'random fraction';
 MIN: 'min';
 MAX: 'max';
-MOD_OF : 'moduloOf';
-REMAINDER_OF: 'remainderOf';
-QUOTIENT_OF: 'quotientOf';
-RAD_TO_DEG: 'radiansToDegrees';
-DEG_TO_RAD: 'degreesToRadians';
-FORMAT_AS_DEC: 'formatAsDecimal';
-IS_NUM: 'isNumber';
+MODULO: 'modulo';
+REMAINDER: 'remainder';
+QUOTIENT: 'quotient';
+OF: 'of';
+CONVERT: 'convert';
+// RAD_2_DEG: 'radians to degrees';
+// DEG_2_RAD: 'degrees to radians';
+// FORMAT_AS_DECIMAL: 'format as decimal';
+// IS: 'is';
+// ISNUMBER: 'number?';
+// BASE10: 'Base 10?';
+// ISHEX: 'hexadecimal?';
+// ISBIN: 'binary?';
+// CONVERT_NUM: 'convert number';
+// BASE_10_TO_HEX: 'base 10 to hex';
+// HEX_TO_BASE_10: 'hex to base 10';
+// BASE_10_TO_BIN: 'base 10 to binary';
+// BIN_TO_BASE_10: 'binary to base 10';
 
-//Trig Ops
 SIN: 'sin';
 COS: 'cos';
 TAN: 'tan';
 ASIN: 'asin';
 ACOS: 'acos';
 ATAN: 'atan';
+ATAN2: 'atan2';
 
-//Colors
+//String Ops
+JOIN: 'join';
+LENGTH: 'length';
+IS_EMPTY: 'is empty';
+COMPARE_TEXTS: 'compare texts';
+TRIM: 'trim';
+UPCASE: 'upcase';
+DOWNCASE: 'downcase';
+STARTS_AT: 'starts at';
+// PIECE: 'piece';
+CONTAINS: 'contains';
+SPLIT: 'split';
+SPLIT_AT_FIRST: 'split at first';
+SPLIT_AT_ANY: 'split at any';
+SPLIT_AT_FIRST_OF_ANY: 'split at first of any';
+// AT: 'at';
+// AT_LIST: 'at (list)';
+SPLIT_AT_SPACES: 'split at spaces';
+SEGMENT: 'segment';
+// START: 'start';
+REPLACE_ALL: 'replace all';
+REPLACEMENT: 'replacement';
+OBFUSCATED_TEXT: 'Obfuscated Text';
+IS_A_STR: 'is a string?';
+// THING: 'thing';
+REVERSE: 'reverse';
+MAPPINGS: 'mappings';
+IN_TEXT: 'in text';
+PREFERRING: 'preferring';
+LONGEST_STRING_FIRST: 'longest string first';
+DICTIONARY: 'dictionary';
+// ORDER: 'order';
 
-COLOR: 'color';
-MAKE_COLOR: 'make_color';
-BLACK: 'black';
-BLUE: 'blue';
-WHITE: 'white';
-MAGENTA: 'magenta';
-RED: 'red';
-LIGHT_GRAY: 'light_gray';
-PINK: 'pink';
-GRAY: 'gray';
-ORANGE: 'orange';
-DARK_GRAY: 'dark_gray';
-YELLOW: 'yellow';
-GREEN: 'green';
-CYAN: 'cyan';
 
 //lists
-MAKE_LIST: 'make_a_list';
-LIST: 'list';
+// CREATE_EMPTY_LIST: ('create empty ')? 'list';
+// MAKE_LIST: 'make a list';
+// // LIST: 'list';
+// ADD_ITEMS_TO_LIST: 'add items to list';
+// // ITEM: 'item';
+// IS_IN_LIST: 'is in list?';
+// LENGTH_OF_LIST: 'length of list';
+// IS_LIST_EMPTY: 'is list empty?';
+// PICK_A_RANDOM_ITEM: 'pick a random item';
+// INDEX_IN_LIST: 'index in list';
+// SELECT_LIST_ITEM: 'select list item';
+// // INDEX: 'index';
+// REPLACE_LIST_ITEM: 'replace list item';
+// REMOVE_LIST_ITEM: 'remove list item';
+// APPEND_TO_LIST: 'append to list';
+// COPY_LIST: 'copy list';
+// IS_A_LIST: 'is a list?';
+// REVERSE_LIST: 'reverse list';
+// LIST_TO_CSV_ROW: 'list to csv row';
+// LIST_TO_CSV_TABLE: 'list to csv table';
+// LIST_FROM_CSV_ROW: 'list from csv row';
+// LIST_FROMCSV_TABLE: 'list from csv table';
+// LOOK_UP_IN_PAIRS: 'look up in pairs';
+// JOIN_ITEMS_USING_SEPARATOR: 'join items using separator';
+
+//Colors
+// COLOR: 'color';
+// MAKE_COLOR: 'make color';
+// SPLIT_COLOR: 'split color';
+// BLACK: 'black';
+// BLUE: 'blue';
+// WHITE: 'white';
+// MAGENTA: 'magenta';
+// RED: 'red';
+// LIGHT_GRAY: 'light_gray';
+// PINK: 'pink';
+// GRAY: 'gray';
+// ORANGE: 'orange';
+// DARK_GRAY: 'dark_gray';
+// YELLOW: 'yellow';
+// GREEN: 'green';
+// CYAN: 'cyan';
+
 
 // //Generic Component Block Stuff
 // OF_COMPONENT: 'of_component:';
