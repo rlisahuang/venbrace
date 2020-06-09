@@ -6078,6 +6078,7 @@ function Call_procedure_exprContext(parser, parent, invokingState) {
     this.parser = parser;
     this.ruleIndex = VenbraceParser.RULE_call_procedure_expr;
     this.tokens = null
+    this._LPAREN = null; // Token
     this._CALL = null; // Token
     this._ID = null; // Token
     this.component = null; // Token
@@ -6085,6 +6086,7 @@ function Call_procedure_exprContext(parser, parent, invokingState) {
     this.event = null; // Token
     this._label = null; // LabelContext
     this.arg = null; // Expr_blockContext
+    this._RPAREN = null; // Token
     return this;
 }
 
@@ -6169,8 +6171,8 @@ VenbraceParser.prototype.call_procedure_expr = function() {
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 718;
-        this.match(VenbraceParser.LPAREN);
-        localctx.tokens.push(LPAREN);
+        localctx._LPAREN = this.match(VenbraceParser.LPAREN);
+        localctx.tokens.push(localctx._LPAREN);
         this.state = 722;
         this._errHandler.sync(this);
         _la = this._input.LA(1);
@@ -6233,8 +6235,8 @@ VenbraceParser.prototype.call_procedure_expr = function() {
             _la = this._input.LA(1);
         }
         this.state = 745;
-        this.match(VenbraceParser.RPAREN);
-        localctx.tokens.push(RPAREN);
+        localctx._RPAREN = this.match(VenbraceParser.RPAREN);
+        localctx.tokens.push(localctx._RPAREN);
         }
     catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {

@@ -121,7 +121,7 @@
 
     //solution
     var solution = $("#solution").html().replace("&gt;", ">");
-    console.log(`solution: ${solution}`);
+    // console.log(`solution: ${solution}`);
 
     var sol_lexer = new VenbraceLexer(new antlr4.InputStream(solution));
 
@@ -131,11 +131,12 @@
     var sol_parser = new VenbraceParser(sol_stream);
     var sol_tokens = sol_parser.test_program().tokens;
     var sol_tokens_count = getSolutionTokens(sol_tokens);
+    console.log("solution tokens:");
     console.log(sol_tokens_count);
 
     //input
     var input = editor.getValue();
-    console.log(input);
+    // console.log(input);
 
     var cstream = new antlr4.InputStream(input);
     var lexer = new VenbraceLexer(cstream);
@@ -144,7 +145,6 @@
 
     tstream.fill(); //test code
     var rawTokens = tstream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;})
-
     var tokens = preprocessing(rawTokens); //type: CommonToken
 
     var parser = new VenbraceParser(tstream);
@@ -167,10 +167,11 @@
         var parseTokens = dom.tokens;
         // console.log(tokens);
         var tokenCount = countTokens(tokens);
-        // console.log(tokenCount);
+        console.log("tokens from input:");
+        console.log(tokenCount);
         var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
-        // console.log(tokenCheckResult);
-        // console.log(tokenMarks);
+        console.log("compare input tokens with solution tokens:");
+        console.log(tokenCheckResult);
       // }
       // catch (e) {
       //   // parserErrors = parser.getErrors();

@@ -709,7 +709,7 @@ call_procedure_expr returns [var tokens]
 @init {
   $tokens = [];
 }
-: LPAREN {$tokens.push(LPAREN);}
+: LPAREN {$tokens.push($LPAREN);}
 (CALL {
  $CALL['optional'] = true;
  $tokens.push($CALL); 
@@ -726,7 +726,7 @@ call_procedure_expr returns [var tokens]
  label_token['optional'] = true;
  $tokens.push(label_token); 
 })? arg=expr_block {$tokens.push(...$arg.tokens);}
-)* RPAREN {$tokens.push(RPAREN);};
+)* RPAREN {$tokens.push($RPAREN);};
 
 // OTHER ELEMENTS
 
