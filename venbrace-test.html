@@ -39,6 +39,7 @@
   var VenbraceParserLib = require('./VenbraceParser')
   var VenbraceParser = VenbraceParserLib.VenbraceParser;
   var token_NEG_NUM = VenbraceParserLib.NEG_NUM;
+  var errorMsg = undefined;
 
 
   'use strict';
@@ -50,11 +51,73 @@
     // scanForBracket: true,
     cursorBlinkRate: 0}
     );
+
+  var Pos = CodeMirror.Pos;
+  var tokenMarks = [];
+
+
+  class VenbraceErrorListener extends antlr4.error.ErrorListener {
+    
+    
+    syntaxError(recognizer, offendingSymbol, line, column, msg, err) {
+      var sourceName = recognizer.getInputStream();
+      // console.log(sourceName);
+      errorMsg = `line ${line}, col ${column}: ${msg}\n`;
+      // console.log(`Error found: ${offendingSymbol} line ${line}, col ${column}: ${msg}`);
+      
+      this.underlineError(recognizer, offendingSymbol, line, column);
+      console.log(errorMsg);
+    }
+
+    underlineError(recognizer, offendingToken, line, column) {
+        var tokens = recognizer.getInputStream();
+        // var input = tokens.getTokenSource().getInputStream().toString();
+        var input = tokens.tokenSource.inputStream.strdata
+        var lines = input.split("\n");
+        var errorLine = lines[line - 1];
+        errorMsg += errorLine + "\n";
+        // console.log(errorLine);
+        for (var i=0; i<column; i++) errorMsg += " ";
+        var start = offendingToken.start;
+        var stop = offendingToken.stop;
+        if ( start>=0 && stop>=0 ) {
+            for (var i=start; i<=stop; i++) errorMsg += "^";
+        }
+
+        // console.log(editor);
+        this.markError(editor, line-1, start, stop+1, "CodeMirror-invalidToken");
+
+        // editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"})
+
+        // tokenMarks.push(editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"}));
+
+        // console.log(tokenMarks);
+    }
+
+    markError(editor, line, start, end, style) {
+      var mark = editor.markText(Pos(line, start), Pos(line, end), {className: style});
+      tokenMarks.push(mark);
+      // console.log("marked!");
+    }
+
+    
+
+  }
   
   
   var parse = function () { 
     // Attempt to parse the text in the input text area.
     //var input = document.getElementById("input").value;
+
+    
+    if (tokenMarks.length) {
+      editor.operation(function() {
+          for (var i = 0; i < tokenMarks.length; i++) tokenMarks[i].clear();
+        });
+      tokenMakrs = [];
+    }
 
     //solution
     var solution = $("#solution").html().replace("&gt;", ">");
@@ -84,7 +147,11 @@
 
     var tokens = preprocessing(rawTokens); //type: CommonToken
 
-    // var parser = new VenbraceParser(tstream);
+    var parser = new VenbraceParser(tstream);
+
+    parser.buildParseTrees = true;
+    parser.removeErrorListeners();
+    parser.addErrorListener(new VenbraceErrorListener());
   
     var dom = undefined;
     // var xml = undefined;
@@ -94,21 +161,25 @@
     var parserErrors = [];
 
     if (lexer.getErrors().length === 0) {
-      try {
-        // dom = parser.test_program();
+      // try {
+        dom = parser.test_program();
         // xml = dom.elt;
-        // tokens = dom.tokens;
-        console.log(tokens);
+        var parseTokens = dom.tokens;
+        // console.log(tokens);
         var tokenCount = countTokens(tokens);
-        console.log(tokenCount);
+        // console.log(tokenCount);
         var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
-        console.log(tokenCheckResult);
-      }
-      catch (e) {
-        // parserErrors = parser.getErrors();
-        // console.log(parserErrors);
-        throw(e);
-      }
+        // console.log(tokenCheckResult);
+        // console.log(tokenMarks);
+      // }
+      // catch (e) {
+      //   // parserErrors = parser.getErrors();
+      //   // console.log(parserErrors);
+      //   console.log("before error");
+      //   throw(e);
+      //   console.log("im here");
+      //  // console.log(parseErrors);
+      // }
       
       
       /** OLD CODE FOR TESTING XML **/
@@ -157,7 +228,7 @@
 
       /* END OF OLD CODE */
       
-      console.log("Number of parser errors is " + parserErrors.length);
+      // console.log("Number of parser errors is " + parserErrors.length);
 
       // trace tokens from the parse tree
       // dom.accept(new Visitor());
@@ -171,7 +242,7 @@
           document.getElementById("output").innerHTML = "Parsing failed.";
         } else {
           // document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
-          document.getElementById("output").innerHTML = escapeHTML(printTokens(tokens));
+          document.getElementById("output").innerHTML = escapeHTML(printTokens(parseTokens));
         }
       } else {
         console.log("Parser errors:");

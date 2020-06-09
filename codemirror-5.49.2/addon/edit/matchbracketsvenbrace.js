@@ -240,10 +240,10 @@
 
     if (marks.length) {
       document.getElementById("isBalanced").innerHTML = "not balanced";
-      console.log($("#isBalanced").html());
+      // console.log($("#isBalanced").html());
     } else {
       document.getElementById("isBalanced").innerHTML = "balanced";
-      console.log($("#isBalanced").html());
+      // console.log($("#isBalanced").html());
     }
 
     return marks;

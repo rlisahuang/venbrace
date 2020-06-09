@@ -72,6 +72,7 @@ options
 @rulecatch{
 	catch (re){
 		throw re;
+    //alert(re);
 	}
 }
 
