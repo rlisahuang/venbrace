@@ -165,7 +165,7 @@
         dom = parser.test_program();
         // xml = dom.elt;
         var parseTokens = dom.tokens;
-        // console.log(tokens);
+        // console.log(parseTokens); // will be empty if parse fails
         var tokenCount = countTokens(tokens);
         console.log("tokens from input:");
         console.log(tokenCount);

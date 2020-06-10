@@ -102,8 +102,9 @@ decl_block returns [var tokens]
   }
   );
 
-decl returns [var tokens]: 
-    global_decl {$tokens = $global_decl.tokens;}
+decl returns [var tokens] 
+@init {$tokens = [];}
+  : global_decl {$tokens = $global_decl.tokens;}
   | procedure_do {$tokens = $procedure_do.tokens;}
   | procedure_result {$tokens = $procedure_result.tokens;}
   | event_handler {$tokens = $event_handler.tokens;}
@@ -187,6 +188,7 @@ stat_block returns [var tokens]
   ;
 
 stat returns [var tokens]
+@init {$tokens = [];}
   : control_stat {$tokens = $control_stat.tokens;}
   | call_procedure_stat {$tokens = $call_procedure_stat.tokens;}
   | var_stat {$tokens = $var_stat.tokens;};
@@ -197,6 +199,7 @@ stat returns [var tokens]
 // list_stat: ADD_ITEMS_TO_LIST label? expr_block label? expr_block;
 
 control_stat returns [var tokens]
+@init {$tokens = [];}
   : if_stat {$tokens = $if_stat.tokens;}
   | for_each_from_to {$tokens = $for_each_from_to.tokens;}
   | while_stat {$tokens = $while_stat.tokens;};
@@ -300,7 +303,9 @@ call_procedure_stat returns [var tokens]
 )? arg=expr_block {$tokens.push(...$arg.tokens);})*;
 
 /* Feb 28 2020: remove local_init_stat from the first user study */
-var_stat returns [var tokens]: setter {$tokens = $setter.tokens;};
+var_stat returns [var tokens]
+@init {$tokens = [];}
+  : setter {$tokens = $setter.tokens;};
 
 // 05/04/2020: although GLOBAL setter is implemented, it is not used in the translation tasks of study 1
 setter returns [var tokens]
@@ -323,11 +328,14 @@ expr_block returns [var tokens]
    $tokens.push($LPAREN);
    $tokens.push($RPAREN); 
   }) //empty expr
-  | atom {$tokens.push(...$atom.tokens);}
-  | expr {$tokens.push(...$expr.tokens);};
+  | atom {$tokens.push(...($atom.tokens));}
+  | expr {$tokens.push(...($expr.tokens));};
 
 // EXPR BLOCKS
 expr returns [var tokens]
+@init {
+  $tokens = [];
+}
   : getter {$tokens = $getter.tokens;}
   | control_expr {$tokens = $control_expr.tokens;}
   | logic_expr {$tokens = $logic_expr.tokens;}
@@ -341,6 +349,7 @@ expr returns [var tokens]
   ;
 
 control_expr returns [var tokens]
+@init {$tokens = [];}
   : if_expr {$tokens = $if_expr.tokens;}
   | do_expr {$tokens = $do_expr.tokens;};
 
@@ -446,6 +455,7 @@ b=expr_block RPAREN
 
 // only contains blocks that have no long sequences of helper words
 math_expr returns [var tokens]
+@init {$tokens = [];}
   : mutable_op {$tokens = $mutable_op.tokens;}
   | immutable_op {$tokens = $immutable_op.tokens;}
   | min_max {$tokens = $min_max.tokens;}
@@ -630,6 +640,7 @@ y_expr=expr_block {$tokens.push(...$y_expr.tokens);}
 };
 
 str_expr returns [var tokens]
+@init {$tokens = [];}
   : str_join {$tokens = $str_join.tokens;}
   | str_length  {$tokens = $str_length.tokens;}
   | str_reverse  {$tokens = $str_reverse.tokens;}

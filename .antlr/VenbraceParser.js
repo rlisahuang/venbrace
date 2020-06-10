@@ -1075,6 +1075,7 @@ VenbraceParser.prototype.decl = function() {
 
     var localctx = new DeclContext(this, this._ctx, this.state);
     this.enterRule(localctx, 6, VenbraceParser.RULE_decl);
+    localctx.tokens =  []
     try {
         this.state = 132;
         this._errHandler.sync(this);
@@ -1751,6 +1752,7 @@ VenbraceParser.prototype.stat = function() {
 
     var localctx = new StatContext(this, this._ctx, this.state);
     this.enterRule(localctx, 20, VenbraceParser.RULE_stat);
+    localctx.tokens =  []
     try {
         this.state = 222;
         this._errHandler.sync(this);
@@ -1834,6 +1836,7 @@ VenbraceParser.prototype.control_stat = function() {
 
     var localctx = new Control_statContext(this, this._ctx, this.state);
     this.enterRule(localctx, 22, VenbraceParser.RULE_control_stat);
+    localctx.tokens =  []
     try {
         this.state = 233;
         this._errHandler.sync(this);
@@ -2493,6 +2496,7 @@ VenbraceParser.prototype.var_stat = function() {
 
     var localctx = new Var_statContext(this, this._ctx, this.state);
     this.enterRule(localctx, 32, VenbraceParser.RULE_var_stat);
+    localctx.tokens =  []
     try {
         this.enterOuterAlt(localctx, 1);
         this.state = 327;
@@ -2702,14 +2706,14 @@ VenbraceParser.prototype.expr_block = function() {
             this.enterOuterAlt(localctx, 2);
             this.state = 352;
             localctx._atom = this.atom();
-            localctx.tokens.push(...localctx._atom.tokens);
+            localctx.tokens.push(...(localctx._atom.tokens));
             break;
 
         case 3:
             this.enterOuterAlt(localctx, 3);
             this.state = 355;
             localctx._expr = this.expr();
-            localctx.tokens.push(...localctx._expr.tokens);
+            localctx.tokens.push(...(localctx._expr.tokens));
             break;
 
         }
@@ -2803,6 +2807,9 @@ VenbraceParser.prototype.expr = function() {
 
     var localctx = new ExprContext(this, this._ctx, this.state);
     this.enterRule(localctx, 38, VenbraceParser.RULE_expr);
+
+      localctx.tokens =  []
+
     try {
         this.state = 390;
         this._errHandler.sync(this);
@@ -2929,6 +2936,7 @@ VenbraceParser.prototype.control_expr = function() {
 
     var localctx = new Control_exprContext(this, this._ctx, this.state);
     this.enterRule(localctx, 40, VenbraceParser.RULE_control_expr);
+    localctx.tokens =  []
     try {
         this.state = 398;
         this._errHandler.sync(this);
@@ -3688,6 +3696,7 @@ VenbraceParser.prototype.math_expr = function() {
 
     var localctx = new Math_exprContext(this, this._ctx, this.state);
     this.enterRule(localctx, 54, VenbraceParser.RULE_math_expr);
+    localctx.tokens =  []
     try {
         this.state = 498;
         this._errHandler.sync(this);
@@ -4965,6 +4974,7 @@ VenbraceParser.prototype.str_expr = function() {
 
     var localctx = new Str_exprContext(this, this._ctx, this.state);
     this.enterRule(localctx, 74, VenbraceParser.RULE_str_expr);
+    localctx.tokens =  []
     try {
         this.state = 669;
         this._errHandler.sync(this);
