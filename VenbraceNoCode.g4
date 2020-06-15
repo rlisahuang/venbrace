@@ -91,9 +91,14 @@ program: (decl_block)* EOF
 
 // rule for testing single blocks
 test_program: 
-    decl_block
-  | stat_block
+    decl_block 
+  | stat_block 
   | expr_block 
+  ;
+
+// rule for testing multiple blocks
+test_blocks: 
+  (  decl_block | stat_block | expr_block )+ 
   ;
 
 decl_block: LSQR decl RSQR
@@ -110,11 +115,11 @@ global_decl: INITIALIZE GLOBAL ID TO expr_block
   ;
 
 procedure_do: 
-  TO proc_name=ID (arg_name=ID)* DO suite
+  TO proc_name=ID (arg_name=ID)* DO? suite
   ;
 
 procedure_result:
-  TO proc_name=ID (arg_name=ID)* RESULT expr_block
+  TO proc_name=ID (arg_name=ID)* RESULT? expr_block
   ;
 
 event_handler:

@@ -49,7 +49,7 @@ function getAndDisplayTokens() {
       if (!inBrowser) {
         console.log("\nRunning parser to Build parse tree.");
       }
-      var tree = parser.test_program();    
+      var tree = parser.test_blocks();    
       var parserTokensVisitor = new ParserTokensVisitor();
       // Collect and return list of terminal tokens via visitor. 
       var tokens = parserTokensVisitor.visit(tree); 

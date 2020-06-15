@@ -29,6 +29,15 @@ VenbraceNoCodeListener.prototype.exitTest_program = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceNoCodeParser#test_blocks.
+VenbraceNoCodeListener.prototype.enterTest_blocks = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceNoCodeParser#test_blocks.
+VenbraceNoCodeListener.prototype.exitTest_blocks = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceNoCodeParser#decl_block.
 VenbraceNoCodeListener.prototype.enterDecl_block = function(ctx) {
 };

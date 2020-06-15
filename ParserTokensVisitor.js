@@ -17,8 +17,8 @@ ParserTokensVisitor.prototype = Object.create(VenbraceNoCodeVisitor.prototype);
 ParserTokensVisitor.prototype.constructor = ParserTokensVisitor;
 // -----------------------------------------
 
-// Visit a parse tree produced by LabeledExprParser#prog.
-ParserTokensVisitor.prototype.visitTest_program = function(ctx) {
+// Visit a parse tree produced by #test_blocks.
+ParserTokensVisitor.prototype.visitTest_blocks = function(ctx) {
   this.tokens = [] // Initialize token list that will be mutated 
                    // by each call to visitTerminal in tree walk by visitor. 
                    // After the walk, grab the tokens field from the listener. 

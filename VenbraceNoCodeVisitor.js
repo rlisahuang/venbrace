@@ -24,6 +24,12 @@ VenbraceNoCodeVisitor.prototype.visitTest_program = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceNoCodeParser#test_blocks.
+VenbraceNoCodeVisitor.prototype.visitTest_blocks = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceNoCodeParser#decl_block.
 VenbraceNoCodeVisitor.prototype.visitDecl_block = function(ctx) {
   return this.visitChildren(ctx);
