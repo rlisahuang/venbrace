@@ -281,12 +281,21 @@ VenbraceNoCodeListener.prototype.exitMutable_op = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceNoCodeParser#immutable_op.
-VenbraceNoCodeListener.prototype.enterImmutable_op = function(ctx) {
+// Enter a parse tree produced by VenbraceNoCodeParser#immutable_regular_case.
+VenbraceNoCodeListener.prototype.enterImmutable_regular_case = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceNoCodeParser#immutable_op.
-VenbraceNoCodeListener.prototype.exitImmutable_op = function(ctx) {
+// Exit a parse tree produced by VenbraceNoCodeParser#immutable_regular_case.
+VenbraceNoCodeListener.prototype.exitImmutable_regular_case = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceNoCodeParser#immutable_neg_num_special_case.
+VenbraceNoCodeListener.prototype.enterImmutable_neg_num_special_case = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceNoCodeParser#immutable_neg_num_special_case.
+VenbraceNoCodeListener.prototype.exitImmutable_neg_num_special_case = function(ctx) {
 };
 
 

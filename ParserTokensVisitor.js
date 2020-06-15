@@ -1,7 +1,7 @@
 /**
  * File: ParserTokensVisitor.js 
  * Author: Lyn Turbak
- * Date: 2020/06/12-14
+ * Date: 2020/06/12-15
  * 
  * Generate an array of tokens from a VenbraceNoCode parse tree. 
  */
@@ -26,6 +26,26 @@ ParserTokensVisitor.prototype.visitTest_program = function(ctx) {
   return this.tokens; // Return the mutated tokens list at the end of the walk. 
 }
 
+// Special case for converting expr_block NEG_NUM to binary subtraction in cases like (a-17)
+ParserTokensVisitor.prototype.visitImmutable_neg_num_special_case = function (ctx) {
+  var negNumToken = ctx.NEG_NUM().getSymbol();
+  var newMinusToken = negNumToken.clone(); 
+  newMinusToken.type = 63; // hard-coded MINUS token type
+  newMinusToken.stop = newMinusToken.start; // MINUS token is one character long
+  newMinusToken.text = '-';
+
+  negNumToken.text = negNumToken.text.substring(1); // remove - sign
+  negNumToken.type = 121; // NUMBER = 121, NEG_NUM = 122
+  negNumToken.start = negNumToken.start + 1; // exclude - sign
+  negNumToken.column = negNumToken.column + 1; // exclude - sign
+  
+  this.tokens.push(ctx.LPAREN().getSymbol()); 
+  this.visit(ctx.expr_block()); // recursively process left operand expression
+  this.tokens.push(newMinusToken);
+  this.tokens.push(negNumToken);
+  this.tokens.push(ctx.RPAREN().getSymbol()); 
+}
+
 ParserTokensVisitor.prototype.visitTerminal = function(ctx) {
   var terminalToken = ctx.getSymbol(); // Returns the token at the terminal 
   if (isOptional(ctx, terminalToken)) {
@@ -38,18 +58,11 @@ function isOptional (ctx, token) {
   var parentNameWithContext = ctx.getParent().constructor.name;
   // Turn names like 'Decl_blockContext' into 'decl_block'
   var parentNameWithoutContext = parentNameWithContext.split('Context')[0].toLowerCase(); 
-  console.log('isOptional: parent=' + parentNameWithoutContext);
-  console.log('isOptional token=' + token.text);
-  // console.log('isOptional token:');
-  // console.log(token);
   optionalTexts = optionalTokens[parentNameWithoutContext]; 
   if (optionalTexts === undefined) {
     // not in dictionary
-    console.log('isOptional context undefined; returns false');
     return false;
   } else {
-    console.log('isOptional optionalTexts =' + optionalTexts);
-    console.log('isOptional returns ' + optionalTexts.includes(token.text));
     return optionalTexts.includes(token.text);
   }
 }

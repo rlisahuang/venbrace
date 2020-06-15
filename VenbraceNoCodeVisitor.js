@@ -192,8 +192,14 @@ VenbraceNoCodeVisitor.prototype.visitMutable_op = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceNoCodeParser#immutable_op.
-VenbraceNoCodeVisitor.prototype.visitImmutable_op = function(ctx) {
+// Visit a parse tree produced by VenbraceNoCodeParser#immutable_regular_case.
+VenbraceNoCodeVisitor.prototype.visitImmutable_regular_case = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceNoCodeParser#immutable_neg_num_special_case.
+VenbraceNoCodeVisitor.prototype.visitImmutable_neg_num_special_case = function(ctx) {
   return this.visitChildren(ctx);
 };
 

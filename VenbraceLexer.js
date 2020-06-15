@@ -1,6 +1,6 @@
-// Generated from Venbrace.g4 by ANTLR 4.7.2
+// Generated from Venbrace.g4 by ANTLR 4.8
 // jshint ignore: start
-var antlr4 = require('./antlr4/index');
+var antlr4 = require('antlr4/index');
 
 
 
@@ -756,6 +756,22 @@ var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new a
 function VenbraceLexer(input) {
 	antlr4.Lexer.call(this, input);
     this._interp = new antlr4.atn.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
+
+		var errors = [];
+
+	  VenbraceLexer.prototype.emitErrorMessage = function(error) {
+	  	    //var hdr = getErrorHeader(e);
+	        //var msg = getErrorMessage(e, tokenNames);
+	        errors.push(error);
+	    }
+	  VenbraceLexer.prototype.getErrors = function() {
+	        return errors;
+	    }
+
+	  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
+	    factory = newFactory;
+	  }
+
     return this;
 }
 
@@ -1018,23 +1034,6 @@ VenbraceLexer.prototype.ruleNames = [ "T__0", "T__1", "WS", "LCURLY", "RCURLY",
                                       "STRING" ];
 
 VenbraceLexer.prototype.grammarFileName = "Venbrace.g4";
-
-
-	var errors = [];
-
-  VenbraceLexer.prototype.emitErrorMessage = function(error) {
-  	    //var hdr = getErrorHeader(e);
-        //var msg = getErrorMessage(e, tokenNames);
-        errors.push(error);
-    }
-  VenbraceLexer.prototype.getErrors = function() {
-        return errors;
-    }
-
-  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
-    factory = newFactory;
-  }
-
 
 
 exports.VenbraceLexer = VenbraceLexer;

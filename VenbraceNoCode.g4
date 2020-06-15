@@ -3,7 +3,8 @@ Venbrace grammar (simplified version)
 
 Author: Ruanqianqian Huang
 Modified: Jun 7, 2020
-Modified (by lyn): Jun 12, 2020 Removed all JavaScript code and JavaScript option (so can use in Java, too, for debugging)
+Modified (by lyn): Jun 12-15, 2020 Removed all JavaScript code and JavaScript option 
+                   (so can use in Java, too, for debugging)
 
 FEATURES:
 - Text representations for *some* App Inventor blocks
@@ -172,7 +173,7 @@ var_stat:
 
 // [2020/06/15] Added by Lyn for testing (not used in Round 2)
 local_var_decl_stat:
-   (INITIALIZE LOCAL? ID TO? expr_block)* IN? stat_block
+   (INITIALIZE LOCAL? ID TO? expr_block)* IN? suite
    ;
 
 // 05/04/2020: although GLOBAL setter is implemented, it is not used in the translation tasks of study 1
@@ -244,8 +245,8 @@ mutable_op:
   ;
 
 immutable_op:
-    LPAREN a=expr_block (MINUS | DIV | POW) b=expr_block RPAREN
-  | LPAREN a=expr_block NEG_NUM RPAREN
+    LPAREN a=expr_block (MINUS | DIV | POW) b=expr_block RPAREN #immutable_regular_case
+  | LPAREN expr_block NEG_NUM RPAREN #immutable_neg_num_special_case 
   ; 
 
 min_max:

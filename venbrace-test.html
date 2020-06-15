@@ -3,6 +3,23 @@
 <head>
 <meta charset="UTF-8">
 
+<style>
+  #solutionTokensDiffs {
+    margin: 10px;
+    background-color: lightpink;
+  }
+
+  #solutionLexerTokens {
+    margin: 10px;
+    background-color: lightgoldenrodyellow;
+  }
+
+  #solutionParserTokens {
+    margin: 10px;
+    background-color: palegreen;
+  }
+</style>
+
 <script src='lib/require.js'></script>
 
 <!-- /* code for CodeMirror editor */ -->
@@ -21,18 +38,30 @@
 </head>
 
 <body>
+  <b>User Input:</b>
   <textarea id="input" name="input" rows="10" cols="100"
   placeholder="// Enter your input text to parse here..."></textarea>
-  <br>
   <button id="submit" onClick="parse();">Parse Above Text!</button>
+  <br><br><b>Solution:</b><br>
+  <!-- ((not (Button1.enabled)) or ((length ("cat")) >= (get num))) -->
+  <textarea id="solution" name="solution" rows="5" cols="70">
+  (a-17)
+  </textarea>
+  <br><br><b>Solution tokens from lexer before parsing:</b><br>
+  <textarea id="solutionLexerTokens" name="solutionLexerTokens" rows="5" cols="30">
+  </textarea>
+  <br><br><b>Solution tokens from lexer after parsing:</b><br>
+  <textarea id="solutionParserTokens" name="solutionParserTokens" rows="5" cols="30">
+  </textarea>
+  <br><b>Balance Note:</b><br>
   <p id="isBalanced">nothing</p>
+  <b>Output:</b>
   <pre id="output">Output will go here....</pre>
+  <b>Raw Input:</b>
   <pre id="raw">Raw input will go here....</pre>
-  <p id="solution" style="display:none">((not (Button1.enabled)) or ((length ("cat")) >= (get num)))</p>
-</body>
+ </body>
 
 <script type="text/javascript">
-  // Begin local JavaScript code for this page
 
   var antlr4 = require('./antlr4/index.js');
   var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
@@ -116,20 +145,26 @@
       editor.operation(function() {
           for (var i = 0; i < tokenMarks.length; i++) tokenMarks[i].clear();
         });
-      tokenMakrs = [];
+      tokenMarks = [];
     }
 
     //solution
-    var solution = $("#solution").html().replace("&gt;", ">");
-    // console.log(`solution: ${solution}`);
+    // var solution = $("#solution").html().replace("&gt;", ">");
+    var solution = $("#solution").val().replace("&gt;", ">");
 
     var sol_lexer = new VenbraceLexer(new antlr4.InputStream(solution));
 
     var sol_stream = new antlr4.CommonTokenStream(sol_lexer); 
     sol_stream.fill(); //test code
-
+    var sol_lexer_tokens = sol_stream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;});
+    $("#solutionLexerTokens").val(tokensToString(sol_lexer_tokens));
     var sol_parser = new VenbraceParser(sol_stream);
     var sol_tokens = sol_parser.test_program().tokens;
+    var sol_parser_tokens = sol_tokens;
+    $("#solutionParserTokens").val(tokensToString(sol_parser_tokens));
+    // console.log('Solution tokens from parser:');
+    // sol_tokens.forEach( function (tok) { console.log(tok); });
+
     var sol_tokens_count = getSolutionTokens(sol_tokens);
     console.log("solution tokens:");
     console.log(sol_tokens_count);
@@ -426,6 +461,13 @@
     div.appendChild(text);
     return div.innerHTML;
   }
+
+  function tokensToString(tokens) {
+    tokensString = '';
+    tokens.forEach( tok => (tokensString += tok.toString() + "\n") );
+    return tokensString;
+  }
+
   // End local JavaScript for this page
   </script>
 
