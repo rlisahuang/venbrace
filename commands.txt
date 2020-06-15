@@ -1,0 +1,8 @@
+[Java version]
+antlr4 VenbraceNoCode.g4
+javac *.java
+grun VenbraceNoCode test_program -tree
+
+[JavaScript version]
+antlr4 -Dlanguage=JavaScript -visitor VenbraceNoCode.g4
+
