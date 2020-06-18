@@ -1,5 +1,0 @@
-[to avg a b result ((a + b) / 2)]
-
-[to count n do
-   {set CountLabel.Text (n + CountLabel.Text)}
-]

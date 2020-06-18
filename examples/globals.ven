@@ -1,0 +1,13 @@
+[initialize global a to 1]
+
+initialize global b to 2 // Forgiving parser adds missing brackets
+
+{init global c to 3} // Forgiving parser changes curlies to squares
+
+[init global d to 4} // ANTLR parser error correction highlights mismatched `}`
+
+{[init global e 5} // ANTLR parser error correction deletes spurious `[`
+
+[init e 5] // ANTLR parser error correction inserts missing global
+
+

@@ -1,0 +1,17 @@
+// Testing comments in Venbrace 
+
+(a +  // Line comment in expression 
+   b)
+
+(c * /* Multiline 
+        block comment 
+        in expression
+      */
+   d)
+
+(e /  /* Outer multiline 
+           /* Nested multiline 
+              block comment 
+              */
+         block comment */
+   f)

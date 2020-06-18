@@ -1,0 +1,63 @@
+<!Doctype HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<style>
+  #lexerTokens {
+    margin: 10px;
+    background-color: lightgoldenrodyellow;
+  }
+
+  #unfixedParserTokens {
+    margin: 10px;
+    background-color: lightpink;
+  }
+
+  #fixedParserTokens {
+    margin: 10px;
+    background-color: palegreen;
+  }
+
+  #stringForFixedParserTokens {
+    margin: 10px;
+    background-color: bisque;
+  }
+</style>
+
+</head>
+
+<body>
+  <b>Input:</b><br>
+  <textarea id="input" name="input" rows="8" cols="60">
+when Button1.Click do
+  initialize local num to 0 in 
+    (for each num from 1 to (10) by 1 do // wrong open brace
+      set sum to (sum + num)
+    ) // wrong close brace
+    set Label1.Text to (sum-17) // note NEGNUM use 
+  </textarea>
+<!-- ( (not Button1.enabled) or ( (length "cat") >= num ) ) -->
+  <br><button id="submit" onClick="getAndDisplayTokens();">Display tokens for above Venbrace program</button>
+  </textarea>
+  <br><br><b>Input tokens from lexer before parsing:</b><br>
+  <textarea id="lexerTokens" name="LexerTokens" rows="17" cols="65">
+  </textarea>
+  <br><b>Tokens from parser before fixing:</b><br>
+  <textarea id="unfixedParserTokens" name="UnfixedParserTokens" rows="17" cols="65">
+  </textarea>
+  <br><b>Tokens from parser before after fixing:</b><br>
+  <textarea id="fixedParserTokens" name="FixedParserTokens" rows="17" cols="65">
+  </textarea>
+  <br><b>String for fixed parser tokens:</b><br>
+  <textarea id="stringForFixedParserTokens" name="StringForFixedParserTokens" rows="8" cols="60">
+  </textarea>
+ </body>
+
+<script src='lib/require.js'></script>
+<script type="text/javascript">
+  inBrowser = true; // Flag that tells following JavaScript to run browser-specific code. 
+</script>
+<script src='ForgivingTokens.js'></script>
+
+</html>

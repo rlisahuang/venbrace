@@ -1,8 +1,17 @@
 [Java version]
-antlr4 VenbraceNoCode.g4
+// Note: to use java, in VenbraceForgiving.js need to comment out `language = 'JavaScript';` option 
+// and comment out JavaScript error handling code at top of the .g4 file. 
+antlr4 VenbraceForgiving.g4
 javac *.java
-grun VenbraceNoCode test_program -tree
+grun VenbraceForgiving test_program -tree
+grun VenbraceForgiving test_blocks -tree
+grun VenbraceForgiving program -tree
 
 [JavaScript version]
-antlr4 -Dlanguage=JavaScript -visitor VenbraceNoCode.g4
+antlr4 -Dlanguage=JavaScript -visitor VenbraceForgiving.g4
+node ForgivingTokens.js examples/buttonLoop.ven
+
+[HTML]
+http://localhost:8000/ForgivingTokens.html
+
 

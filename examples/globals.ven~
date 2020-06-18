@@ -1,0 +1,13 @@
+[initialize global a to 1]
+
+initialize global b to 2
+
+{init global c to 3}
+
+[init global d to 4}
+
+{[init global e 5}
+
+[init e 5] // missing global is inserted by forgiving parser. 
+
+
