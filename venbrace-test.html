@@ -311,7 +311,7 @@
       } else if (s == null && i != null) { // extra token
         return false;
       } else if (s != null && i == null) { // missing or optional
-        if (!s["optional?"]) {
+        if (!s.optional) {
           return false;
         }
       }
@@ -447,11 +447,11 @@
     var result = new Array(2);
     result[0] = solutionTokensAligned.map((t) => {
       if (t != null)
-        return {"text":t.text, "type": t.type, "optional?": (t.optional) ? true : false};
+        return {"text":t.text, "type": t.type, "optional": (t.optional) ? true : false};
       return null;});
     result[1] = valueTokensAligned.map((t) => {
       if (t != null)
-        return {"text":t.text, "type": t.type, "optional?": (t.optional) ? true : false};
+        return {"text":t.text, "type": t.type, "optional": (t.optional) ? true : false};
       return null;});
     return result;
   }
