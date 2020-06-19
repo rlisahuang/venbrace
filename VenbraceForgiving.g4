@@ -465,7 +465,7 @@ unary_op:
    | ROUND
    | CEILING
    | FLOOR)
-   expr_block RPAREN
+   expr_block 
    RPAREN
    ;
 
