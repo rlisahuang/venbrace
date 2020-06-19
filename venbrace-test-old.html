@@ -25,14 +25,10 @@
   placeholder="// Enter your input text to parse here..."></textarea>
   <br>
   <button id="submit" onClick="parse();">Parse Above Text!</button>
-  <pre id="isBalanced">Paren balance indicator here...</pre>
-  <pre id="error">Error will go here....</pre>
-  <!-- <pre id="raw">Raw input will go here....</pre> -->
+  <p id="isBalanced">nothing</p>
   <pre id="output">Output will go here....</pre>
-  <p id="solution" style="display:none">
-    (max ((6)*(4)) (57) (()/(3)))
-  </p>
-  <!-- <p id="solution" style="display:none">((3) + (4))</p> -->
+  <pre id="raw">Raw input will go here....</pre>
+  <p id="solution" style="display:none">((not (Button1.enabled)) or ((length ("cat")) >= (get num)))</p>
 </body>
 
 <script type="text/javascript">
@@ -58,8 +54,6 @@
 
   var Pos = CodeMirror.Pos;
   var tokenMarks = [];
-  var solutionTokens = undefined;
-  var valueTokens = undefined;
 
 
   class VenbraceErrorListener extends antlr4.error.ErrorListener {
@@ -89,14 +83,26 @@
         if ( start>=0 && stop>=0 ) {
             for (var i=start; i<=stop; i++) errorMsg += "^";
         }
+
+        // console.log(editor);
         this.markError(editor, line-1, start, stop+1, "CodeMirror-invalidToken");
 
+        // editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"})
+
+        // tokenMarks.push(editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"}));
+
+        // console.log(tokenMarks);
     }
 
     markError(editor, line, start, end, style) {
       var mark = editor.markText(Pos(line, start), Pos(line, end), {className: style});
       tokenMarks.push(mark);
+      // console.log("marked!");
     }
+
+    
 
   }
   
@@ -123,8 +129,8 @@
     sol_stream.fill(); //test code
 
     var sol_parser = new VenbraceParser(sol_stream);
-    solutionTokens = sol_parser.test_program().tokens;
-    var sol_tokens_count = getSolutionTokens(solutionTokens);
+    var sol_tokens = sol_parser.test_program().tokens;
+    var sol_tokens_count = getSolutionTokens(sol_tokens);
     console.log("solution tokens:");
     console.log(sol_tokens_count);
 
@@ -148,43 +154,104 @@
     parser.addErrorListener(new VenbraceErrorListener());
   
     var dom = undefined;
+    // var xml = undefined;
+    // var tokens = undefined;
+    // var valueTokens = undefined;
     var visit = undefined;
+    var parserErrors = [];
 
     if (lexer.getErrors().length === 0) {
-      console.log("tokens from input:");
-      console.log(lexTokens);
-      var tokenCount = countTokens(lexTokens);
-      var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
-      console.log("compare input tokens with solution tokens:");
-      console.log(tokenCheckResult);
+      // try {
+        // console.log(parseTokens); // will be empty if parse fails
+        var tokenCount = countTokens(lexTokens);
+        console.log("tokens from input:");
 
-      if (isEmpty(tokenCheckResult.missing) && isEmpty(tokenCheckResult.unexpected)) {
         dom = parser.test_program();
-        console.log(dom);
-        valueTokens = dom.tokens;
-        console.log(valueTokens);
+        // xml = dom.elt;
+        var parseTokens = dom.tokens;
+        console.log(tokenCount);
+        var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
+        console.log("compare input tokens with solution tokens:");
+        console.log(tokenCheckResult);
+      // }
+      // catch (e) {
+      //   // parserErrors = parser.getErrors();
+      //   // console.log(parserErrors);
+      //   console.log("before error");
+      //   throw(e);
+      //   console.log("im here");
+      //  // console.log(parseErrors);
+      // }
+      
+      
+      /** OLD CODE FOR TESTING XML **/
+      // parserErrors = parser.getErrors();
+      // try {  
+      //   console.log("Try to parse as expr.");
+      //   // Try to parse as expression first 
+      //   dom = parser.expr_block(); 
+      //   console.log("Parsing as expr succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+        
+      // } catch (expErr) {
+      //   //TODO: write my own ErrorReportStrategy
+      //   console.log("Parsing as expr failed!");
+      //   // console.log(expErr);
+      // }
+      // try {
+      //   console.log("Try to parse as statement.");
+      //   dom = parser.stat_block(); 
+      //   console.log("Parsing as statement succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+      // } catch (statError) {
+      //   console.log("Parsing as statement failed!");
+      //   console.log(statError);
+      // }
+      // try {
+      //   console.log("Try to parse as decl.");
+      //   dom = parser.decl_block(); 
+      //   console.log("Parsing as decl succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+      // } catch (declError) {
+      //     console.log("Parsing as decl failed!");
+      //     console.log(declError);
+      // }
+        
+       
+      // console.log("Parsing succeeded!");
 
+      // xml = dom.elt;
+
+      /* END OF OLD CODE */
+      
+      // console.log("Number of parser errors is " + parserErrors.length);
+
+      // trace tokens from the parse tree
+      // dom.accept(new Visitor());
+      
+
+
+
+      if (parserErrors.length === 0) {
         if (dom === undefined) {
           console.log("Unable to parse due to parsing errors.");
           document.getElementById("output").innerHTML = "Parsing failed.";
         } else {
           // document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
-          document.getElementById("output").innerHTML = escapeHTML(printTokens(valueTokens));
-          var tam_table = CalcTable();
-          // console.log(tam_table);
-          var alignment = Backtrace(tam_table);
-          console.log(alignment);
-          if (solutionCheck(alignment)) {
-            console.log("correct!");
-          } else {
-            console.log("incorrect!");
-          }
+          document.getElementById("output").innerHTML = escapeHTML(printTokens(parseTokens));
         }
       } else {
-        document.getElementById("error").innerHTML = "Token check failed. Please revise your input.";
+        console.log("Parser errors:");
+        parserErrors.forEach(function(error){
+          console.log(error);
+        });
       }
-      
-     
     } else {
       console.log("Lexer errors:");
       lexer.getErrors().forEach(function(error){
@@ -194,29 +261,25 @@
     
   }
 
-  function isEmpty(dict) {
-    return Object.keys(dict).length == 0;
-  }
-
   function preprocessing(tokens) {
     var result = [];
     for (var i=0; i<tokens.length; i++) {
       var t = tokens[i].clone();
       ////console.log(t);
-      if (t.type == 120 && i > 0) { // t is NEG_NUM
+      if (t.type == 122 && i > 0) { // t is NEG_NUM
         var prev = tokens[i-1];
-        if (prev.type == 119
-          || prev.type == 120
+        if (prev.type == 121
           || prev.type == 122
-          || prev.type == 5) { // prev is NUM, NEG_NUM, ID, or RPAREN (end of an expr)
+          || prev.type == 124
+          || prev.type == 7) { // prev is NUM, NEG_NUM, ID, or RPAREN (end of an expr)
 
           var op = t.clone();
           op.text = "-";
-          op.type = 61;
+          op.type = 63;
           op.stop = op.start;
 
           t.text = t.text.substring(1);
-          t.type = 119;
+          t.type = 121;
           t.start = t.start + 1;
           t.column = t.column + 1;
           
@@ -296,165 +359,6 @@
     return result;
   }
 
-  function solutionCheck(alignment) {
-    // var pass = ;
-    var sol = alignment[0];
-    var input = alignment[1];
-    for (var c = 0; c < sol.length; c++) {
-      // sol.length == input.length
-      var s = sol[c];
-      var i = input[c];
-      if (s != null && i != null) {
-        if (s.text != i.text) {
-          return false;
-        }
-      } else if (s == null && i != null) { // extra token
-        return false;
-      } else if (s != null && i == null) { // missing or optional
-        if (!s["optional?"]) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
-
-  //TODO: you are here
-
-  function CalcTable() {
-    console.log(valueTokens);
-    console.log(solutionTokens);
-    var table = CreateTable();
-    var rows = table.length;
-    var cols = table[0].length;
-    for (var r = 1; r < rows; r++) {
-        for (var c = 1; c < cols; c++) {
-            CalcCell(table, r, c);
-        }
-    }
-    return table;
-  }
-
-  function CreateTable() {
-    var cols = solutionTokens.length + 1;
-    var rows = valueTokens.length + 1;
-    var table = new Array(rows);
-    for (var i = 0; i < table.length; i++) {
-        table[i] = new Array(cols);
-    }
-    for (var r = 0; r < rows; r++) {
-        for (var c = 0; c < cols; c++) {
-            var entry = new Cell(r, c);
-            if (r == 0 && c == 0) {
-                entry.value = 0;
-            }
-            else if (r == 0) {
-                entry.prev = table[0][c - 1];
-                entry.value = entry.prev.value - 2;
-            }
-            else if (c == 0) {
-                entry.prev = table[r - 1][0];
-                entry.value = entry.prev.value - 2;
-            }
-            table[r][c] = entry;
-        }
-    }
-    return table;
-  }
-
-  function CalcCell(table, row, col) {
-    var cell = table[row][col];
-    var cellAbove = table[cell.row - 1][cell.col];
-    var cellLeft = table[cell.row][cell.col - 1];
-    var cellDiag = table[cell.row - 1][cell.col - 1];
-    var scoreFromAbove = cellAbove.value - 2;
-    var scoreFromLeft = cellLeft.value - 2;
-    var scoreFromDiag = cellDiag.value;
-    // (1) token w/ same text content & optional tag
-    // (2) token w/ different text content but same type & optional tag
-    if (((solutionTokens[cell.col - 1].text == valueTokens[cell.row - 1].text) || 
-          (solutionTokens[cell.col - 1].type == valueTokens[cell.row - 1].type))
-        && ((solutionTokens[cell.col - 1].optional && valueTokens[cell.row - 1].optional)
-            || (!solutionTokens[cell.col-1].optional && !valueTokens[cell.row - 1].optional))) {
-        scoreFromDiag += 1;
-    }
-    else
-        scoreFromDiag -= 1;
-    if (scoreFromAbove >= scoreFromLeft) {
-        if (scoreFromDiag >= scoreFromAbove) {
-            cell.value = scoreFromDiag;
-            cell.prev = cellDiag;
-        }
-        else {
-            cell.value = scoreFromAbove;
-            cell.prev = cellAbove;
-        }
-    }
-    else {
-        if (scoreFromDiag >= scoreFromLeft) {
-            cell.value = scoreFromDiag;
-            cell.prev = cellDiag;
-        }
-        else {
-            cell.value = scoreFromLeft;
-            cell.prev = cellLeft;
-        }
-    }
-    return false;
-  }
-
-
-  class Cell {
-    constructor(row, col) {
-        this.row = row;
-        this.col = col;
-        this.value = 0;
-        this.prev = null; //Cell
-        return this;
-    }
-    toString() {
-      return this.value;
-    }
-  }
-
-
-  Cell.prototype.constructor = Cell;
-
-  function Backtrace(table) {
-    var solutionTokensAligned = [];
-    var valueTokensAligned = [];
-    var current = table[table.length-1][table[0].length-1];
-    while (current.prev != null) {
-      if ((current.row - current.prev.row) == 1) {
-        valueTokensAligned.unshift(valueTokens[current.row - 1]);
-      } else {
-        valueTokensAligned.unshift(null);
-      }
-      if ((current.col - current.prev.col) == 1) {
-        solutionTokensAligned.unshift(solutionTokens[current.col - 1]);
-      } else {
-        solutionTokensAligned.unshift(null);
-      }
-      current = current.prev;
-    }
-
-    // console.log("raw solution");
-    // console.log(solutionTokensAligned);
-    // console.log("raw response");
-    // console.log(valueTokensAligned);
-
-    var n = solutionTokensAligned.length;
-    var result = new Array(2);
-    result[0] = solutionTokensAligned.map((t) => {
-      if (t != null)
-        return {"text":t.text, "type": t.type, "optional?": (t.optional) ? true : false};
-      return null;});
-    result[1] = valueTokensAligned.map((t) => {
-      if (t != null)
-        return {"text":t.text, "type": t.type, "optional?": (t.optional) ? true : false};
-      return null;});
-    return result;
-  }
 
   var printTokens = function(ts) {
     if (!ts) return "";
