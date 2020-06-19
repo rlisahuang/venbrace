@@ -434,10 +434,10 @@ math_expr: mutable_op
   | min_max 
   | unary_op 
   | mod 
-  | remainder  
-  | quotient 
+  // | remainder  // Lyn sez: AI2 does *not* have a remainder op, only modulo of
+  // | quotient  // Lyn sez: AI2 does *not* have a quotient op, only /
   | trig 
-  | atan2
+  // | atan2  // Lyn sez: atan2 problematics because of x and y keywords. Punting for now. 
   ;
 
 mutable_op:
@@ -473,6 +473,7 @@ mod:
   LPAREN MODULO OF a=expr_block DIV b=expr_block RPAREN
   ;
 
+/* // Lyn sez: AI2 does *not* have remainder or quotient operations. 
 remainder:
   LPAREN REMAINDER OF a=expr_block DIV b=expr_block RPAREN
   ;
@@ -480,6 +481,7 @@ remainder:
 quotient:
   LPAREN QUOTIENT OF a=expr_block DIV b=expr_block RPAREN
   ;
+ */
 
 trig:
   LPAREN 
@@ -493,11 +495,14 @@ trig:
   RPAREN
   ;
 
+/* // Lyn sez: atan2 is problematic because of x and y keywords. 
+   // Punting it for now
 atan2:
   LPAREN ATAN2 // (y='y')? 
          y_expr=expr_block // (x='x')? 
          x_expr=expr_block RPAREN 
   ;
+ */
 
 str_expr: str_join 
   | str_length  

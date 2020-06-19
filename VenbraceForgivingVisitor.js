@@ -240,26 +240,8 @@ VenbraceForgivingVisitor.prototype.visitMod = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#remainder.
-VenbraceForgivingVisitor.prototype.visitRemainder = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#quotient.
-VenbraceForgivingVisitor.prototype.visitQuotient = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
 // Visit a parse tree produced by VenbraceForgivingParser#trig.
 VenbraceForgivingVisitor.prototype.visitTrig = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#atan2.
-VenbraceForgivingVisitor.prototype.visitAtan2 = function(ctx) {
   return this.visitChildren(ctx);
 };
 
