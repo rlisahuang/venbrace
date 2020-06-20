@@ -252,6 +252,7 @@
           document.getElementById("output").innerHTML = "Parsing failed.";
         } else {
           // document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
+          valueTokens = tokens;
           document.getElementById("output").innerHTML = escapeHTML(printTokens(valueTokens));
           var tam_table = CalcTable();
           // console.log(tam_table);
@@ -286,20 +287,20 @@
     for (var i=0; i<tokens.length; i++) {
       var t = tokens[i].clone();
       ////console.log(t);
-      if (t.type == 120 && i > 0) { // t is NEG_NUM
+      if (t.type == 121 && i > 0) { // t is NEG_NUM
         var prev = tokens[i-1];
-        if (prev.type == 119
-          || prev.type == 120
-          || prev.type == 122
+        if (prev.type == 120
+          || prev.type == 121
+          || prev.type == 123
           || prev.type == 5) { // prev is NUM, NEG_NUM, ID, or RPAREN (end of an expr)
 
           var op = t.clone();
           op.text = "-";
-          op.type = 61;
+          op.type = 62;
           op.stop = op.start;
 
           t.text = t.text.substring(1);
-          t.type = 119;
+          t.type = 120;
           t.start = t.start + 1;
           t.column = t.column + 1;
           
