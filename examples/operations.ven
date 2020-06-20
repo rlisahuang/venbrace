@@ -1,0 +1,35 @@
+((a - b)
+ + (c * d) 
+ + (e / f)
+ + (modulo of g / h))
+
+((a < b)
+ or 
+ ((c <= d)
+  or 
+  ((e != f)
+    and 
+    ((g = h)
+     and 
+     ((not (i >= j))
+      and (k > l))))))
+
+(min (sin a) 
+     (cos b) 
+     (tan c)
+     (asin d) 
+     (acos e) 
+     (atan f))
+
+(max (square root a)
+     (absolute b)
+     (neg c)
+     (log d)
+     (e^ 5)
+     (round 6)
+     (ceiling 7)
+     (floor 8))
+
+(split at spaces (join (length a) (reverse b)))
+
+

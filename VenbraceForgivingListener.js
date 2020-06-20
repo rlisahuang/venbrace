@@ -353,39 +353,12 @@ VenbraceForgivingListener.prototype.exitMod = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#remainder.
-VenbraceForgivingListener.prototype.enterRemainder = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#remainder.
-VenbraceForgivingListener.prototype.exitRemainder = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#quotient.
-VenbraceForgivingListener.prototype.enterQuotient = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#quotient.
-VenbraceForgivingListener.prototype.exitQuotient = function(ctx) {
-};
-
-
 // Enter a parse tree produced by VenbraceForgivingParser#trig.
 VenbraceForgivingListener.prototype.enterTrig = function(ctx) {
 };
 
 // Exit a parse tree produced by VenbraceForgivingParser#trig.
 VenbraceForgivingListener.prototype.exitTrig = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#atan2.
-VenbraceForgivingListener.prototype.enterAtan2 = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#atan2.
-VenbraceForgivingListener.prototype.exitAtan2 = function(ctx) {
 };
 
 
