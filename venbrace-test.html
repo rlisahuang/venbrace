@@ -3,7 +3,48 @@
 <head>
 <meta charset="UTF-8">
 
+<style>
+  #solution {
+    margin: 10px;
+    background-color: oldlace;
+  }
+
+  #solutionLexerTokens {
+    margin: 10px;
+    background-color: lightgoldenrodyellow;
+  }
+
+  #solutionParserTokens {
+    margin: 10px;
+    background-color: powderblue;
+  }
+
+  #inputLexerTokens {
+    margin: 10px;
+    background-color: lightpink;
+  }
+
+  #inputParserTokens {
+    margin: 10px;
+    background-color: palegreen;
+  }
+
+  #modifiedInput {
+    margin: 10px;
+    background-color: bisque;
+  }
+
+
+
+</style>
+
 <script src='lib/require.js'></script>
+
+<!-- Added by Lyn. Needed to load ForgivingTokensVisitor.js --> 
+<script type="text/javascript">
+  inBrowser = true; // Flag that tells following JavaScript to run browser-specific code. 
+</script>
+
 
 <!-- /* code for CodeMirror editor */ -->
 <link rel=stylesheet href="codemirror-5.49.2/doc/docs.css">
@@ -22,29 +63,57 @@
 
 <body>
   <textarea id="input" name="input" rows="10" cols="100"
-  placeholder="// Enter your input text to parse here..."></textarea>
+  placeholder="when Button1.Click do
+  initialize local num to 0 in 
+    (for each num from 1 to (10) by 1 do // wrong open brace
+      set sum to (sum + num)
+    ) // wrong close brace
+    set Label1.Text to (sum-17) // note NEGNUM use "></textarea>
   <br>
   <button id="submit" onClick="parse();">Parse Above Text!</button>
   <pre id="isBalanced">Paren balance indicator here...</pre>
   <pre id="error">Error will go here....</pre>
-  <!-- <pre id="raw">Raw input will go here....</pre> -->
   <pre id="output">Output will go here....</pre>
-  <p id="solution" style="display:none">
+  <br><br><b>Solution:</b><br>
+  <textarea id="solution" name="solution" rows="5" cols="70">
+[when Button1.Click do
+  {initialize local num to 0 in 
+    {for each num from 1 to (10) by 1 do 
+      {set sum to (sum + num)}
+    }
+    {set Label1.Text to (sum-17)}
+  }
+]
+  </textarea>
+  <br><b>Solution tokens from lexer before parsing:</b><br>
+  <textarea id="solutionLexerTokens" name="solutionLexerTokens" rows="10" cols="65">
+  </textarea>
+  <br><b>Solution tokens from lexer after parsing:</b><br>
+  <textarea id="solutionParserTokens" name="solutionParserTokens" rows="10" cols="65">
+  </textarea>
+  <br><b>Input raw tokens from lexer before parsing:</b><br>
+  <textarea id="inputLexerTokens" name="inputLexerTokens" rows="10" cols="65">
+  </textarea>
+  <br><b>Input tokens from lexer after parsing:</b><br>
+  <textarea id="inputParserTokens" name="inputParserParserTokens" rows="10" cols="65">
+  </textarea>
+  <br><b>Modifed input consistent with tokens after parsing parsing:</b><br>
+  <textarea id="modifiedInput" name="modifiedInput" rows="8" cols="60">
+  </textarea>
+  <!-- <p id="solution" style="display:none">
     (max ((6)*(4)) (57) (()/(3)))
-  </p>
+  </p> -->
   <!-- <p id="solution" style="display:none">((3) + (4))</p> -->
 </body>
 
 <script type="text/javascript">
-  // Begin local JavaScript code for this page
 
   var antlr4 = require('./antlr4/index.js');
-  var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
-  var VenbraceParserLib = require('./VenbraceParser')
-  var VenbraceParser = VenbraceParserLib.VenbraceParser;
-  var token_NEG_NUM = VenbraceParserLib.NEG_NUM;
+  var VenbraceLexer = require('./VenbraceForgivingLexer').VenbraceForgivingLexer;
+  var VenbraceParserLib = require('./VenbraceForgivingParser')
+  var VenbraceParser = VenbraceParserLib.VenbraceForgivingParser;
+  var ForgivingTokensVisitor = require('./ForgivingTokensVisitor').ForgivingTokensVisitor;
   var errorMsg = undefined;
-
 
   'use strict';
   var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
@@ -102,41 +171,41 @@
   
   
   var parse = function () { 
-    // Attempt to parse the text in the input text area.
-    //var input = document.getElementById("input").value;
 
-    
+
     if (tokenMarks.length) {
       editor.operation(function() {
           for (var i = 0; i < tokenMarks.length; i++) tokenMarks[i].clear();
         });
-      tokenMakrs = [];
+      tokenMarks = [];
     }
 
-    //solution
-    var solution = $("#solution").html().replace("&gt;", ">");
-    // console.log(`solution: ${solution}`);
+    // solution
+    var solution = $("#solution").val().replace("&gt;", ">");
 
     var sol_lexer = new VenbraceLexer(new antlr4.InputStream(solution));
-
     var sol_stream = new antlr4.CommonTokenStream(sol_lexer); 
     sol_stream.fill(); //test code
-
+    var sol_lexer_tokens = sol_stream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;});
+    $("#solutionLexerTokens").val(tokensToString(sol_lexer_tokens));
+    
     var sol_parser = new VenbraceParser(sol_stream);
-    solutionTokens = sol_parser.test_program().tokens;
+    // solutionTokens = sol_parser.test_program().tokens;
+    var sol_tree = sol_parser.test_program();
+    var solutionParserTokensVisitor = new ForgivingTokensVisitor();
+    solutionTokens = solutionParserTokensVisitor.visit(sol_tree); 
+    $("#solutionParserTokens").val(tokensToString(solutionTokens));
+
     var sol_tokens_count = getSolutionTokens(solutionTokens);
     console.log("solution tokens:");
     console.log(sol_tokens_count);
 
     //input
     var input = editor.getValue();
-    // console.log(input);
-
     var cstream = new antlr4.InputStream(input);
     var lexer = new VenbraceLexer(cstream);
 
     var tstream = new antlr4.CommonTokenStream(lexer); 
-
     tstream.fill(); //test code
     var rawTokens = tstream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;})
     var lexTokens = preprocessing(rawTokens); //type: CommonToken
@@ -161,8 +230,22 @@
       if (isEmpty(tokenCheckResult.missing) && isEmpty(tokenCheckResult.unexpected)) {
         dom = parser.test_program();
         console.log(dom);
-        valueTokens = dom.tokens;
-        console.log(valueTokens);
+        // valueTokens = dom.tokens;
+        // console.log(valueTokens);
+
+        var inputParserTokensVisitor = new ForgivingTokensVisitor();
+        var tokens = inputParserTokensVisitor.visit(dom); 
+        $("#inputParserTokens").val(tokensToString(tokens));
+
+        var stringForParserTokens = inputParserTokensVisitor.stringForTokens;
+        $("#modifiedInput").val(stringForParserTokens);
+
+        var tokenCount = countTokens(tokens);
+        console.log("tokens from input:");
+        console.log(tokenCount);
+        var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
+        console.log("compare input tokens with solution tokens:");
+        console.log(tokenCheckResult);
 
         if (dom === undefined) {
           console.log("Unable to parse due to parsing errors.");
@@ -523,6 +606,13 @@
     div.appendChild(text);
     return div.innerHTML;
   }
+
+  function tokensToString(tokens) {
+    tokensString = '';
+    tokens.forEach( tok => (tokensString += tok.toString() + "\n") );
+    return tokensString;
+  }
+
   // End local JavaScript for this page
   </script>
 

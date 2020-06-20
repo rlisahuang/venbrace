@@ -1,0 +1,86 @@
+[when Button.Click do 
+  {if (a1 < 1) then 
+     {set b1 to 1}
+     {set c1 to 1}
+     {set d1 to 1}
+  }
+]
+
+[when Button.Click do 
+  {if (a2 < 2) then 
+     {set b2 to 2}
+     {set b2 to 2}}
+  {set b2 to 2}
+]
+
+[when Button.Click do 
+  if (a3 < 3) then 
+     set b3 to 3
+     set c3 to 3
+     set d3 to 3
+]
+
+when Button.Click do 
+  if (a4 < 3) then 
+     set b4 to 4
+     set c4 to 4
+     set d4 to 4
+
+// The following parses fine when only decl_blocks are expected.
+// But if any *sequence* of blocks is expected, the
+// when will end at `}` and `set d5` will start new top-level block. 
+// Why? Because in former case `{`/`}` is treated as start/end of suite
+// but in latter case `{` is treated as start/end  of `{set b5 ...}
+// and `}` is corrected as end of when block (after other `}`s are inserted.
+// Lyn can't grok why the parser seeks a second top-level block in the second case.
+when Button.Click do 
+  if (a5 < 5) then {
+     set b5 to 5
+     set c5 to 5
+  } 
+  set d5 to 5
+
+when Button.Click do 
+  if (a6 < 6) then 
+     {set b6 to 6}
+     {set c6 to 6   // mising close brace
+
+when Button.Click do 
+  if (a7 < 7) then
+     {set b7 to 7   // mising close brace
+     {set c7 to 7}
+
+when Button.Click do 
+  if (a8 < 8) then 
+     {set b8 to 8
+      set c8 to 8}
+
+[when Button.Click do 
+   if (a9 < 9) then 
+      {set b9 to 9
+       set c9 to 9}
+]
+
+// Similar notes to a5 case above
+when Button.Click do 
+  if (a10 < 10) then {}
+   else {
+     set b10 to 10
+     set c10 to 10
+  }
+  set d10 to 10
+
+// Similar notes to a5 case above
+when Button.Click do 
+  if (a11 < 11) then () // test noncurly braces
+   else {
+     set b11 to 11
+     set c11 to 11
+  }
+  set d11 to 11
+
+
+
+
+
+   

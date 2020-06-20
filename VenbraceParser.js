@@ -1,6 +1,6 @@
-// Generated from Venbrace.g4 by ANTLR 4.7.2
+// Generated from Venbrace.g4 by ANTLR 4.8
 // jshint ignore: start
-var antlr4 = require('./antlr4/index');
+var antlr4 = require('antlr4/index');
 var VenbraceListener = require('./VenbraceListener').VenbraceListener;
 var grammarFileName = "Venbrace.g4";
 
@@ -876,8 +876,7 @@ VenbraceParser.prototype.program = function() {
         }
         this.state = 102;
         this.match(VenbraceParser.EOF);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -978,8 +977,7 @@ VenbraceParser.prototype.test_program = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1061,8 +1059,7 @@ VenbraceParser.prototype.decl_block = function() {
             localctx.tokens.push(...(localctx._decl.tokens));
             localctx.tokens.push(localctx._RSQR);
           
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1170,8 +1167,7 @@ VenbraceParser.prototype.decl = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1271,8 +1267,7 @@ VenbraceParser.prototype.global_decl = function() {
         this.state = 139;
         localctx._expr_block = this.expr_block();
         localctx.tokens.push(...localctx._expr_block.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1392,8 +1387,7 @@ VenbraceParser.prototype.procedure_do = function() {
         this.state = 157;
         localctx._suite = this.suite();
         localctx.tokens.push(...localctx._suite.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1516,8 +1510,7 @@ VenbraceParser.prototype.procedure_result = function() {
         this.state = 175;
         localctx._expr_block = this.expr_block();
         localctx.tokens.push(...localctx._expr_block.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1643,8 +1636,7 @@ VenbraceParser.prototype.event_handler = function() {
         this.state = 192;
         localctx._suite = this.suite();
         localctx.tokens.push(...localctx._suite.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1756,8 +1748,7 @@ VenbraceParser.prototype.suite = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1841,8 +1832,7 @@ VenbraceParser.prototype.stat_block = function() {
             localctx.tokens.push(...localctx._stat.tokens);
             localctx.tokens.push(localctx._RCURLY);
           
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1939,8 +1929,7 @@ VenbraceParser.prototype.stat = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2034,8 +2023,7 @@ VenbraceParser.prototype.control_stat = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2213,8 +2201,7 @@ VenbraceParser.prototype.if_stat = function() {
 
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2390,8 +2377,7 @@ VenbraceParser.prototype.for_each_from_to = function() {
         this.state = 284;
         localctx._suite = this.suite();
         localctx.tokens.push(...localctx._suite.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2508,8 +2494,7 @@ VenbraceParser.prototype.while_stat = function() {
         this.state = 299;
         localctx._suite = this.suite();
         localctx.tokens.push(...localctx._suite.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2679,8 +2664,7 @@ VenbraceParser.prototype.call_procedure_stat = function() {
             this._errHandler.sync(this);
             _la = this._input.LA(1);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2744,8 +2728,7 @@ VenbraceParser.prototype.var_stat = function() {
         this.state = 327;
         localctx._setter = this.setter();
         localctx.tokens =  localctx._setter.tokens
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2878,8 +2861,7 @@ VenbraceParser.prototype.setter = function() {
         this.state = 346;
         localctx._expr_block = this.expr_block();
         localctx.tokens.push(...localctx._expr_block.tokens);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2987,8 +2969,7 @@ VenbraceParser.prototype.expr_block = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3170,8 +3151,7 @@ VenbraceParser.prototype.expr = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3255,8 +3235,7 @@ VenbraceParser.prototype.control_expr = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3379,8 +3358,7 @@ VenbraceParser.prototype.if_expr = function() {
             localctx.tokens.push(...localctx.e2.tokens);
             localctx.tokens.push(localctx._RPAREN);
           
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3488,8 +3466,7 @@ VenbraceParser.prototype.do_expr = function() {
             localctx.tokens.push(...localctx._expr_block.tokens);
             localctx.tokens.push(localctx._RPAREN);
           
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3612,8 +3589,7 @@ VenbraceParser.prototype.logic_expr = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3705,8 +3681,7 @@ VenbraceParser.prototype.not_expr = function() {
           localctx.tokens.push(...localctx._expr_block.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3829,8 +3804,7 @@ VenbraceParser.prototype.compare_eq_expr = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3993,8 +3967,7 @@ VenbraceParser.prototype.compare_math_expr = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4162,8 +4135,7 @@ VenbraceParser.prototype.math_expr = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4325,8 +4297,7 @@ VenbraceParser.prototype.mutable_op = function() {
         this.state = 521;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4494,8 +4465,7 @@ VenbraceParser.prototype.immutable_op = function() {
         this.state = 545;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4623,8 +4593,7 @@ VenbraceParser.prototype.min_max = function() {
         this.state = 565;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4792,8 +4761,7 @@ VenbraceParser.prototype.unary_op = function() {
         this.state = 590;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4912,8 +4880,7 @@ VenbraceParser.prototype.mod = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5032,8 +4999,7 @@ VenbraceParser.prototype.remainder = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5152,8 +5118,7 @@ VenbraceParser.prototype.quotient = function() {
           localctx.tokens.push(...localctx.b.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5303,8 +5268,7 @@ VenbraceParser.prototype.trig = function() {
           localctx.tokens.push(...localctx._expr_block.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5448,8 +5412,7 @@ VenbraceParser.prototype.atan2 = function() {
           localctx.tokens.push(...localctx.x_expr.tokens);
           localctx.tokens.push(localctx._RPAREN);  
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5557,8 +5520,7 @@ VenbraceParser.prototype.str_expr = function() {
             break;
 
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5650,8 +5612,7 @@ VenbraceParser.prototype.str_length = function() {
           localctx.tokens.push(...localctx._expr_block.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5763,8 +5724,7 @@ VenbraceParser.prototype.str_join = function() {
         this.state = 690;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5856,8 +5816,7 @@ VenbraceParser.prototype.str_reverse = function() {
           localctx.tokens.push(...localctx._expr_block.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5949,8 +5908,7 @@ VenbraceParser.prototype.str_split_at_spaces = function() {
           localctx.tokens.push(...localctx._expr_block.tokens);
           localctx.tokens.push(localctx._RPAREN);
 
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6076,8 +6034,7 @@ VenbraceParser.prototype.getter = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6262,8 +6219,7 @@ VenbraceParser.prototype.call_procedure_expr = function() {
         this.state = 747;
         localctx._RPAREN = this.match(VenbraceParser.RPAREN);
         localctx.tokens.push(localctx._RPAREN);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6368,8 +6324,7 @@ VenbraceParser.prototype.atom = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6498,8 +6453,7 @@ VenbraceParser.prototype.atom_elements = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6565,8 +6519,7 @@ VenbraceParser.prototype.label = function() {
         this.state = 774;
         localctx._ID = this.match(VenbraceParser.ID);
         localctx.tokens.push(localctx._ID);
-        }
-    catch (re) {
+    } catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
