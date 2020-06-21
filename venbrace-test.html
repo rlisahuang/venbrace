@@ -304,13 +304,12 @@
   function markTokens(tokens) {
     for (var i in tokens) {
       var t = tokens[i];
+      var length = t.stop-t.start+1;
       if (t.inserted || t.corrected) {
-        console.log(t);
-        tokenMarks.push(editor.markText(Pos(t.line-1, t.start), Pos(t.line-1, t.end+1), {className: "modifiedToken"}));
+        tokenMarks.push(editor.markText(Pos(t.line-1,t.column), Pos(t.line-1, t.column+length), {className: "CodeMirror-modifiedToken"}));
       }
       else if (t.deleted) {
-        console.log(t);
-        tokenMarks.push(editor.markText(Pos(t.line-1, t.start), Pos(t.line-1, t.end+1), {className: "deletedToken"}));
+        tokenMarks.push(editor.markText(Pos(t.line-1,t.column), Pos(t.line-1, t.column+length), {className: "CodeMirror-deletedToken"}));
       }
     }
   }
