@@ -1,0 +1,433 @@
+<!Doctype HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script src='lib/require.js'></script>
+
+<!-- /* code for CodeMirror editor */ -->
+<link rel=stylesheet href="codemirror-5.49.2/doc/docs.css">
+<link rel="stylesheet" href="codemirror-5.49.2/lib/codemirror.css">
+<script src="codemirror-5.49.2/lib/codemirror.js"></script>
+<script src="codemirror-5.49.2/addon/edit/closebrackets.js"></script>
+<script src="codemirror-5.49.2/addon/edit/matchbracketsvenbrace.js"></script>
+<script src="codemirror-5.49.2/mode/venbrace/venbrace.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+      .highlighted-scope { background-color: #e0e0e0; }
+
+    </style>
+</head>
+
+<body>
+  <textarea id="input" name="input" rows="10" cols="100"
+  placeholder="// Enter your input text to parse here..."></textarea>
+  <br>
+  <button id="submit" onClick="parse();">Parse Above Text!</button>
+  <p id="isBalanced">nothing</p>
+  <pre id="output">Output will go here....</pre>
+  <pre id="raw">Raw input will go here....</pre>
+  <p id="solution" style="display:none">((not (Button1.enabled)) or ((length ("cat")) >= (get num)))</p>
+</body>
+
+<script type="text/javascript">
+  // Begin local JavaScript code for this page
+
+  var antlr4 = require('./antlr4/index.js');
+  var VenbraceLexer = require('./VenbraceLexer').VenbraceLexer;
+  var VenbraceParserLib = require('./VenbraceParser')
+  var VenbraceParser = VenbraceParserLib.VenbraceParser;
+  var token_NEG_NUM = VenbraceParserLib.NEG_NUM;
+  var errorMsg = undefined;
+
+
+  'use strict';
+  var editor = CodeMirror.fromTextArea(document.getElementById("input"), {
+    mode: "venbrace",  
+    lineNumbers: true,
+    autoCloseBrackets: true, // do we still want to enable this?
+    matchBrackets: true,
+    // scanForBracket: true,
+    cursorBlinkRate: 0}
+    );
+
+  var Pos = CodeMirror.Pos;
+  var tokenMarks = [];
+
+
+  class VenbraceErrorListener extends antlr4.error.ErrorListener {
+    
+    
+    syntaxError(recognizer, offendingSymbol, line, column, msg, err) {
+      var sourceName = recognizer.getInputStream();
+      // console.log(sourceName);
+      errorMsg = `line ${line}, col ${column}: ${msg}\n`;
+      // console.log(`Error found: ${offendingSymbol} line ${line}, col ${column}: ${msg}`);
+      
+      this.underlineError(recognizer, offendingSymbol, line, column);
+      console.log(errorMsg);
+    }
+
+    underlineError(recognizer, offendingToken, line, column) {
+        var tokens = recognizer.getInputStream();
+        // var input = tokens.getTokenSource().getInputStream().toString();
+        var input = tokens.tokenSource.inputStream.strdata
+        var lines = input.split("\n");
+        var errorLine = lines[line - 1];
+        errorMsg += errorLine + "\n";
+        // console.log(errorLine);
+        for (var i=0; i<column; i++) errorMsg += " ";
+        var start = offendingToken.start;
+        var stop = offendingToken.stop;
+        if ( start>=0 && stop>=0 ) {
+            for (var i=start; i<=stop; i++) errorMsg += "^";
+        }
+
+        // console.log(editor);
+        this.markError(editor, line-1, start, stop+1, "CodeMirror-invalidToken");
+
+        // editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"})
+
+        // tokenMarks.push(editor.markText(Pos(line, start), Pos(line, stop + 1), 
+        //           {className: "CodeMirror-invalidToken"}));
+
+        // console.log(tokenMarks);
+    }
+
+    markError(editor, line, start, end, style) {
+      var mark = editor.markText(Pos(line, start), Pos(line, end), {className: style});
+      tokenMarks.push(mark);
+      // console.log("marked!");
+    }
+
+    
+
+  }
+  
+  
+  var parse = function () { 
+    // Attempt to parse the text in the input text area.
+    //var input = document.getElementById("input").value;
+
+    
+    if (tokenMarks.length) {
+      editor.operation(function() {
+          for (var i = 0; i < tokenMarks.length; i++) tokenMarks[i].clear();
+        });
+      tokenMakrs = [];
+    }
+
+    //solution
+    var solution = $("#solution").html().replace("&gt;", ">");
+    // console.log(`solution: ${solution}`);
+
+    var sol_lexer = new VenbraceLexer(new antlr4.InputStream(solution));
+
+    var sol_stream = new antlr4.CommonTokenStream(sol_lexer); 
+    sol_stream.fill(); //test code
+
+    var sol_parser = new VenbraceParser(sol_stream);
+    var sol_tokens = sol_parser.test_program().tokens;
+    var sol_tokens_count = getSolutionTokens(sol_tokens);
+    console.log("solution tokens:");
+    console.log(sol_tokens_count);
+
+    //input
+    var input = editor.getValue();
+    // console.log(input);
+
+    var cstream = new antlr4.InputStream(input);
+    var lexer = new VenbraceLexer(cstream);
+
+    var tstream = new antlr4.CommonTokenStream(lexer); 
+
+    tstream.fill(); //test code
+    var rawTokens = tstream.tokens.filter(function (t) {return t.type !== antlr4.Token.EOF;})
+    var lexTokens = preprocessing(rawTokens); //type: CommonToken
+
+    var parser = new VenbraceParser(tstream);
+
+    parser.buildParseTrees = true;
+    parser.removeErrorListeners();
+    parser.addErrorListener(new VenbraceErrorListener());
+  
+    var dom = undefined;
+    // var xml = undefined;
+    // var tokens = undefined;
+    // var valueTokens = undefined;
+    var visit = undefined;
+    var parserErrors = [];
+
+    if (lexer.getErrors().length === 0) {
+      // try {
+        // console.log(parseTokens); // will be empty if parse fails
+        var tokenCount = countTokens(lexTokens);
+        console.log("tokens from input:");
+
+        dom = parser.test_program();
+        // xml = dom.elt;
+        var parseTokens = dom.tokens;
+        console.log(tokenCount);
+        var tokenCheckResult = tokenCheck(tokenCount, sol_tokens_count);
+        console.log("compare input tokens with solution tokens:");
+        console.log(tokenCheckResult);
+      // }
+      // catch (e) {
+      //   // parserErrors = parser.getErrors();
+      //   // console.log(parserErrors);
+      //   console.log("before error");
+      //   throw(e);
+      //   console.log("im here");
+      //  // console.log(parseErrors);
+      // }
+      
+      
+      /** OLD CODE FOR TESTING XML **/
+      // parserErrors = parser.getErrors();
+      // try {  
+      //   console.log("Try to parse as expr.");
+      //   // Try to parse as expression first 
+      //   dom = parser.expr_block(); 
+      //   console.log("Parsing as expr succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+        
+      // } catch (expErr) {
+      //   //TODO: write my own ErrorReportStrategy
+      //   console.log("Parsing as expr failed!");
+      //   // console.log(expErr);
+      // }
+      // try {
+      //   console.log("Try to parse as statement.");
+      //   dom = parser.stat_block(); 
+      //   console.log("Parsing as statement succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+      // } catch (statError) {
+      //   console.log("Parsing as statement failed!");
+      //   console.log(statError);
+      // }
+      // try {
+      //   console.log("Try to parse as decl.");
+      //   dom = parser.decl_block(); 
+      //   console.log("Parsing as decl succeeded!");
+        
+      //   console.log("Parsing succeeded!");
+      //   xml = dom.elt;
+      // } catch (declError) {
+      //     console.log("Parsing as decl failed!");
+      //     console.log(declError);
+      // }
+        
+       
+      // console.log("Parsing succeeded!");
+
+      // xml = dom.elt;
+
+      /* END OF OLD CODE */
+      
+      // console.log("Number of parser errors is " + parserErrors.length);
+
+      // trace tokens from the parse tree
+      // dom.accept(new Visitor());
+      
+
+
+
+      if (parserErrors.length === 0) {
+        if (dom === undefined) {
+          console.log("Unable to parse due to parsing errors.");
+          document.getElementById("output").innerHTML = "Parsing failed.";
+        } else {
+          // document.getElementById("output").innerHTML = escapeHTML(domToPrettyText(xml));
+          document.getElementById("output").innerHTML = escapeHTML(printTokens(parseTokens));
+        }
+      } else {
+        console.log("Parser errors:");
+        parserErrors.forEach(function(error){
+          console.log(error);
+        });
+      }
+    } else {
+      console.log("Lexer errors:");
+      lexer.getErrors().forEach(function(error){
+        console.log(error);
+      });
+    }
+    
+  }
+
+  function preprocessing(tokens) {
+    var result = [];
+    for (var i=0; i<tokens.length; i++) {
+      var t = tokens[i].clone();
+      ////console.log(t);
+      if (t.type == 122 && i > 0) { // t is NEG_NUM
+        var prev = tokens[i-1];
+        if (prev.type == 121
+          || prev.type == 122
+          || prev.type == 124
+          || prev.type == 7) { // prev is NUM, NEG_NUM, ID, or RPAREN (end of an expr)
+
+          var op = t.clone();
+          op.text = "-";
+          op.type = 63;
+          op.stop = op.start;
+
+          t.text = t.text.substring(1);
+          t.type = 121;
+          t.start = t.start + 1;
+          t.column = t.column + 1;
+          
+          result.push(op);
+        }
+      }
+      result.push(t);
+    }
+    return result;
+  }
+
+  function getSolutionTokens(ts) {
+    var result = {"required": {}, "optional": {}};
+    for (var i = 0; i < ts.length; i++) {
+      var t = ts[i];
+      var t_text = t.text;
+      if (t.optional) {
+        if (result.optional[t_text]) {
+          result.optional[t_text] = result.optional[t_text] + 1;
+        } else result.optional[t_text] = 1;
+      } else {
+        if (result.required[t_text]) {
+          result.required[t_text] = result.required[t_text] + 1;
+        } else result.required[t_text] = 1;
+      }
+    } 
+
+    return result;
+  }
+
+  function countTokens(ts) {
+    var result = {};
+    for (var i = 0; i < ts.length; i++) {
+      var t = ts[i].text;
+      if (result[t]) {
+        result[t] = result[t] + 1;
+      } else result[t] = 1;
+    }
+
+    return result;
+  }
+
+  function tokenCheck(input, solution) {
+    var result = {"missing": {}, "unexpected": {}};
+    for (var t in input) {
+      var count = input[t];
+      if (!(solution.required[t])) {
+        if (!(solution.optional[t])) {
+          result.unexpected[t] = count;
+        } else {
+          if (count > solution.optional[t]) {
+            result.unexpected[t] = count - solution.optional[t];
+          }
+        }
+      } else {
+        if (count < solution.required[t]) {
+          result.missing[t] = solution.required[t] - count;
+        } else if (count > solution.required[t]) {
+          if (!(solution.optional[t])) {
+            result.unexpected[t] = count - solution.required[t];
+          } else {
+            var delta = count - solution.required[t] - solution.optional[t];
+            if (delta > 0) {
+              result.unexpected[t] = delta;
+            }
+          }
+        }
+      }
+    }
+
+    for (var r in solution.required) {
+      if (!(input[r])) {
+        result.missing[r] = solution.required[r];
+      }
+    }
+
+    return result;
+  }
+
+
+  var printTokens = function(ts) {
+    if (!ts) return "";
+    var result = "";
+    for (var i = 0; i < ts.length; i++) {
+      var t = ts[i];
+      var optional = (t.optional ? "(optional)" : "");
+      var text = t.text;
+      var line = t.line;
+      var col = t.column;
+      var str = `token: ${text}, pos: (${line}, ${col}) ${optional}\n`;
+      result += str;
+    }
+    return result;
+  }
+  
+  
+  
+  // From Blockly core xml.js
+  /**
+   * Converts a DOM structure into properly indented text.
+   * @param {!Element} dom A tree of XML elements.
+   * @return {string} Text representation.
+   */
+  var domToPrettyText = function(dom) {
+    // This function is not guaranteed to be correct for all XML.
+    // But it handles the XML that Blockly generates.
+    var blob = domToText(dom);
+    // Place every open and close tag on its own line.
+    var lines = blob.split('<');
+    // Indent every line.
+    var indent = '';
+    for (var x = 1; x < lines.length; x++) {
+      var line = lines[x];
+      if (line[0] == '/') {
+        indent = indent.substring(2);
+      }
+      lines[x] = indent + '<' + line;
+      if (line[0] != '/' && line.slice(-2) != '/>') {
+        indent += '  ';
+      }
+    }
+    // Pull simple tags back together.
+    // E.g. <foo></foo>
+    var text = lines.join('\n');
+    text = text.replace(/(<(\w+)\b[^>]*>[^\n]*)\n *<\/\2>/g, '$1</$2>');
+    // Trim leading blank line.
+    return text.replace(/^\n/, '');
+  };
+  
+  /**
+   * Converts a DOM structure into plain text.
+   * Currently the text format is fairly ugly: all one line with no whitespace.
+   * @param {!Element} dom A tree of XML elements.
+   * @return {string} Text representation.
+   */
+  var domToText = function(dom) {
+    var oSerializer = new XMLSerializer();
+    return oSerializer.serializeToString(dom);
+  };
+  
+  // From http://forums.asp.net/t/1151879.aspx?HttpUtility+HtmlEncode+in+javaScript+                                              
+  function escapeHTML (str) {
+    var div = document.createElement('div');
+    var text = document.createTextNode(str);
+    div.appendChild(text);
+    return div.innerHTML;
+  }
+  // End local JavaScript for this page
+  </script>
+
+</html>

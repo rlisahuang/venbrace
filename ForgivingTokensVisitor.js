@@ -13,6 +13,9 @@
  *   + tok.inserted is true if tok is an inserted token (undefined otherwise). 
  *     Currently, the only inserted tokens are braces and 
  *     the MINUS token inserted when processing expr_block NEG_NUM. 
+ * ===== Qianqian Jun. 20, 2020 =====
+ * - removed the `inserted' tag for corrected NEG_NUM
+ * 
  * 
  *   + tok.deleted is true if tok is a deleted token (undefined otherwise)
  *      Currently, only brace tokens are deleted (when used around a suite). 
@@ -20,6 +23,9 @@
  *   + tok.corrected has the previous token text if tok has been corrected 
  *     (undefined otherwise). Currently, the only tokens corrected are 
  *     wrong-type braces and the NEG_NUM in expr_block NEG_NUM. 
+ * ===== Qianqian Jun. 20, 2020 =====
+ * - removed the `corrected' tag for corrected NEG_NUM
+ * 
  * 
  *   + tok.optional is true if tok is optional in the grammar (undefined otherwise).
  *     Inserted, deleted, and corrected tokens are never marked optional. 
@@ -125,14 +131,14 @@ ForgivingTokensVisitor.prototype.visitTest_program = function(ctx) {
 ForgivingTokensVisitor.prototype.visitImmutable_neg_num_special_case = function (ctx) {
   var negNumToken = ctx.NEG_NUM().getSymbol();
   var newMinusToken = negNumToken.clone(); 
-  newMinusToken.type = 63; // hard-coded MINUS token type
+  newMinusToken.type = 62; // hard-coded MINUS token type
   newMinusToken.stop = newMinusToken.start; // MINUS token is one character long
   newMinusToken.text = '-';
-  newMinusToken.inserted = true;
+  // newMinusToken.inserted = true;
 
-  negNumToken.corrected = negNumToken.text;
+  // negNumToken.corrected = negNumToken.text;
   negNumToken.text = negNumToken.text.substring(1); // remove - sign
-  negNumToken.type = 121; // NUMBER = 121, NEG_NUM = 122
+  negNumToken.type = 120; // NUMBER = 120, NEG_NUM = 121
   negNumToken.start = negNumToken.start + 1; // exclude - sign
   negNumToken.column = negNumToken.column + 1; // exclude - sign
 

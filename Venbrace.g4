@@ -286,9 +286,8 @@ call_procedure_stat returns [var tokens]
 }
 : (CALL
 {
-  $CALL['optional'] = true;
   $tokens.push($CALL);
-})? ((ID {$tokens.push($ID);}) | (component=ID DOT event=ID 
+}) ((ID {$tokens.push($ID);}) | (component=ID DOT event=ID 
 {
   $tokens.push($ID);
   $tokens.push($DOT);
@@ -622,16 +621,18 @@ atan2 returns [var tokens]
   $tokens.push($LPAREN);
   $tokens.push($ATAN2);
 }
-(y='y' 
+(y=label 
 {
-  $y['optiona'] = true;
-  $tokens.push($y);  
+  var y = $y.tokens[0];
+  y['optional'] = true;
+  $tokens.push(y);  
 })? 
 y_expr=expr_block {$tokens.push(...$y_expr.tokens);}
-(x='x'
+(x=label
 {
-  $x['optiona'] = true;
-  $tokens.push($x);  
+  var x = $x.tokens[0];
+  x['optional'] = true;
+  $tokens.push(x);  
 }
 )? x_expr=expr_block RPAREN 
 {
@@ -700,7 +701,7 @@ getter returns [var tokens]
 @init {
   $tokens = [];
 }
-: (ID {$tokens.push($ID);}) 
+: ((GLOBAL {$tokens.push($GLOBAL);})? ID {$tokens.push($ID);}) 
 | (LPAREN GET 
   {
     $LPAREN['optional'] = true;
@@ -722,9 +723,8 @@ call_procedure_expr returns [var tokens]
 }
 : LPAREN {$tokens.push($LPAREN);}
 (CALL {
- $CALL['optional'] = true;
  $tokens.push($CALL); 
-})? 
+})
 (ID {$tokens.push($ID);}
 | (component=ID DOT event=ID {
  $tokens.push($component);
