@@ -1,10 +1,14 @@
 /*
-Venbrace grammar (simplified version)
+Forgiving grammar for Venbrace. 
 
-Author: Lyn Turbak 
+Author: Lyn Turbak, based on Qianqian's Venbrace.g4
 
 History: 
-[2020/06/16-18, lyn] First draft handles decl_blocks, suites, and statement_blocks.
+* [2020/06/21, lyn] Added forgiving handling of expressions, including operator 
+  precedence, base on my experimentation with a smaller expression grammar in 
+  ~fturbak/Projects/antlr4/Prec/Prec8.g4.
+
+* [2020/06/16-18, lyn] First draft handles decl_blocks, suites, and statement_blocks.
   Expressions are *not* yet handles, nor are insertions of GLOBAL and LOCAL
   after INITIALIZE. See notes below 
 
@@ -212,10 +216,27 @@ test_program:
   | expr_block 
   ;
 
-// rule for testing multiple blocks
-test_blocks: 
-  (  decl_block | stat_block | expr_block )+ 
-  ;
+// rule for testing multiple blocks explicitly introduced by explicit 
+// `decl`, `stat`, or `expr` keyword (which reduces amiguities across 
+// multiple test expressions when testing.)
+test_top_blocks: top_block+ ; 
+
+top_block: 
+    'decl' decl_block
+  | 'stat' stat_block
+  | 'expr' expr_block
+  ; 
+
+// Like test_top_block, but allows *optional* `decl`, `stat`, or `expr` keyword
+// This takes a tad longer to parse than test_top_blocks, even with 
+// the explicit keywords.
+test_blocks: block+ ; 
+
+block: 
+    'decl'? decl_block
+  | 'stat'? stat_block
+  | 'expr'? expr_block
+  ; 
 
 decl_block: 
     declLbrace=LSQR decl declRbrace=RSQR
@@ -252,9 +273,9 @@ decl:
   | event_handler
   ;
 
-global_decl: 
-  (INIT | INITIALIZE) global_decl_keyword ID TO? expr_block 
-  ;
+global_decl: init_keyword global_decl_keyword ID TO? expr_block ;
+
+init_keyword: INITIALIZE | INIT ;
 
 // [2020/06/17] Split this out into a separate rule as part of experiment 
 // for automatically inserting missing GLOBAL in a top-level decl. 
@@ -355,7 +376,7 @@ var_stat:
 
 // [2020/06/15] Added by Lyn for testing (not used in Round 2)
 local_var_decl_stat:
-   (INITIALIZE local_decl_keyword ID TO? expr_block)+ IN? suite
+   (init_keyword local_decl_keyword ID TO? expr_block)+ IN? suite
    ;
 
 // [2020/06/17, lyn] Split this out into a separate rule as part of experiment 
@@ -382,22 +403,93 @@ setter:
   SET GLOBAL? target=(ID | COMPONENT_PROPERTY) TO? expr_block
   ;
 
-expr_block: LPAREN RPAREN
-  | atom 
-  | expr 
+// [2020/06/21] Parens-optional version of expression with a relatively standard 
+// precedence hiearchy, except that args to prefix operators allow 
+// parenthesization of low-precedence operators. May want to revisit this
+// decision based on testing with bad Round 1 and Round 2 inputs. 
+expr_block: 
+    and_expr                 #andExprBogus // lowest precedence level 
+  ; 
+
+and_expr: 
+    or_expr                  #orExprBogus // ascend to higher precedence level 
+  | <assoc=right> and_expr AND and_expr #andExpr
+    // Lyn thinks right associativity here is more natural in App Inventor than 
+    // standard left associativity. But this can be easily changed to left associativity 
+    // by removing <assoc=right> decl.
+  ; 
+
+or_expr: 
+    math_compare_expr        #mathCompareExprBogus // ascend to higher precedence level 
+  | <assoc=right> or_expr OR or_expr #orExpr
+    // Lyn thinks right associativity here is more natural in App Inventor than 
+    // standard left associativity. But this can be easily changed to left associativity 
+    // by removing <assoc=right> decl.
+  ; 
+
+math_compare_expr: 
+    add_sub_expr              #addSubExprBogus // ascend to higher precedence level 
+  | add_sub_expr math_compare_op add_sub_expr  #mathCompareExpr
+    // No recursion with math_rel_op since doesn't make sense 
+    // for relops to have other relops as args.
   ;
 
-expr: getter 
+math_compare_op: LT | LE | EQ | NEQ | GE | GT ; 
+
+/* 
+
+// [2020/06/21, lyn] commented these out because can't currently disctinguish 
+// logic operators = or != from same math operators in Venbrace.
+// Ideas for handling this: 
+//   * use keyword `logic` or `compare` at beginning of block 
+//   * use operator symbols like logic=, log= or L= 
+
+logic_compare_expr: LPAREN a=expr_block logic_compare_op b=expr_block RPAREN; 
+
+logic_compare: EQ | NEQ ;  
+
+ */
+
+add_sub_expr:
+    mul_div_expr             #mulDivExprBogus // ascend to higher precedence level 
+  | mul_div_expr (PLUS add_sub_expr)+  #mutableAddExpr // addition with >=2 args (can't handle <= arg
+                                                       // but it's silly for AppInventor to support this!)
+  | add_sub_expr NEG_NUM #subNegNumExpr // special case binary subtraction
+  | <assoc=right> add_sub_expr MINUS add_sub_expr #subExpr // binary subtraction
+    // Lyn thinks right associativity here is more natural in App Inventor than 
+    // standard left associativity. But this can be easily changed to left associativity 
+    // by removing <assoc=right> decl.
+  ;
+
+mul_div_expr: 
+    pow_expr                 #powExprBogus // ascend to higher precedence level 
+  | pow_expr (MUL mul_div_expr)+ #mutableMulExpr  // multiplication with >=2 args (can't handle <= arg
+                                                  // but it's silly for AppInventor to support this!)
+  | <assoc=right> mul_div_expr DIV mul_div_expr #divExpr // binary division
+    // Lyn thinks right associativity here is more natural in App Inventor than 
+    // standard left associativity. But this can be easily changed to left associativity 
+    // by removing <assoc=right> decl.
+  ;
+
+pow_expr: 
+    core_expr                   #coreExprBogus // ascend to higher precedence level 
+  | <assoc=right> pow_expr POW pow_expr #powExpr // Right associativity is standard for exponentiation
+  ; 
+
+// Core expressions with optional (due to "forgivingness")  braces
+core_expr: 
+    getter 
   | control_expr
-  | logic_expr
   | not_expr
-  | compare_eq_expr
-  | compare_math_expr
   | math_expr
   | str_expr
   | call_procedure_expr
-  | local_var_decl_expr // [2020/06/15] Added by Lyn for testing (not used in Round 2)
+  | local_var_decl_expr // [2020/06/15, lyn] Added for testing (not used in Round 2)
   | atom
+  | LPAREN RPAREN            // special case for empty expression 
+  | LPAREN expr_block RPAREN // Explict parens
+  | LCURLY expr_block RCURLY // Explict curlies; wrong, but allowed by forgiving parser
+  | LSQR expr_block RSQR // Explict squares; wrong, but allowed by forgiving parser
   ;
 
 control_expr: if_expr
@@ -405,40 +497,30 @@ control_expr: if_expr
   ;
 
 if_expr:
-  LPAREN IF c=expr_block THEN e1=expr_block ELSE e2=expr_block RPAREN
+  IF c=expr_block THEN e1=expr_block ELSE e2=expr_block
   ;
 
 do_expr:
-  LPAREN DO suite RESULT expr_block RPAREN
-  ;
-
-logic_expr:
-  LPAREN a=expr_block (AND | OR) b=expr_block RPAREN
+  DO suite RESULT expr_block 
   ;
 
 not_expr:
-  LPAREN NOT expr_block RPAREN
+  NOT expr_block
   ; 
 
-compare_eq_expr:
-  LPAREN a=expr_block (LOGIC_EQ | LOGIC_NOT_EQ) b=expr_block RPAREN
-  ;
-
-compare_math_expr: 
-  LPAREN a=expr_block (EQ | NEQ | GT | GE | LT | LE) b=expr_block RPAREN
-  ;
-
 // only contains blocks that have no long sequences of helper words
-math_expr: mutable_op 
-  | immutable_op 
-  | min_max 
-  | unary_op 
+math_expr: 
+    min_max 
+  | unary_operation
   | mod 
   // | remainder  // Lyn sez: AI2 does *not* have a remainder op, only modulo of
   // | quotient  // Lyn sez: AI2 does *not* have a quotient op, only /
   | trig 
   // | atan2  // Lyn sez: atan2 problematics because of x and y keywords. Punting for now. 
   ;
+
+/* // [2020/06/21, lyn] Commented out becase mutable_op and immutable_op now handled 
+   // as part of precedence chain above
 
 mutable_op:
     LPAREN a=expr_block (PLUS b=expr_block)+ RPAREN
@@ -449,29 +531,26 @@ immutable_op:
     LPAREN a=expr_block (MINUS | DIV | POW) b=expr_block RPAREN #immutable_regular_case
   | LPAREN expr_block NEG_NUM RPAREN #immutable_neg_num_special_case 
   ; 
+*/
 
-min_max:
-  LPAREN (MIN | MAX) expr_block* RPAREN 
+min_max: (MIN | MAX) expr_block*
   ;
 
 // only contains blocks without long sequences of helper words
-unary_op:
-  LPAREN 
-  (SQRT 
+unary_operation: unary_op expr_block ;
+
+unary_op: 
+     SQRT 
    | ABS 
    | NEG 
    | LOG 
    | EULER
    | ROUND
    | CEILING
-   | FLOOR)
-   expr_block 
-   RPAREN
+   | FLOOR
    ;
 
-mod:
-  LPAREN MODULO OF a=expr_block DIV b=expr_block RPAREN
-  ;
+mod: MODULO OF expr_block DIV expr_block ;
 
 /* // Lyn sez: AI2 does *not* have remainder or quotient operations. 
 remainder:
@@ -483,17 +562,17 @@ quotient:
   ;
  */
 
-trig:
-  LPAREN 
-  (SIN 
+trig: trig_op expr_block ; 
+
+trig_op: 
+    SIN 
   | COS 
   | TAN 
   | ASIN 
   | ACOS 
-  | ATAN)
-  expr_block 
-  RPAREN
-  ;
+  | ATAN
+  ; 
+
 
 /* // Lyn sez: atan2 is problematic because of x and y keywords. 
    // Punting it for now
@@ -510,42 +589,29 @@ str_expr: str_join
   | str_split_at_spaces 
   ;
 
-str_length:
-  LPAREN LENGTH expr_block RPAREN 
-  ;
+str_length: LENGTH expr_block ;
 
-str_join:
-  LPAREN JOIN expr_block* RPAREN
-  ;
+str_join:JOIN expr_block* ;
 
-str_reverse:
-  LPAREN REVERSE expr_block RPAREN
-  ; 
+str_reverse: REVERSE expr_block ; 
 
-str_split_at_spaces:
-  LPAREN SPLIT_AT_SPACES expr_block RPAREN
-  ;
+str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
 
 getter: ID
-  | LPAREN GET GLOBAL? ID RPAREN
+  | GET GLOBAL? ID 
   ;
 
 call_procedure_expr:
   // CALL required for Round 2
-  LPAREN CALL (ID | component=ID DOT method=ID) 
-              (label? arg=expr_block)* RPAREN
+  CALL (ID | component=ID DOT method=ID) (label? arg=expr_block)* 
   ;
 
 // [2020/06/15] Added by Lyn for testing (not used in Round 2)
 local_var_decl_expr:
-   LPAREN (INITIALIZE LOCAL? ID TO? init_val=expr_block)* IN? body=expr_block RPAREN
+   (INITIALIZE LOCAL ID TO? init=expr_block)+ IN? body=expr_block 
    ;
 
-atom: atom_elements
-  | LPAREN atom_elements RPAREN
-  ;
-
-atom_elements:
+atom: 
     NUMBER 
   | NEG_NUM
   | STRING 

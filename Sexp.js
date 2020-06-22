@@ -104,10 +104,21 @@ function getAndDisplaySexp() {
         console.log("\nRunning parser to Build parse tree.");
       }
     
-      // Choose one of the following three trees:
-      var tree = parser.test_blocks(); // Sequence of any blocks
-      // var tree = parser.test_program();  // Single block of any kind
-      // var tree = parser.program();  // Top-level decls only 
+
+      var tree = Utils.displayTimeTaken(
+        'Time taken by parser: ', 
+        parser, 
+
+        // Choose one of the following four trees:
+        // parser.test_top_blocks // Sequence of any blocks, each introduced by *required*
+                               // `decl`, `stat`, or `expr` tag 
+                               // (to avoid ambiguities across top-level blocks)
+        parser.test_blocks // Sequence of any blocks, each introduced by *optional*
+                           // `decl`, `stat`, or `expr` tag 
+                           // (to avoid ambiguities across top-level blocks)
+        // parser.test_program // Single block of any kind
+        // parser.program // Top-level decls only 
+      );
 
       var sexpVisitor = new SexpVisitor();
 

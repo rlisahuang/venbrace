@@ -29,12 +29,39 @@ VenbraceForgivingListener.prototype.exitTest_program = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceForgivingParser#test_top_blocks.
+VenbraceForgivingListener.prototype.enterTest_top_blocks = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#test_top_blocks.
+VenbraceForgivingListener.prototype.exitTest_top_blocks = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#top_block.
+VenbraceForgivingListener.prototype.enterTop_block = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#top_block.
+VenbraceForgivingListener.prototype.exitTop_block = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceForgivingParser#test_blocks.
 VenbraceForgivingListener.prototype.enterTest_blocks = function(ctx) {
 };
 
 // Exit a parse tree produced by VenbraceForgivingParser#test_blocks.
 VenbraceForgivingListener.prototype.exitTest_blocks = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#block.
+VenbraceForgivingListener.prototype.enterBlock = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#block.
+VenbraceForgivingListener.prototype.exitBlock = function(ctx) {
 };
 
 
@@ -62,6 +89,15 @@ VenbraceForgivingListener.prototype.enterGlobal_decl = function(ctx) {
 
 // Exit a parse tree produced by VenbraceForgivingParser#global_decl.
 VenbraceForgivingListener.prototype.exitGlobal_decl = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#init_keyword.
+VenbraceForgivingListener.prototype.enterInit_keyword = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#init_keyword.
+VenbraceForgivingListener.prototype.exitInit_keyword = function(ctx) {
 };
 
 
@@ -209,21 +245,165 @@ VenbraceForgivingListener.prototype.exitSetter = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#expr_block.
-VenbraceForgivingListener.prototype.enterExpr_block = function(ctx) {
+// Enter a parse tree produced by VenbraceForgivingParser#andExprBogus.
+VenbraceForgivingListener.prototype.enterAndExprBogus = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceForgivingParser#expr_block.
-VenbraceForgivingListener.prototype.exitExpr_block = function(ctx) {
+// Exit a parse tree produced by VenbraceForgivingParser#andExprBogus.
+VenbraceForgivingListener.prototype.exitAndExprBogus = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#expr.
-VenbraceForgivingListener.prototype.enterExpr = function(ctx) {
+// Enter a parse tree produced by VenbraceForgivingParser#andExpr.
+VenbraceForgivingListener.prototype.enterAndExpr = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceForgivingParser#expr.
-VenbraceForgivingListener.prototype.exitExpr = function(ctx) {
+// Exit a parse tree produced by VenbraceForgivingParser#andExpr.
+VenbraceForgivingListener.prototype.exitAndExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#orExprBogus.
+VenbraceForgivingListener.prototype.enterOrExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#orExprBogus.
+VenbraceForgivingListener.prototype.exitOrExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#mathCompareExprBogus.
+VenbraceForgivingListener.prototype.enterMathCompareExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#mathCompareExprBogus.
+VenbraceForgivingListener.prototype.exitMathCompareExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#orExpr.
+VenbraceForgivingListener.prototype.enterOrExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#orExpr.
+VenbraceForgivingListener.prototype.exitOrExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#addSubExprBogus.
+VenbraceForgivingListener.prototype.enterAddSubExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#addSubExprBogus.
+VenbraceForgivingListener.prototype.exitAddSubExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#mathCompareExpr.
+VenbraceForgivingListener.prototype.enterMathCompareExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#mathCompareExpr.
+VenbraceForgivingListener.prototype.exitMathCompareExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#math_compare_op.
+VenbraceForgivingListener.prototype.enterMath_compare_op = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#math_compare_op.
+VenbraceForgivingListener.prototype.exitMath_compare_op = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#subExpr.
+VenbraceForgivingListener.prototype.enterSubExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#subExpr.
+VenbraceForgivingListener.prototype.exitSubExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#mutableAddExpr.
+VenbraceForgivingListener.prototype.enterMutableAddExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#mutableAddExpr.
+VenbraceForgivingListener.prototype.exitMutableAddExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#subNegNumExpr.
+VenbraceForgivingListener.prototype.enterSubNegNumExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#subNegNumExpr.
+VenbraceForgivingListener.prototype.exitSubNegNumExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#mulDivExprBogus.
+VenbraceForgivingListener.prototype.enterMulDivExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#mulDivExprBogus.
+VenbraceForgivingListener.prototype.exitMulDivExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#powExprBogus.
+VenbraceForgivingListener.prototype.enterPowExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#powExprBogus.
+VenbraceForgivingListener.prototype.exitPowExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#mutableMulExpr.
+VenbraceForgivingListener.prototype.enterMutableMulExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#mutableMulExpr.
+VenbraceForgivingListener.prototype.exitMutableMulExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#divExpr.
+VenbraceForgivingListener.prototype.enterDivExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#divExpr.
+VenbraceForgivingListener.prototype.exitDivExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#coreExprBogus.
+VenbraceForgivingListener.prototype.enterCoreExprBogus = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#coreExprBogus.
+VenbraceForgivingListener.prototype.exitCoreExprBogus = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#powExpr.
+VenbraceForgivingListener.prototype.enterPowExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#powExpr.
+VenbraceForgivingListener.prototype.exitPowExpr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#core_expr.
+VenbraceForgivingListener.prototype.enterCore_expr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#core_expr.
+VenbraceForgivingListener.prototype.exitCore_expr = function(ctx) {
 };
 
 
@@ -254,39 +434,12 @@ VenbraceForgivingListener.prototype.exitDo_expr = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#logic_expr.
-VenbraceForgivingListener.prototype.enterLogic_expr = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#logic_expr.
-VenbraceForgivingListener.prototype.exitLogic_expr = function(ctx) {
-};
-
-
 // Enter a parse tree produced by VenbraceForgivingParser#not_expr.
 VenbraceForgivingListener.prototype.enterNot_expr = function(ctx) {
 };
 
 // Exit a parse tree produced by VenbraceForgivingParser#not_expr.
 VenbraceForgivingListener.prototype.exitNot_expr = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#compare_eq_expr.
-VenbraceForgivingListener.prototype.enterCompare_eq_expr = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#compare_eq_expr.
-VenbraceForgivingListener.prototype.exitCompare_eq_expr = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#compare_math_expr.
-VenbraceForgivingListener.prototype.enterCompare_math_expr = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#compare_math_expr.
-VenbraceForgivingListener.prototype.exitCompare_math_expr = function(ctx) {
 };
 
 
@@ -299,39 +452,21 @@ VenbraceForgivingListener.prototype.exitMath_expr = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#mutable_op.
-VenbraceForgivingListener.prototype.enterMutable_op = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#mutable_op.
-VenbraceForgivingListener.prototype.exitMutable_op = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#immutable_regular_case.
-VenbraceForgivingListener.prototype.enterImmutable_regular_case = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#immutable_regular_case.
-VenbraceForgivingListener.prototype.exitImmutable_regular_case = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#immutable_neg_num_special_case.
-VenbraceForgivingListener.prototype.enterImmutable_neg_num_special_case = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#immutable_neg_num_special_case.
-VenbraceForgivingListener.prototype.exitImmutable_neg_num_special_case = function(ctx) {
-};
-
-
 // Enter a parse tree produced by VenbraceForgivingParser#min_max.
 VenbraceForgivingListener.prototype.enterMin_max = function(ctx) {
 };
 
 // Exit a parse tree produced by VenbraceForgivingParser#min_max.
 VenbraceForgivingListener.prototype.exitMin_max = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#unary_operation.
+VenbraceForgivingListener.prototype.enterUnary_operation = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#unary_operation.
+VenbraceForgivingListener.prototype.exitUnary_operation = function(ctx) {
 };
 
 
@@ -359,6 +494,15 @@ VenbraceForgivingListener.prototype.enterTrig = function(ctx) {
 
 // Exit a parse tree produced by VenbraceForgivingParser#trig.
 VenbraceForgivingListener.prototype.exitTrig = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#trig_op.
+VenbraceForgivingListener.prototype.enterTrig_op = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#trig_op.
+VenbraceForgivingListener.prototype.exitTrig_op = function(ctx) {
 };
 
 
@@ -440,15 +584,6 @@ VenbraceForgivingListener.prototype.enterAtom = function(ctx) {
 
 // Exit a parse tree produced by VenbraceForgivingParser#atom.
 VenbraceForgivingListener.prototype.exitAtom = function(ctx) {
-};
-
-
-// Enter a parse tree produced by VenbraceForgivingParser#atom_elements.
-VenbraceForgivingListener.prototype.enterAtom_elements = function(ctx) {
-};
-
-// Exit a parse tree produced by VenbraceForgivingParser#atom_elements.
-VenbraceForgivingListener.prototype.exitAtom_elements = function(ctx) {
 };
 
 

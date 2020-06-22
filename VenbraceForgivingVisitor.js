@@ -24,8 +24,26 @@ VenbraceForgivingVisitor.prototype.visitTest_program = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceForgivingParser#test_top_blocks.
+VenbraceForgivingVisitor.prototype.visitTest_top_blocks = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#top_block.
+VenbraceForgivingVisitor.prototype.visitTop_block = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceForgivingParser#test_blocks.
 VenbraceForgivingVisitor.prototype.visitTest_blocks = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#block.
+VenbraceForgivingVisitor.prototype.visitBlock = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -44,6 +62,12 @@ VenbraceForgivingVisitor.prototype.visitDecl = function(ctx) {
 
 // Visit a parse tree produced by VenbraceForgivingParser#global_decl.
 VenbraceForgivingVisitor.prototype.visitGlobal_decl = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#init_keyword.
+VenbraceForgivingVisitor.prototype.visitInit_keyword = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -144,14 +168,110 @@ VenbraceForgivingVisitor.prototype.visitSetter = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#expr_block.
-VenbraceForgivingVisitor.prototype.visitExpr_block = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#andExprBogus.
+VenbraceForgivingVisitor.prototype.visitAndExprBogus = function(ctx) {
   return this.visitChildren(ctx);
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#expr.
-VenbraceForgivingVisitor.prototype.visitExpr = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#andExpr.
+VenbraceForgivingVisitor.prototype.visitAndExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#orExprBogus.
+VenbraceForgivingVisitor.prototype.visitOrExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mathCompareExprBogus.
+VenbraceForgivingVisitor.prototype.visitMathCompareExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#orExpr.
+VenbraceForgivingVisitor.prototype.visitOrExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#addSubExprBogus.
+VenbraceForgivingVisitor.prototype.visitAddSubExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mathCompareExpr.
+VenbraceForgivingVisitor.prototype.visitMathCompareExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#math_compare_op.
+VenbraceForgivingVisitor.prototype.visitMath_compare_op = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#subExpr.
+VenbraceForgivingVisitor.prototype.visitSubExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mutableAddExpr.
+VenbraceForgivingVisitor.prototype.visitMutableAddExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#subNegNumExpr.
+VenbraceForgivingVisitor.prototype.visitSubNegNumExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mulDivExprBogus.
+VenbraceForgivingVisitor.prototype.visitMulDivExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#powExprBogus.
+VenbraceForgivingVisitor.prototype.visitPowExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mutableMulExpr.
+VenbraceForgivingVisitor.prototype.visitMutableMulExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#divExpr.
+VenbraceForgivingVisitor.prototype.visitDivExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#coreExprBogus.
+VenbraceForgivingVisitor.prototype.visitCoreExprBogus = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#powExpr.
+VenbraceForgivingVisitor.prototype.visitPowExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#core_expr.
+VenbraceForgivingVisitor.prototype.visitCore_expr = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -174,26 +294,8 @@ VenbraceForgivingVisitor.prototype.visitDo_expr = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#logic_expr.
-VenbraceForgivingVisitor.prototype.visitLogic_expr = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
 // Visit a parse tree produced by VenbraceForgivingParser#not_expr.
 VenbraceForgivingVisitor.prototype.visitNot_expr = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#compare_eq_expr.
-VenbraceForgivingVisitor.prototype.visitCompare_eq_expr = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#compare_math_expr.
-VenbraceForgivingVisitor.prototype.visitCompare_math_expr = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -204,26 +306,14 @@ VenbraceForgivingVisitor.prototype.visitMath_expr = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#mutable_op.
-VenbraceForgivingVisitor.prototype.visitMutable_op = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#immutable_regular_case.
-VenbraceForgivingVisitor.prototype.visitImmutable_regular_case = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#immutable_neg_num_special_case.
-VenbraceForgivingVisitor.prototype.visitImmutable_neg_num_special_case = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
 // Visit a parse tree produced by VenbraceForgivingParser#min_max.
 VenbraceForgivingVisitor.prototype.visitMin_max = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#unary_operation.
+VenbraceForgivingVisitor.prototype.visitUnary_operation = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -242,6 +332,12 @@ VenbraceForgivingVisitor.prototype.visitMod = function(ctx) {
 
 // Visit a parse tree produced by VenbraceForgivingParser#trig.
 VenbraceForgivingVisitor.prototype.visitTrig = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#trig_op.
+VenbraceForgivingVisitor.prototype.visitTrig_op = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -296,12 +392,6 @@ VenbraceForgivingVisitor.prototype.visitLocal_var_decl_expr = function(ctx) {
 
 // Visit a parse tree produced by VenbraceForgivingParser#atom.
 VenbraceForgivingVisitor.prototype.visitAtom = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by VenbraceForgivingParser#atom_elements.
-VenbraceForgivingVisitor.prototype.visitAtom_elements = function(ctx) {
   return this.visitChildren(ctx);
 };
 
