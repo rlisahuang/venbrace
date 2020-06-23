@@ -400,7 +400,8 @@ local_decl_keyword: LOCAL // Actually required due to reasoning above.
 
 // 05/04/2020: although GLOBAL setter is implemented, it is not used in the translation tasks of study 1
 setter:
-  SET GLOBAL? target=(ID | COMPONENT_PROPERTY) TO? expr_block
+    SET GLOBAL? ID TO? expr_block // Only allow global with ID
+  | SET COMPONENT_PROPERTY TO? expr_block
   ;
 
 // [2020/06/21] Parens-optional version of expression with a relatively standard 
