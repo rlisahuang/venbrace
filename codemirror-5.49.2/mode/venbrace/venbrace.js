@@ -40,7 +40,7 @@ CodeMirror.defineMode("venbrace", function () {
     var VenbraceKeywords = [ null, "'y'", "'x'", null, "'{'", "'}'", "'('", "')'", 
     "'['", "']'", "','", "'==='", "'.'", "'<-'", "':'", 
     "'true'", "'false'", "'when'", "'if'", "'then'", "'else'", 
-    "'else if'", "'for each'", "'do'", "'result'", "'to'", 
+    "'else if'", "'for'", "'each'", "'do'", "'result'", "'to'", 
     "'call'", "'get'", "'set'", "'global'", "'initialize'", 
     "'local'", "'in'", "'by'", "'from'", "'while'", "'test'", 
     "'screenName'", "'startValue'", 
