@@ -1,7 +1,10 @@
 /**
  * File: ForgivingTokensVisitor.js 
  * Author: Lyn Turbak
- * Created: 2020/06/16-18
+ * 
+ * History:
+ * * [2020/06/22, lyn] Fixed bug in counting newlines when file begins with comment
+ * * [2020/06/16-18, lyn] Created
  * 
  * Generate an array of tokens from a VenbraceForgiving parse tree. 
  * 
@@ -75,7 +78,9 @@ var CommonToken = antlr4.CommonToken;
 // console.log('TerminalNodeImpl');
 // console.log(TerminalNodeImpl);
 var VenbraceForgivingVisitor = require('./VenbraceForgivingVisitor').VenbraceForgivingVisitor;
+var ListTreeVisitor = require('./ListTreeVisitor').ListTreeVisitor;
 var Utils = require('./Utils');
+var tokenIntMap = require('./TokenIntMap').tokenIntMap;
 
 // ---------- Set up inheritance ----------
 function ForgivingTokensVisitor() {
@@ -121,14 +126,14 @@ ForgivingTokensVisitor.prototype.visitTest_program = function(ctx) {
 ForgivingTokensVisitor.prototype.visitImmutable_neg_num_special_case = function (ctx) {
   var negNumToken = ctx.NEG_NUM().getSymbol();
   var newMinusToken = negNumToken.clone(); 
-  newMinusToken.type = 62; // hard-coded MINUS token type
+  newMinusToken.type = tokenIntMap['MINUS']; 
   newMinusToken.stop = newMinusToken.start; // MINUS token is one character long
   newMinusToken.text = '-';
   // newMinusToken.inserted = true;
 
   // negNumToken.corrected = negNumToken.text;
   negNumToken.text = negNumToken.text.substring(1); // remove - sign
-  negNumToken.type = 120; // NUMBER = 120, NEG_NUM = 121
+  newMinusToken.type = tokenIntMap['NUMBER']; 
   negNumToken.start = negNumToken.start + 1; // exclude - sign
   negNumToken.column = negNumToken.column + 1; // exclude - sign
 
@@ -257,6 +262,65 @@ ForgivingTokensVisitor.prototype.visitLocal_decl_keyword = function(ctx) {
 }
 */
 
+
+/* THIS IS CODE STILL UNDER CONSTRUCTION BY LYN THAT HE'S COMMENTED OUT
+
+// Rather than directly process expression tokens via ForgivingTokenVisitor,
+// instead, use ListTreeVisitor to create a list tree representation of 
+// the outermost expr_block, and process that tree for its tokens. 
+ForgivingTokensVisitor.prototype.visitExpr_block = function(ctx) {
+  var listTreeVisitor = new ListTreeVisitor();   
+  // Note: do *not* call this.visit(ctx). Instead make a list tree of expr
+  var exprBlockListTree = listTreeVisitor(visit(ctx));
+  var exprBlockTokens = exprBlockTreeToTokens(exprBlockListTree);
+  Utils.pushArray(this.tokens, exprBlockTokens);
+}
+
+function exprBlockTreeToTokens(exprBlockListTree) {
+
+  function exprTreeToTokens(etr) {
+    // A tree node is either (1) a token or (2) a list beginning with 
+    // a string context type followed by subtrees. 
+    // Return a nonempty list of (possibly annotated) tokens
+    if (etr instanceof CommonToken) {
+      return [etr]; 
+    } else if (! (etr instanceof Array)) {
+      throw 'exprBlockTreeToTokens expects token or Array; found ' + (typeof etr);
+    }
+    if (etr.length <= 1) {
+      throw 'exprBlockTreeToTokens expects Array length >= 2 ' + etr;
+    }
+    // Invariant: etr is Array of length >= 2
+    var nodeType = etr[0]; 
+    if (nodeType == 'emptyExpr') {
+      return etr.slice(1); // List of left and right paren tokens
+    }
+    if (nodeType == 'parensExpr') {
+      var subtokens = exprTreeToTokens(etr[2]); // etr[2] is subexp
+      if (isOpenBrace(subtokens[0].text)) { // subexp alreay braced, so these parens 
+        // are extra and should be deleted
+        var lparenToken = subtokens[0]; 
+        var rparenToken = subtokens[subtokens.length-1]; // Assume balanced braces;
+      }
+    }
+  }
+
+  var exprBlockTokens = exprTreeToTokens(exprBlockListTree); 
+  if (! (isOpenBrace(exprBlockTokens[0].text))) { // Need to insert paren tokens
+    
+    return exprBlockTokens;
+  } else { 
+    exprBlockTokens
+
+  }
+}
+
+function isOpenBrace(str) {
+  return ['(', '{', '['].includes(str);
+}
+
+*/
+
 ForgivingTokensVisitor.prototype.visitTerminal = function(ctx) {
   // Default handler for terminal tokens not handled by explicit visitor
   var token = ctx.getSymbol(); // Returns the token at the terminal 
@@ -276,6 +340,8 @@ ForgivingTokensVisitor.prototype.visitTerminal = function(ctx) {
  * TOKEN HELPER FUNCTIONS
  * *********************************************************** 
  */
+
+
 
 // Modify CommonToken toString method to handle 
 // inserted, deleted, correct, and optional tokens
@@ -326,7 +392,7 @@ function isOptional (ctx, token) {
   var parentNameWithContext = ctx.getParent().constructor.name;
   // console.log('Debug: ' + token + ' ' + parentNameWithContext);
   // Turn names like 'Decl_blockContext' into 'decl_block'
-  var parentNameWithoutContext = parentNameWithContext.split('Context')[0].toLowerCase(); 
+  var parentNameWithoutContext = Utils.uncapitalizeFirstLetter(parentNameWithContext.split('Context')[0]);
   optionalTexts = optionalTokens[parentNameWithoutContext]; 
   if (optionalTexts === undefined) {
     // not in dictionary
@@ -358,7 +424,7 @@ function ensureLSQR(token) {
   var text = token.text;
   if (text !== '[') {
     token.corrected = text;
-    token.type = 6; // LSQR int in .tokens file
+    token.type = tokenIntMap['LSQR'];
     token.text = '['; 
   }
   return token;
@@ -369,14 +435,14 @@ function ensureRSQR(token) {
   var text = token.text;
   if (text !== ']') {
     token.corrected = text;
-    token.type = 7; // RSQR int in .tokens file
+    token.type = tokenIntMap['RSQR'];
     token.text = ']'; 
   }
   return token;
 }
 
 function newLSQRToken() {
-  tok = new CommonToken(undefined, 6, // LSQR int in .tokens file
+  tok = new CommonToken(undefined, tokenIntMap['LSQR'], 
                         undefined, undefined, undefined);
   tok.text = '['; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
@@ -385,7 +451,7 @@ function newLSQRToken() {
 }
 
 function newRSQRToken() {
-  tok = new CommonToken(undefined, 7, // RSQR int in .tokens file
+  tok = new CommonToken(undefined, tokenIntMap['RSQR'], 
                         undefined, undefined, undefined);
   tok.text = ']'; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
@@ -398,7 +464,7 @@ function ensureLCURLY(token) {
   var text = token.text;
   if (text !== '{') {
     token.corrected = text;
-    token.type = 2; // LCURLY int in .tokens file
+    token.type = tokenIntMap['LCURLY'];
     token.text = '{'; 
   }
   return token;
@@ -409,14 +475,15 @@ function ensureRCURLY(token) {
   var text = token.text;
   if (text !== '}') {
     token.corrected = text;
-    token.type = 3; // RCURLY int in .tokens file
+    token.type = tokenIntMap['RCURLY'];
     token.text = '}'; 
   }
   return token;
 }
 
 function newLCURLYToken() { // LCURLY int in .tokens file
-  tok = new CommonToken(undefined, 2, undefined, undefined, undefined);
+  tok = new CommonToken(undefined, tokenIntMap['LCURLY'],
+                        undefined, undefined, undefined);
   tok.text = '{'; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
   tok.inserted = true;
@@ -424,7 +491,7 @@ function newLCURLYToken() { // LCURLY int in .tokens file
 }
 
 function newRCURLYToken() {
-  tok = new CommonToken(undefined, 3, // RCURLY int in .tokens file
+  tok = new CommonToken(undefined, tokenIntMap['RCURLY'],
                         undefined, undefined, undefined);
   tok.text = '}'; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
@@ -432,8 +499,26 @@ function newRCURLYToken() {
   return tok; 
 }
 
+function newLPARENToken() { 
+  tok = new CommonToken(undefined, tokenIntMap['LPAREN'],
+                        undefined, undefined, undefined);
+  tok.text = '('; 
+  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
+  tok.inserted = true;
+  return tok; 
+}
+
+function newRPARENToken() {
+  tok = new CommonToken(undefined, tokenIntMap['RPAREN'],
+                        undefined, undefined, undefined);
+  tok.text = ')'; 
+  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
+  tok.inserted = true;
+  return tok; 
+}
+
 function newGLOBALToken() {
-  tok = new CommonToken(undefined, 27, // GLOBAL int in .tokens file
+  tok = new CommonToken(undefined, tokenIntMap['GLOBAL'],
                         undefined, undefined, undefined);
   tok.text = 'global'; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
@@ -442,7 +527,7 @@ function newGLOBALToken() {
 }
 
 function newLOCALToken() {
-  tok = new CommonToken(undefined, 30, // LOCAL int in .tokens file
+  tok = new CommonToken(undefined, tokenIntMap['LOCAL'],
                         undefined, undefined, undefined);
   tok.text = 'local'; 
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
@@ -501,7 +586,7 @@ function fixupTokens(tokens) {
                                       // They will come before next regular token,
                                       // and might be on next line rather than current one.
   var prevRegularTokenStop = undefined; 
-  var prevRegularTokenLine = undefined; 
+  var prevRegularTokenLine = 1; 
 
   function printState(msg, t) { // For debugging
     console.log(msg + tokenString(t)
@@ -541,6 +626,8 @@ function fixupTokens(tokens) {
         if (!prevRegularTokenStop) {
           // This is the first regular token on first nonempty line
           charIndex = tok.start;
+          numSpaces = tok.start; // [2020/06/22, lyn] Fixed bug cause by initial comments
+                                 // by adding this line
         } else {
           // Maintain space from prev regular token
           numSpaces = tok.start - (prevRegularTokenStop + 1); // space between tokens
@@ -560,6 +647,13 @@ function fixupTokens(tokens) {
             // For line other than first line, determine where newlines should go. 
             var leadingSpacesThisLine = Utils.spaces(tok.column); 
             var numNewlines = tok.line - prevRegularTokenLine;
+            /* 
+            console.log('tok.line=' + tok.line 
+                        + '; prevRegularTokenLine=' + prevRegularTokenLine
+                        + '; numNewlines=' + numNewlines
+                        + '; numSpaces=' + numSpaces
+                        + '; tok.column=' + tok.column);
+            */
             var trailingSpacesPrevLine = Utils.spaces(numSpaces - tok.column - numNewlines); 
             var newWhitespace = trailingSpacesPrevLine + Utils.newlines(numNewlines) + leadingSpacesThisLine; 
             // Invariant: newWhitespace.length == numSpaces

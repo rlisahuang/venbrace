@@ -479,18 +479,18 @@ pow_expr:
 
 // Core expressions with optional (due to "forgivingness")  braces
 core_expr: 
-    getter 
-  | control_expr
-  | not_expr
-  | math_expr
-  | str_expr
-  | call_procedure_expr
-  | local_var_decl_expr // [2020/06/15, lyn] Added for testing (not used in Round 2)
-  | atom
-  | LPAREN RPAREN            // special case for empty expression 
-  | LPAREN expr_block RPAREN // Explict parens
-  | LCURLY expr_block RCURLY // Explict curlies; wrong, but allowed by forgiving parser
-  | LSQR expr_block RSQR // Explict squares; wrong, but allowed by forgiving parser
+    getter                   #getterExpr
+  | control_expr             #controlExpr
+  | not_expr                 #notExpr
+  | math_expr                #mathExpr
+  | str_expr                 #strExpr
+  | call_procedure_expr      #callProcedureExpr
+  | local_var_decl_expr      #locaVarDeclExpr // [2020/06/15, lyn] Added for testing (not used in Round 2)
+  | atom                     #atomExpr
+  | LPAREN RPAREN            #emptyExpr // special case for empty expression 
+  | LPAREN expr_block RPAREN #parensExpr // Explict parens
+  | LCURLY expr_block RCURLY #curliesExpr // Explict curlies; wrong, but allowed by forgiving parser
+  | LSQR expr_block RSQR     #squaresExpr // Explict squares; wrong, but allowed by forgiving parser
   ;
 
 control_expr: if_expr

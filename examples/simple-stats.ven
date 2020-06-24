@@ -10,9 +10,17 @@ set a5 to b5 + c5
 
 set a6 to b6 * c6 + d6 / e6
 
-(set global a7 to 7)
-
 (set Button1.Text to 8)
+
+(set global a9 to 9)
+
+(set global a10 to (10 + (get global a10)))
+
+set global a11 to 11 + global a11
+
+set global a12 to global a12 + 12
+
+
 
 // (set global Button1.Text to 7) // This should be illegal, and it is.
 

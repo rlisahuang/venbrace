@@ -42,8 +42,22 @@ function dashes(n) {
 function multiplyString(str, n) {
   // Acts like python str * n 
   // console.log("multiplyString('" + str + "', " + n + ")");
-  return Array(n).fill(str).join('')
+  if (isInt(n)) {
+    if (n >= 0) {
+      return Array(n).fill(str).join('');
+    } else {
+      throw 'Utils.multiplyString given negative integer: ' + n.toString();
+    }
+  } else {
+    throw 'Utils.multiplyString given noninteger: ' + n.toString();
+  }
 }
+
+// https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
+function isInt(value) {
+  return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
+}
+
 
 function displayTimeTaken(msg, obj, thunk) {
   var start = Date.now();
@@ -54,11 +68,38 @@ function displayTimeTaken(msg, obj, thunk) {
 
 }
 
+function capitalizeFirstLetter(str) {
+  if (str.length == 0) {
+    return str;
+  } else {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+}
+
+function uncapitalizeFirstLetter(str) {
+  if (str.length == 0) {
+    return str;
+  } else {
+    return str.charAt(0).toLowerCase() + str.slice(1);
+  }
+}
+
+// Mutate arr1 by pushing all elements of arr2
+// See https://stackoverflow.com/questions/4156101/copy-array-items-into-another-array
+function pushArray(arr1, arr2) {
+  arr1.push.apply(arr1, arr2); // mutate arr1 by add all elements of arr2
+  return arr1; // Return modified arr1 for kicks.
+}
+
 exports.className = className;
 exports.zip = zip;
 exports.spaces = spaces;
 exports.newlines = newlines;
 exports.dashes = dashes;
 exports.multiplyString = dashes;
-exports.displayTimeTaken = displayTimeTaken
+exports.isInt = isInt;
+exports.displayTimeTaken = displayTimeTaken;
+exports.capitalizeFirstLetter = capitalizeFirstLetter;
+exports.uncapitalizeFirstLetter = uncapitalizeFirstLetter;
+exports.pushArray = pushArray;
 

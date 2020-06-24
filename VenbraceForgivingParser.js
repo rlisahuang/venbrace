@@ -5018,86 +5018,459 @@ function Core_exprContext(parser, parent, invokingState) {
 Core_exprContext.prototype = Object.create(antlr4.ParserRuleContext.prototype);
 Core_exprContext.prototype.constructor = Core_exprContext;
 
-Core_exprContext.prototype.getter = function() {
-    return this.getTypedRuleContext(GetterContext,0);
+
+ 
+Core_exprContext.prototype.copyFrom = function(ctx) {
+    antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
 };
 
-Core_exprContext.prototype.control_expr = function() {
-    return this.getTypedRuleContext(Control_exprContext,0);
-};
 
-Core_exprContext.prototype.not_expr = function() {
-    return this.getTypedRuleContext(Not_exprContext,0);
-};
+function MathExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
 
-Core_exprContext.prototype.math_expr = function() {
+MathExprContext.prototype = Object.create(Core_exprContext.prototype);
+MathExprContext.prototype.constructor = MathExprContext;
+
+VenbraceForgivingParser.MathExprContext = MathExprContext;
+
+MathExprContext.prototype.math_expr = function() {
     return this.getTypedRuleContext(Math_exprContext,0);
 };
-
-Core_exprContext.prototype.str_expr = function() {
-    return this.getTypedRuleContext(Str_exprContext,0);
-};
-
-Core_exprContext.prototype.call_procedure_expr = function() {
-    return this.getTypedRuleContext(Call_procedure_exprContext,0);
-};
-
-Core_exprContext.prototype.local_var_decl_expr = function() {
-    return this.getTypedRuleContext(Local_var_decl_exprContext,0);
-};
-
-Core_exprContext.prototype.atom = function() {
-    return this.getTypedRuleContext(AtomContext,0);
-};
-
-Core_exprContext.prototype.LPAREN = function() {
-    return this.getToken(VenbraceForgivingParser.LPAREN, 0);
-};
-
-Core_exprContext.prototype.RPAREN = function() {
-    return this.getToken(VenbraceForgivingParser.RPAREN, 0);
-};
-
-Core_exprContext.prototype.expr_block = function() {
-    return this.getTypedRuleContext(Expr_blockContext,0);
-};
-
-Core_exprContext.prototype.LCURLY = function() {
-    return this.getToken(VenbraceForgivingParser.LCURLY, 0);
-};
-
-Core_exprContext.prototype.RCURLY = function() {
-    return this.getToken(VenbraceForgivingParser.RCURLY, 0);
-};
-
-Core_exprContext.prototype.LSQR = function() {
-    return this.getToken(VenbraceForgivingParser.LSQR, 0);
-};
-
-Core_exprContext.prototype.RSQR = function() {
-    return this.getToken(VenbraceForgivingParser.RSQR, 0);
-};
-
-Core_exprContext.prototype.enterRule = function(listener) {
+MathExprContext.prototype.enterRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterCore_expr(this);
+        listener.enterMathExpr(this);
 	}
 };
 
-Core_exprContext.prototype.exitRule = function(listener) {
+MathExprContext.prototype.exitRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitCore_expr(this);
+        listener.exitMathExpr(this);
 	}
 };
 
-Core_exprContext.prototype.accept = function(visitor) {
+MathExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitCore_expr(this);
+        return visitor.visitMathExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
 };
 
+
+function SquaresExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+SquaresExprContext.prototype = Object.create(Core_exprContext.prototype);
+SquaresExprContext.prototype.constructor = SquaresExprContext;
+
+VenbraceForgivingParser.SquaresExprContext = SquaresExprContext;
+
+SquaresExprContext.prototype.LSQR = function() {
+    return this.getToken(VenbraceForgivingParser.LSQR, 0);
+};
+
+SquaresExprContext.prototype.expr_block = function() {
+    return this.getTypedRuleContext(Expr_blockContext,0);
+};
+
+SquaresExprContext.prototype.RSQR = function() {
+    return this.getToken(VenbraceForgivingParser.RSQR, 0);
+};
+SquaresExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterSquaresExpr(this);
+	}
+};
+
+SquaresExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitSquaresExpr(this);
+	}
+};
+
+SquaresExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitSquaresExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function GetterExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+GetterExprContext.prototype = Object.create(Core_exprContext.prototype);
+GetterExprContext.prototype.constructor = GetterExprContext;
+
+VenbraceForgivingParser.GetterExprContext = GetterExprContext;
+
+GetterExprContext.prototype.getter = function() {
+    return this.getTypedRuleContext(GetterContext,0);
+};
+GetterExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterGetterExpr(this);
+	}
+};
+
+GetterExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitGetterExpr(this);
+	}
+};
+
+GetterExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitGetterExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function EmptyExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+EmptyExprContext.prototype = Object.create(Core_exprContext.prototype);
+EmptyExprContext.prototype.constructor = EmptyExprContext;
+
+VenbraceForgivingParser.EmptyExprContext = EmptyExprContext;
+
+EmptyExprContext.prototype.LPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.LPAREN, 0);
+};
+
+EmptyExprContext.prototype.RPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.RPAREN, 0);
+};
+EmptyExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterEmptyExpr(this);
+	}
+};
+
+EmptyExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitEmptyExpr(this);
+	}
+};
+
+EmptyExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitEmptyExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function ParensExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+ParensExprContext.prototype = Object.create(Core_exprContext.prototype);
+ParensExprContext.prototype.constructor = ParensExprContext;
+
+VenbraceForgivingParser.ParensExprContext = ParensExprContext;
+
+ParensExprContext.prototype.LPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.LPAREN, 0);
+};
+
+ParensExprContext.prototype.expr_block = function() {
+    return this.getTypedRuleContext(Expr_blockContext,0);
+};
+
+ParensExprContext.prototype.RPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.RPAREN, 0);
+};
+ParensExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterParensExpr(this);
+	}
+};
+
+ParensExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitParensExpr(this);
+	}
+};
+
+ParensExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitParensExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function StrExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+StrExprContext.prototype = Object.create(Core_exprContext.prototype);
+StrExprContext.prototype.constructor = StrExprContext;
+
+VenbraceForgivingParser.StrExprContext = StrExprContext;
+
+StrExprContext.prototype.str_expr = function() {
+    return this.getTypedRuleContext(Str_exprContext,0);
+};
+StrExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterStrExpr(this);
+	}
+};
+
+StrExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitStrExpr(this);
+	}
+};
+
+StrExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitStrExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function ControlExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+ControlExprContext.prototype = Object.create(Core_exprContext.prototype);
+ControlExprContext.prototype.constructor = ControlExprContext;
+
+VenbraceForgivingParser.ControlExprContext = ControlExprContext;
+
+ControlExprContext.prototype.control_expr = function() {
+    return this.getTypedRuleContext(Control_exprContext,0);
+};
+ControlExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterControlExpr(this);
+	}
+};
+
+ControlExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitControlExpr(this);
+	}
+};
+
+ControlExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitControlExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function CurliesExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+CurliesExprContext.prototype = Object.create(Core_exprContext.prototype);
+CurliesExprContext.prototype.constructor = CurliesExprContext;
+
+VenbraceForgivingParser.CurliesExprContext = CurliesExprContext;
+
+CurliesExprContext.prototype.LCURLY = function() {
+    return this.getToken(VenbraceForgivingParser.LCURLY, 0);
+};
+
+CurliesExprContext.prototype.expr_block = function() {
+    return this.getTypedRuleContext(Expr_blockContext,0);
+};
+
+CurliesExprContext.prototype.RCURLY = function() {
+    return this.getToken(VenbraceForgivingParser.RCURLY, 0);
+};
+CurliesExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterCurliesExpr(this);
+	}
+};
+
+CurliesExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitCurliesExpr(this);
+	}
+};
+
+CurliesExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitCurliesExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function AtomExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+AtomExprContext.prototype = Object.create(Core_exprContext.prototype);
+AtomExprContext.prototype.constructor = AtomExprContext;
+
+VenbraceForgivingParser.AtomExprContext = AtomExprContext;
+
+AtomExprContext.prototype.atom = function() {
+    return this.getTypedRuleContext(AtomContext,0);
+};
+AtomExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterAtomExpr(this);
+	}
+};
+
+AtomExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitAtomExpr(this);
+	}
+};
+
+AtomExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitAtomExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function LocaVarDeclExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+LocaVarDeclExprContext.prototype = Object.create(Core_exprContext.prototype);
+LocaVarDeclExprContext.prototype.constructor = LocaVarDeclExprContext;
+
+VenbraceForgivingParser.LocaVarDeclExprContext = LocaVarDeclExprContext;
+
+LocaVarDeclExprContext.prototype.local_var_decl_expr = function() {
+    return this.getTypedRuleContext(Local_var_decl_exprContext,0);
+};
+LocaVarDeclExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterLocaVarDeclExpr(this);
+	}
+};
+
+LocaVarDeclExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitLocaVarDeclExpr(this);
+	}
+};
+
+LocaVarDeclExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitLocaVarDeclExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function CallProcedureExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+CallProcedureExprContext.prototype = Object.create(Core_exprContext.prototype);
+CallProcedureExprContext.prototype.constructor = CallProcedureExprContext;
+
+VenbraceForgivingParser.CallProcedureExprContext = CallProcedureExprContext;
+
+CallProcedureExprContext.prototype.call_procedure_expr = function() {
+    return this.getTypedRuleContext(Call_procedure_exprContext,0);
+};
+CallProcedureExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterCallProcedureExpr(this);
+	}
+};
+
+CallProcedureExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitCallProcedureExpr(this);
+	}
+};
+
+CallProcedureExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitCallProcedureExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function NotExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+NotExprContext.prototype = Object.create(Core_exprContext.prototype);
+NotExprContext.prototype.constructor = NotExprContext;
+
+VenbraceForgivingParser.NotExprContext = NotExprContext;
+
+NotExprContext.prototype.not_expr = function() {
+    return this.getTypedRuleContext(Not_exprContext,0);
+};
+NotExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterNotExpr(this);
+	}
+};
+
+NotExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitNotExpr(this);
+	}
+};
+
+NotExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitNotExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
 
 
 
@@ -5113,54 +5486,63 @@ VenbraceForgivingParser.prototype.core_expr = function() {
         var la_ = this._interp.adaptivePredict(this._input,54,this._ctx);
         switch(la_) {
         case 1:
+            localctx = new GetterExprContext(this, localctx);
             this.enterOuterAlt(localctx, 1);
             this.state = 467;
             this.getter();
             break;
 
         case 2:
+            localctx = new ControlExprContext(this, localctx);
             this.enterOuterAlt(localctx, 2);
             this.state = 468;
             this.control_expr();
             break;
 
         case 3:
+            localctx = new NotExprContext(this, localctx);
             this.enterOuterAlt(localctx, 3);
             this.state = 469;
             this.not_expr();
             break;
 
         case 4:
+            localctx = new MathExprContext(this, localctx);
             this.enterOuterAlt(localctx, 4);
             this.state = 470;
             this.math_expr();
             break;
 
         case 5:
+            localctx = new StrExprContext(this, localctx);
             this.enterOuterAlt(localctx, 5);
             this.state = 471;
             this.str_expr();
             break;
 
         case 6:
+            localctx = new CallProcedureExprContext(this, localctx);
             this.enterOuterAlt(localctx, 6);
             this.state = 472;
             this.call_procedure_expr();
             break;
 
         case 7:
+            localctx = new LocaVarDeclExprContext(this, localctx);
             this.enterOuterAlt(localctx, 7);
             this.state = 473;
             this.local_var_decl_expr();
             break;
 
         case 8:
+            localctx = new AtomExprContext(this, localctx);
             this.enterOuterAlt(localctx, 8);
             this.state = 474;
             this.atom();
             break;
 
         case 9:
+            localctx = new EmptyExprContext(this, localctx);
             this.enterOuterAlt(localctx, 9);
             this.state = 475;
             this.match(VenbraceForgivingParser.LPAREN);
@@ -5169,6 +5551,7 @@ VenbraceForgivingParser.prototype.core_expr = function() {
             break;
 
         case 10:
+            localctx = new ParensExprContext(this, localctx);
             this.enterOuterAlt(localctx, 10);
             this.state = 477;
             this.match(VenbraceForgivingParser.LPAREN);
@@ -5179,6 +5562,7 @@ VenbraceForgivingParser.prototype.core_expr = function() {
             break;
 
         case 11:
+            localctx = new CurliesExprContext(this, localctx);
             this.enterOuterAlt(localctx, 11);
             this.state = 481;
             this.match(VenbraceForgivingParser.LCURLY);
@@ -5189,6 +5573,7 @@ VenbraceForgivingParser.prototype.core_expr = function() {
             break;
 
         case 12:
+            localctx = new SquaresExprContext(this, localctx);
             this.enterOuterAlt(localctx, 12);
             this.state = 485;
             this.match(VenbraceForgivingParser.LSQR);
