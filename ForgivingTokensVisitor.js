@@ -1,59 +1,67 @@
 /**
- * File: ForgivingTokensVisitor.js 
- * Author: Lyn Turbak
- * 
- * History:
- * * [2020/06/22, lyn] Fixed bug in counting newlines when file begins with comment
- * * [2020/06/16-18, lyn] Created
- * 
- * Generate an array of tokens from a VenbraceForgiving parse tree. 
- * 
- * Calling .visit on a program, test_program, or test_blocks parse tree returns
- * a list of tokens that includes inserted, deleted, and corrected tokens.
- * Also, optional tokens are marked optional. Here are the new properties on 
- * these tokens:
- * 
- *   + tok.inserted is true if tok is an inserted token (undefined otherwise). 
- *     Currently, the only inserted tokens are braces and 
- *     the MINUS token inserted when processing expr_block NEG_NUM. 
- * ===== Qianqian Jun. 20, 2020 =====
- * - removed the `inserted' tag for corrected NEG_NUM
- * 
- * 
- *   + tok.deleted is true if tok is a deleted token (undefined otherwise)
- *      Currently, only brace tokens are deleted (when used around a suite). 
- * 
- *   + tok.corrected has the previous token text if tok has been corrected 
- *     (undefined otherwise). Currently, the only tokens corrected are 
- *     wrong-type braces and the NEG_NUM in expr_block NEG_NUM. 
- * ===== Qianqian Jun. 20, 2020 =====
- * - removed the `corrected' tag for corrected NEG_NUM
- * 
- * 
- *   + tok.optional is true if tok is optional in the grammar (undefined otherwise).
- *     Inserted, deleted, and corrected tokens are never marked optional. 
- * 
- * In cases where expr NEG_NUM is converted to expr MINUS <positive version of NEG_NUM>,
- * the new MINUS token is marked as inserted and the <positive version of NEG_NUM>
- * token is marked as corrected. 
- * 
- * After .visit is called on a top-level program node, the following properties are
- * defined on the visitor: 
- * 
- *   + visitor.unfixedTokens is the unfixed list of tokens, in which tokens
- *       do not have correct tokenIndex, start, stop, line, and column information.
- *       In particular, inserted tokens have bogus information, and any tokens
- *       following an inserted token have incorrect information. 
- * 
- *   + visitor.tokens is the fixed list of tokens, in which all tokens have correct 
- *       tokenIndex, start, stop, line, and column information.
- *    
- *   + visitor.stringForTokens is a string that is consistent for the parsed tokens.
- *     I.e. the start/stop/line/column information for every tokens in visitor.tokens
- *     is consistent with this string. So this string can be used for the highlighting
- *     in the syntax editor using information on the tokens. 
- * 
- */
+ File: ForgivingTokensVisitor.js 
+ Author: Lyn Turbak
+
+ Known Bugs; DO expr doesn't work correctly (because has embedded suite/statements)
+   Can be fixed by handling decl_blocks, suites, and stat_blocks as 
+   conversions from listTrees rather than mutating accumulators of tokens. 
+ 
+ History:
+ * [2020/06/24, lyn] 
+   + Added inserting/deleting/correcting braces for expressions via a combination
+     of ListTreeVisitor, exprTreeToTokensWithParens, and exprTreeToTokens
+   + NEG_NUM special case is now handled by exprTreeToTokens
+ * [2020/06/22, lyn] Fixed bug in counting newlines when file begins with comment
+ * [2020/06/16-18, lyn] Created
+ 
+ Generate an array of tokens from a VenbraceForgiving parse tree. 
+ 
+ Calling .visit on a program, test_program, or test_blocks parse tree returns
+ a list of tokens that includes inserted, deleted, and corrected tokens.
+ Also, optional tokens are marked optional. Here are the new properties on 
+ these tokens:
+ 
+   + tok.inserted is true if tok is an inserted token (undefined otherwise). 
+     Currently, the only inserted tokens are braces and 
+     the MINUS token inserted when processing expr_block NEG_NUM. 
+ ===== Qianqian Jun. 20, 2020 =====
+ - removed the `inserted' tag for corrected NEG_NUM
+ 
+ 
+   + tok.deleted is true if tok is a deleted token (undefined otherwise)
+      Currently, only brace tokens are deleted (when used around a suite). 
+ 
+   + tok.corrected has the previous token text if tok has been corrected 
+      (undefined otherwise). Currently, the only tokens corrected are 
+     wrong-type braces and the NEG_NUM in expr_block NEG_NUM. 
+ ===== Qianqian Jun. 20, 2020 =====
+ - removed the `corrected' tag for corrected NEG_NUM
+ 
+   + tok.optional is true if tok is optional in the grammar (undefined otherwise).
+     Inserted and deleted tokens are never marked optional, 
+     but corrected tokens may be optional. 
+ 
+ In cases where expr NEG_NUM is converted to expr MINUS <positive version of NEG_NUM>,
+ the new MINUS token is marked as inserted and the <positive version of NEG_NUM>
+ token is marked as corrected. 
+ 
+ After .visit is called on a top-level program node, the following properties are
+ defined on the visitor: 
+ 
+   + visitor.unfixedTokens is the unfixed list of tokens, in which tokens
+       do not have correct tokenIndex, start, stop, line, and column information.
+       In particular, inserted tokens have bogus information, and any tokens
+       following an inserted token have incorrect information. 
+ 
+   + visitor.tokens is the fixed list of tokens, in which all tokens have correct 
+       tokenIndex, start, stop, line, and column information.
+    
+   + visitor.stringForTokens is a string that is consistent for the parsed tokens.
+     I.e. the start/stop/line/column information for every tokens in visitor.tokens
+     is consistent with this string. So this string can be used for the highlighting
+     in the syntax editor using information on the tokens. 
+ 
+*/
 
 // inBrowser is defined in .html file. 
 // If it's defined, then we're in the browser version.
@@ -81,6 +89,7 @@ var VenbraceForgivingVisitor = require('./VenbraceForgivingVisitor').VenbraceFor
 var ListTreeVisitor = require('./ListTreeVisitor').ListTreeVisitor;
 var Utils = require('./Utils');
 var tokenIntMap = require('./TokenIntMap').tokenIntMap;
+var tokenTextMap = require('./TokenTextMap').tokenTextMap;
 
 // ---------- Set up inheritance ----------
 function ForgivingTokensVisitor() {
@@ -122,6 +131,7 @@ ForgivingTokensVisitor.prototype.visitTest_program = function(ctx) {
   return this.visitTop(ctx);
 }
 
+/* // Now handled by exprBlockTreeToTokens
 // Special case for converting expr_block NEG_NUM to binary subtraction in cases like (a-17)
 ForgivingTokensVisitor.prototype.visitImmutable_neg_num_special_case = function (ctx) {
   var negNumToken = ctx.NEG_NUM().getSymbol();
@@ -144,6 +154,7 @@ ForgivingTokensVisitor.prototype.visitImmutable_neg_num_special_case = function 
   this.tokens.push(negNumToken);
   this.tokens.push(ctx.RPAREN().getSymbol()); 
 }
+*/
 
 ForgivingTokensVisitor.prototype.visitDecl_block = function(ctx) {
   /* 
@@ -154,19 +165,19 @@ ForgivingTokensVisitor.prototype.visitDecl_block = function(ctx) {
   var lbraceToken = toToken(ctx.declLbrace);
   if (!lbraceToken) {
     // console.log('no declLbrace token'); 
-    this.tokens.push(newLSQRToken()); // No left brace token; add LSQR
+    this.tokens.push(newToken('LSQR')); // No left brace token; add LSQR
   } else {
     // console.log('declLbrace token: ' + lbraceToken.toString());
-    this.tokens.push(ensureLSQR(lbraceToken));
+    this.tokens.push(ensureTokenType('LSQR', lbraceToken));
   }
   this.visit(ctx.decl());
   var rbraceToken = toToken(ctx.declRbrace);
   if (!rbraceToken) {
     // console.log('no declLbrace token'); 
-    this.tokens.push(newRSQRToken()); // No right brace token; add RSQR
+    this.tokens.push(newToken('RSQR')); // No right brace token; add RSQR
   } else {
     // console.log('declRbrace token: ' + rbraceToken.toString());
-    this.tokens.push(ensureRSQR(rbraceToken));
+    this.tokens.push(ensureTokenType('RSQR', rbraceToken));
   }
 }
 
@@ -198,8 +209,8 @@ ForgivingTokensVisitor.prototype.visitSuite = function(ctx) {
   if (emptyStatBlocks && lbraceToken && rbraceToken) {
     // console.log('empty suite branch');
     // special case for explicit empty suite braces
-    this.tokens.push(ensureLCURLY(lbraceToken));
-    this.tokens.push(ensureRCURLY(rbraceToken));
+    this.tokens.push(ensureTokenType('LCURLY', lbraceToken));
+    this.tokens.push(ensureTokenType('RCURLY', rbraceToken));
   } else {
     // all other cases have no explicit suite braces
     if (lbraceToken) {
@@ -220,22 +231,23 @@ ForgivingTokensVisitor.prototype.visitStat_block = function(ctx) {
      right-brace tokens after stat. It will insert a curly in no brace case and 
      convert noncurlies to curlies. 
    */
+  // console.log('Visiting stat_block');
   var lbraceToken = toToken(ctx.statLbrace);
   if (!lbraceToken) {
     // console.log('no statLbrace token'); 
-    this.tokens.push(newLCURLYToken()); // No left brace token; add LCURLY
+    this.tokens.push(newToken('LCURLY')); // No left brace token; add LCURLY
   } else {
     // console.log('statLbrace token: ' + lbraceToken.toString());
-    this.tokens.push(ensureLCURLY(lbraceToken));
+    this.tokens.push(ensureTokenType('LCURLY', lbraceToken));
   }
   this.visit(ctx.stat());
   var rbraceToken = toToken(ctx.statRbrace);
   if (!rbraceToken) {
     // console.log('no statLbrace token'); 
-    this.tokens.push(newRCURLYToken()); // No right brace token; add RCURLY
+    this.tokens.push(newToken('RCURLY')); // No right brace token; add RCURLY
   } else {
     // console.log('statRbrace token: ' + rbraceToken.toString());
-    this.tokens.push(ensureRCURLY(rbraceToken));
+    this.tokens.push(ensureTokenType('RCURLY', rbraceToken));
   }
 }
 
@@ -248,7 +260,7 @@ ForgivingTokensVisitor.prototype.visitGlobal_decl_keyword = function(ctx) {
   if (terminalNode) {
     this.tokens.push(terminalNode.getSymbol());
   } else {
-    this.tokens.push(newGLOBALToken());
+    this.tokens.push(newToken('GLOBAL'));
   }
 }
 
@@ -257,69 +269,134 @@ ForgivingTokensVisitor.prototype.visitLocal_decl_keyword = function(ctx) {
   if (terminalNode) {
     this.tokens.push(terminalNode.getSymbol());
   } else {
-    this.tokens.push(newLOCALToken());
+    this.tokens.push(newToken('LOCAL'));
   }
 }
 */
 
-
-/* THIS IS CODE STILL UNDER CONSTRUCTION BY LYN THAT HE'S COMMENTED OUT
 
 // Rather than directly process expression tokens via ForgivingTokenVisitor,
 // instead, use ListTreeVisitor to create a list tree representation of 
 // the outermost expr_block, and process that tree for its tokens. 
 ForgivingTokensVisitor.prototype.visitExpr_block = function(ctx) {
+  // console.log('Visiting expr_block');
   var listTreeVisitor = new ListTreeVisitor();   
   // Note: do *not* call this.visit(ctx). Instead make a list tree of expr
-  var exprBlockListTree = listTreeVisitor(visit(ctx));
-  var exprBlockTokens = exprBlockTreeToTokens(exprBlockListTree);
+  var exprBlockListTree = listTreeVisitor.visit(ctx);
+  // console.log('exprBlockListTree');
+  // console.log(exprBlockListTree);
+  var exprBlockTokens = exprTreeToTokensWithParens(exprBlockListTree);
+  // console.log('exprBlockTokens');
+  // console.log(exprBlockTokens);
   Utils.pushArray(this.tokens, exprBlockTokens);
 }
 
-function exprBlockTreeToTokens(exprBlockListTree) {
-
-  function exprTreeToTokens(etr) {
-    // A tree node is either (1) a token or (2) a list beginning with 
-    // a string context type followed by subtrees. 
-    // Return a nonempty list of (possibly annotated) tokens
-    if (etr instanceof CommonToken) {
-      return [etr]; 
-    } else if (! (etr instanceof Array)) {
-      throw 'exprBlockTreeToTokens expects token or Array; found ' + (typeof etr);
-    }
-    if (etr.length <= 1) {
-      throw 'exprBlockTreeToTokens expects Array length >= 2 ' + etr;
-    }
-    // Invariant: etr is Array of length >= 2
-    var nodeType = etr[0]; 
-    if (nodeType == 'emptyExpr') {
-      return etr.slice(1); // List of left and right paren tokens
-    }
-    if (nodeType == 'parensExpr') {
-      var subtokens = exprTreeToTokens(etr[2]); // etr[2] is subexp
-      if (isOpenBrace(subtokens[0].text)) { // subexp alreay braced, so these parens 
-        // are extra and should be deleted
-        var lparenToken = subtokens[0]; 
-        var rparenToken = subtokens[subtokens.length-1]; // Assume balanced braces;
-      }
-    }
+function getNodeType(listTree) {
+  if (listTree instanceof CommonToken) {
+    return 'token';
+  } else if (! (listTree instanceof Array)) {
+    throw 'getNodeType expects token or Array; found ' + (typeof listTree);
+  } else if (listTree.length == 0) {
+    throw 'getNodeType expects nonempty array;';
+  } else {
+    return listTree[0];
   }
+}
 
-  var exprBlockTokens = exprTreeToTokens(exprBlockListTree); 
-  if (! (isOpenBrace(exprBlockTokens[0].text))) { // Need to insert paren tokens
+function exprTreeToTokensWithParens(etr) {
+  // Translate an expr listTree to tokens, inserting outer parens if necessary
+  // (not done for abbreviations)
+  var nodeType = getNodeType(etr); 
+  // console.log('withParens nodeType=' + nodeType);
+  var subtokens = exprTreeToTokens(etr); 
+  if (! ['atom', 'getterAbbrev', 'token', 'emptyExpr', 
+         'parensExpr', 'curliesExpr', 'squaresExpr'].includes(nodeType)) {
+    // Need to insert paren tokens
+    // console.log('inserting parens for ' + subtokens.map( t => t.toString() ));
+    subtokens.unshift(newToken('LPAREN'));
+    subtokens.push(newToken('RPAREN'));
+  }
+  // console.log('exprTreeToTokensWithParens returns:');
+  // subtokens.forEach( tok=> console.log(tok.toString()) );
+  return subtokens;
+}
+
+function exprTreeToTokens(etr) {
+  // A tree node is either (1) a token or (2) a list beginning with 
+  // a string context type followed by subtrees. 
+  // Return a nonempty list of (possibly annotated) tokens
+  // Does not necessarily include outer parens (but might)
+  if (etr instanceof CommonToken) {
+    return [etr]; 
+  } else if (! (etr instanceof Array)) {
+    throw 'exprBlockTreeToTokens expects token or Array; found ' + (typeof etr);
+  }
+  if (etr.length <= 1) {
+    throw 'exprBlockTreeToTokens expects Array length >= 2 ' + etr;
+  }
+  // Invariant: etr is Array of length >= 2
+  var nodeType = getNodeType(etr);
+  if (nodeType == 'emptyExpr') {
+    return [ensureTokenType('LPAREN', etr[1]), // left brace, might not be paren
+            ensureTokenType('RPAREN', etr[2])] // right brace, might not be paren
+  } else if (['parensExpr', 'curliesExpr', 'squaresExpr'].includes(nodeType)) {
+    var subnodeType = getNodeType(etr[2]);
+    var subtokens = exprTreeToTokens(etr[2]); // etr[2] is subexp, do *not* require parens
+                                              // since the enclosing context adds braces.
+    var lbraceToken = etr[1]; 
+    var rbraceToken = etr[3]; 
+    // console.log('subnodeType for braces: ' + subnodeType);
+    if (['parensExpr', 'curliesExpr', 'squaresExpr', 
+         'emptyExpr', 'getterAbbrev'].includes(nodeType)) {
+      // subexp already braced or is abbreviated getter, 
+      // so outer braces are extra and should be deleted
+      lbraceToken.deleted = true;
+      rbraceToken.deleted = true;
+    } else { // subexp isn't braced; make sure innermost braces are parens
+      ensureTokenType('LPAREN', lbraceToken);
+      ensureTokenType('RPAREN', rbraceToken);
+    }
+    if (subnodeType === 'atom') {
+      // parens around atoms are optional 
+      lbraceToken.optional = true;
+      rbraceToken.optional = true;
+    }
+    // In all cases add braces token to token list
+    subtokens.unshift(lbraceToken);
+    subtokens.push(rbraceToken);
+    return subtokens; // Return mutated list 
+  } else if (nodeType === 'subNegNumExpr') {
+    // Specially handle case of converting expr_block NEG_NUM to binary subtraction
+    var subtokens = exprTreeToTokensWithParens(etr[1]); // etr[1] is listTree for expr_block
+    var negNumToken = etr[2]; // etr[2] is NEG_NUM token
     
-    return exprBlockTokens;
-  } else { 
-    exprBlockTokens
-
+    var newMinusToken = negNumToken.clone(); 
+    newMinusToken.type = tokenIntMap['MINUS']; 
+    newMinusToken.stop = newMinusToken.start; // MINUS token is one character long
+    newMinusToken.text = '-';
+    // newMinusToken.inserted = true;
+    
+    // Update negNum token to be 
+    
+    var newNumberToken = negNumToken.clone(); 
+    newNumberToken.type = tokenIntMap['NUMBER']; 
+    newNumberToken.text = negNumToken.text.substring(1); // remove - sign
+    newNumberToken.start = negNumToken.start + 1; // exclude - sign
+    newNumberToken.column = negNumToken.column + 1; // exclude - sign
+    // negNumToken.corrected = negNumToken.text;
+    
+    subtokens.push(newMinusToken, newNumberToken);
+    return subtokens;
+  } else {
+    // General case: collect tokens for *parenthesized* subexpressions from below
+    return Utils.concatArrays(// Combine array of arrays into one arraya
+                              etr.slice(1) // Remove nodeType
+                              .map(exprTreeToTokensWithParens) // convert subparts to token lists. 
+                              );
+    
   }
-}
 
-function isOpenBrace(str) {
-  return ['(', '{', '['].includes(str);
 }
-
-*/
 
 ForgivingTokensVisitor.prototype.visitTerminal = function(ctx) {
   // Default handler for terminal tokens not handled by explicit visitor
@@ -385,6 +462,7 @@ function isBrace(text) {
 }
 
 function isOpenBrace(tok) {
+  // console.log("isOpenBrace('" + tok.text + "')=" + ['(', '[', '{'].includes(tok.text));2
   return ['(', '[', '{'].includes(tok.text);
 }
 
@@ -419,117 +497,22 @@ var optionalTokens = { // Dictionary for optional tokens
   // Does *not* handle expression operation labels as optional
 };
 
-function ensureLSQR(token) {
-  // Change left brace token to LSQR if not already '['; otherwise leave unchanged
-  var text = token.text;
-  if (text !== '[') {
-    token.corrected = text;
-    token.type = tokenIntMap['LSQR'];
-    token.text = '['; 
+function ensureTokenType(tokenType, token) {
+  // Change token to tokenType and mark as corrected; otherwise leave unchanged.
+  var oldText = token.text;
+  var newText = tokenTextMap[tokenType];
+  if (oldText !== newText) {
+    token.corrected = oldText;
+    token.type = tokenIntMap[tokenType];
+    token.text = newText;
   }
   return token;
 }
 
-function ensureRSQR(token) {
-  // Change left brace token to RSQR if not already ']'; otherwise leave unchanged
-  var text = token.text;
-  if (text !== ']') {
-    token.corrected = text;
-    token.type = tokenIntMap['RSQR'];
-    token.text = ']'; 
-  }
-  return token;
-}
-
-function newLSQRToken() {
-  tok = new CommonToken(undefined, tokenIntMap['LSQR'], 
+function newToken(tokenType) {
+  tok = new CommonToken(undefined, tokenIntMap[tokenType], 
                         undefined, undefined, undefined);
-  tok.text = '['; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newRSQRToken() {
-  tok = new CommonToken(undefined, tokenIntMap['RSQR'], 
-                        undefined, undefined, undefined);
-  tok.text = ']'; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function ensureLCURLY(token) {
-  // Change left brace token to LCURLY if not already '['; otherwise leave unchanged
-  var text = token.text;
-  if (text !== '{') {
-    token.corrected = text;
-    token.type = tokenIntMap['LCURLY'];
-    token.text = '{'; 
-  }
-  return token;
-}
-
-function ensureRCURLY(token) {
-  // Change left brace token to RCURLY if not already ']'; otherwise leave unchanged
-  var text = token.text;
-  if (text !== '}') {
-    token.corrected = text;
-    token.type = tokenIntMap['RCURLY'];
-    token.text = '}'; 
-  }
-  return token;
-}
-
-function newLCURLYToken() { // LCURLY int in .tokens file
-  tok = new CommonToken(undefined, tokenIntMap['LCURLY'],
-                        undefined, undefined, undefined);
-  tok.text = '{'; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newRCURLYToken() {
-  tok = new CommonToken(undefined, tokenIntMap['RCURLY'],
-                        undefined, undefined, undefined);
-  tok.text = '}'; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newLPARENToken() { 
-  tok = new CommonToken(undefined, tokenIntMap['LPAREN'],
-                        undefined, undefined, undefined);
-  tok.text = '('; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newRPARENToken() {
-  tok = new CommonToken(undefined, tokenIntMap['RPAREN'],
-                        undefined, undefined, undefined);
-  tok.text = ')'; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newGLOBALToken() {
-  tok = new CommonToken(undefined, tokenIntMap['GLOBAL'],
-                        undefined, undefined, undefined);
-  tok.text = 'global'; 
-  // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
-  tok.inserted = true;
-  return tok; 
-}
-
-function newLOCALToken() {
-  tok = new CommonToken(undefined, tokenIntMap['LOCAL'],
-                        undefined, undefined, undefined);
-  tok.text = 'local'; 
+  tok.text = tokenTextMap[tokenType], // Warning: can be undefined for types like 'NUMBER'
   // Don't fill out other properties (channel, start, stop, tokenIndex, line, column) yet
   tok.inserted = true;
   return tok; 
@@ -589,13 +572,13 @@ function fixupTokens(tokens) {
   var prevRegularTokenLine = 1; 
 
   function printState(msg, t) { // For debugging
-    console.log(msg + tokenString(t)
+    console.log(msg + t.toString()
                 + "; token.text=" + t.text
                 + "; tokenIndex=" + tokenIndex
                 + "; charIndex=" + charIndex
                 + "; line=" + line
                 + "; column=" + column
-                // + "; resultString:\n" + resultString
+                + "; resultString='" + resultString + "'"
                 );
   }
 
@@ -623,14 +606,18 @@ function fixupTokens(tokens) {
   tokens.forEach ( function (tok) {
       if (tok.tokenIndex != -1) {
         // This is a regular (noninserted) token
-        if (!prevRegularTokenStop) {
+        if (prevRegularTokenStop === undefined) {
           // This is the first regular token on first nonempty line
           charIndex = tok.start;
+          // console.log('numSpaces special before=' + numSpaces);
           numSpaces = tok.start; // [2020/06/22, lyn] Fixed bug cause by initial comments
                                  // by adding this line
+          // console.log('numSpaces special after=' + numSpaces);
         } else {
           // Maintain space from prev regular token
+          // console.log('numSpaces before=' + numSpaces);
           numSpaces = tok.start - (prevRegularTokenStop + 1); // space between tokens
+          // console.log('numSpaces after=' + numSpaces);
           charIndex += numSpaces;
           column += numSpaces;
         }
@@ -640,7 +627,7 @@ function fixupTokens(tokens) {
           // Reset line, column, and charIndex
           line = tok.line;
           column = tok.column;
-          if (tok.line == 1) {
+          if (tok.line === 1) {
             // On first line
             resultString += Utils.spaces(tok.column); // Insert spaces before first token
           } else {
@@ -720,8 +707,3 @@ function fixupTokens(tokens) {
 }
 
 exports.ForgivingTokensVisitor = ForgivingTokensVisitor;
-
-
-
-
-

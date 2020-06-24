@@ -91,6 +91,10 @@ function pushArray(arr1, arr2) {
   return arr1; // Return modified arr1 for kicks.
 }
 
+function concatArrays(arrayOfArrays) {
+  return [].concat.apply([], arrayOfArrays); 
+}
+
 exports.className = className;
 exports.zip = zip;
 exports.spaces = spaces;
@@ -102,4 +106,5 @@ exports.displayTimeTaken = displayTimeTaken;
 exports.capitalizeFirstLetter = capitalizeFirstLetter;
 exports.uncapitalizeFirstLetter = uncapitalizeFirstLetter;
 exports.pushArray = pushArray;
+exports.concatArrays = concatArrays;
 

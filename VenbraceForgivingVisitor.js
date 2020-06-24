@@ -168,8 +168,8 @@ VenbraceForgivingVisitor.prototype.visitSetter = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#andExprBogus.
-VenbraceForgivingVisitor.prototype.visitAndExprBogus = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#expr_block.
+VenbraceForgivingVisitor.prototype.visitExpr_block = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -438,8 +438,14 @@ VenbraceForgivingVisitor.prototype.visitStr_split_at_spaces = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#getter.
-VenbraceForgivingVisitor.prototype.visitGetter = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#getterAbbrev.
+VenbraceForgivingVisitor.prototype.visitGetterAbbrev = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#getterVerbose.
+VenbraceForgivingVisitor.prototype.visitGetterVerbose = function(ctx) {
   return this.visitChildren(ctx);
 };
 

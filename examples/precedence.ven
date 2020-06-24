@@ -1,0 +1,88 @@
+// Basics for +|-
+expr mulDivBasics
+expr a * b
+expr a / b
+expr a * b * c
+expr a / b / c
+expr a * b * c * d
+expr a / b / c / d
+
+// One / intermixed with 3 *s
+expr threeMulsOneDiv
+expr a / b * c * d * e
+expr a * b / c * d * e
+expr a * b * c / d * e
+expr a * b * c * d / e
+
+// Two /s and two *s intermixed
+expr twoMulsTwoDivs
+expr a / b / c * d * e
+expr a / b * c / d * e
+expr a / b * c * d / e
+expr a * b / c / d * e
+expr a * b / c * d / e
+expr a * b * c / d / e
+
+// Three /s and one * intermixed
+expr oneMulThreeDivs
+expr a / b / c / d * e
+expr a / b / c * d / e
+expr a / b * c / d / e
+expr a * b / c / d / e
+
+// Basics for +|/
+expr addSubBasics
+expr a + b
+expr a - b
+expr a + b + c
+expr a - b - c
+expr a + b + c + d
+expr a - b - c - d
+
+// NEG_NUM special case for subtraction 
+expr negNumSpecialCaseForSubtraction
+expr a-17 
+expr (a-17) 
+expr a-17-23
+expr a-17-23-42
+
+// One - intermixed with 3 +s
+expr threeAddsOneSub
+expr a - b + c + d + e
+expr a + b - c + d + e
+expr a + b + c - d + e
+expr a + b + c + d - e
+
+// Two /s and two +s intermixed
+expr twoAddsTwoSubs
+expr a - b - c + d + e
+expr a - b + c - d + e
+expr a - b + c + d - e
+expr a + b - c - d + e
+expr a + b - c + d - e
+expr a + b + c - d - e
+
+// Three /s and one + intermixed
+expr oneAddThreeSubs
+expr a - b - c - d + e
+expr a - b - c + d - e
+expr a - b + c - d - e
+expr a + b - c - d - e
+
+// Intermixing +|-|*|/
+expr intermixingAddSubMulDiv
+expr a + b + c - d - e * f * g / h / i
+expr a + b - c + d - e * f / g * h / i
+expr a + b * c + d - e * f / g - h / i
+expr a + b * c * d - e + f / g - h / i
+expr a + b * c * d / e / f + g - h - i
+expr a - b * c * d / e / f - g + h + i
+expr a + b * c / d - e + f * g - h / i
+expr a * b * c / d / e + f + g - h - i
+expr a / b / c * d * e - f - g + h + i
+
+expr powTests
+expr a ^ b ^ c ^ d
+expr a * b ^ c * d + e / f ^ g / h
+expr a ^ b * c + d ^ e * f + g ^ h * i
+

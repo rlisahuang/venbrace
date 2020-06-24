@@ -1,15 +1,15 @@
 expr 10^3
 
-expr 4*9/35-29 // precedence wrong
+expr (4*9)/(35-29) // parens for precedence 
 
 expr 45*absolute 18-31*6
 
 expr max 6*4 57 ()/3
 
-expr not Button1.Enabled or length "cat" >= num // precedence wrong
+expr (not Button1.Enabled) or length "cat" >= num // parens for precedence
 
 stat
-set Label1.Text to 3*TextBox1.Text + score // precedence wrong
+set Label1.Text to 3*(TextBox1.Text + score) // parens for precedence
 
 stat
 if num > 3
@@ -28,7 +28,7 @@ when Switch1.Changed
 decl 
 to SizeUpButton scale do
   set Button1.Height to Button1.Height * scale
-  set Button1.Width to Button1.Width * scale]
+  set Button1.Width to Button1.Width * scale
 
 decl 
 to ConcatString s1 s2

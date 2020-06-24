@@ -245,12 +245,12 @@ VenbraceForgivingListener.prototype.exitSetter = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#andExprBogus.
-VenbraceForgivingListener.prototype.enterAndExprBogus = function(ctx) {
+// Enter a parse tree produced by VenbraceForgivingParser#expr_block.
+VenbraceForgivingListener.prototype.enterExpr_block = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceForgivingParser#andExprBogus.
-VenbraceForgivingListener.prototype.exitAndExprBogus = function(ctx) {
+// Exit a parse tree produced by VenbraceForgivingParser#expr_block.
+VenbraceForgivingListener.prototype.exitExpr_block = function(ctx) {
 };
 
 
@@ -650,12 +650,21 @@ VenbraceForgivingListener.prototype.exitStr_split_at_spaces = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#getter.
-VenbraceForgivingListener.prototype.enterGetter = function(ctx) {
+// Enter a parse tree produced by VenbraceForgivingParser#getterAbbrev.
+VenbraceForgivingListener.prototype.enterGetterAbbrev = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceForgivingParser#getter.
-VenbraceForgivingListener.prototype.exitGetter = function(ctx) {
+// Exit a parse tree produced by VenbraceForgivingParser#getterAbbrev.
+VenbraceForgivingListener.prototype.exitGetterAbbrev = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#getterVerbose.
+VenbraceForgivingListener.prototype.enterGetterVerbose = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#getterVerbose.
+VenbraceForgivingListener.prototype.exitGetterVerbose = function(ctx) {
 };
 
 

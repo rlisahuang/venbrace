@@ -1,0 +1,34 @@
+// Numbers
+expr 17
+expr (17)
+expr {17}
+expr [17]
+expr ((17))
+expr ({17})
+expr ([17])
+expr {(17)}
+expr {{17}}
+expr {[17]}
+expr [(17)]
+expr [{17}]
+expr [[17]]
+
+// Abbreviated variable getters
+expr a
+expr (a)
+expr {a}
+expr [a]
+
+// Unabbreviated variable getters
+expr (get a)
+expr {get a}
+expr [get a]
+expr get a
+
+// Simple arithmetic
+expr (a+b)
+expr c+d
+expr e+11
+expr 12+f
+expr g - 13
+expr h-14
