@@ -45,10 +45,20 @@ function multiplyString(str, n) {
   return Array(n).fill(str).join('')
 }
 
+function displayTimeTaken(msg, obj, thunk) {
+  var start = Date.now();
+  var result = thunk.call(obj);
+  var stop = Date.now();
+  console.log(msg + ((stop - start)/ 1000).toString() + ' seconds');
+  return result;
+
+}
+
 exports.className = className;
 exports.zip = zip;
 exports.spaces = spaces;
 exports.newlines = newlines;
 exports.dashes = dashes;
 exports.multiplyString = dashes;
+exports.displayTimeTaken = displayTimeTaken
 

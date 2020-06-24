@@ -39,33 +39,40 @@ SexpVisitor.prototype = Object.create(VenbraceForgivingVisitor.prototype);
 SexpVisitor.prototype.constructor = SexpVisitor;
 // -----------------------------------------
 
-SexpVisitor.prototype.visitTest_blocks = function(ctx) {
+SexpVisitor.prototype.visitTop = function(ctx) {
   var listTree = this.visitChildren(ctx);
   return sexpString(listTree);
+}
+
+SexpVisitor.prototype.visitTest_top_blocks = function(ctx) {
+  return this.visitTop(ctx);
+}
+
+SexpVisitor.prototype.visitTest_blocks = function(ctx) {
+  return this.visitTop(ctx);
 }
 
 SexpVisitor.prototype.visitTest_program = function(ctx) {
-  var listTree = this.visitChildren(ctx);
-  return sexpString(listTree);
+  return this.visitTop(ctx);
 }
 
 SexpVisitor.prototype.visitProgram = function(ctx) {
-  var listTree = this.visitChildren(ctx);
-  return sexpString(listTree);
+  return this.visitTop(ctx);
 }
 
 SexpVisitor.prototype.visitChildren = function(ctx) {
+  var nameWithContext = Utils.className(ctx);
+  var nameWithoutContext = nameWithContext.split('Context')[0].toLowerCase(); 
   if (ctx.children) {
     // ctx.children is a list (i.e., JavaScript array)
     var sublist = ctx.children.map ( child => child.accept(this) ).filter( elt => ! tokensToOmit.includes(elt) );
-    var nameWithContext = Utils.className(ctx);
-    var nameWithoutContext = nameWithContext.split('Context')[0].toLowerCase(); 
     var listKeyword = listKeywordMap[nameWithoutContext];
     if (listKeyword) {
       sublist.unshift(listKeyword);
     } else if (sublist.length === 1) {
       return sublist[0]; // Simple wrapper; just keep contents
     } else {
+      // console.log('Unshifting ' + nameWithoutContext + ' for length ' + sublist.length);
       sublist.unshift(nameWithoutContext);
     }
     if ((sublist[0] === 'seq') && (sublist.length === 2)) {
@@ -73,6 +80,10 @@ SexpVisitor.prototype.visitChildren = function(ctx) {
     } else if (sublist[0] === 'mod') {
       var newSublist = sublist.filter ( elt => elt !== '/' );
       return newSublist;
+    } else if (sublist[0] === 'subnegnumexpr') {
+      sublist[2] = Math.abs(sublist[2]); // position of negative number
+      sublist[0] = '-'; 
+      return sublist;
     } else if (sublist[0] === 'if_stat') {
       if (sublist.length <= 4) { // if/then or if/then/else
         sublist.shift();
@@ -101,6 +112,7 @@ SexpVisitor.prototype.visitChildren = function(ctx) {
       }
     }
   } else {
+    console.log('Returning null for ctx ' + nameWithoutContext);
     return null;
   }
 }
@@ -108,7 +120,8 @@ SexpVisitor.prototype.visitChildren = function(ctx) {
 var braces = ['[', ']', '{', '}' , '(', ')'];
 var tokensToOmit = 
   braces.concat(
-   ['to', 'do', 'result', 'when',
+  ['top', 'decl', 'stat', 'expr', 
+    'to', 'do', 'result', 'when',
     'if', 'then', 'else', 'else if',
     'for each', 'test', 'from', 'by', 'in', 'call', 'set',
     'not', 'modulo', 'of',
@@ -116,6 +129,7 @@ var tokensToOmit =
     ]);
 
 var listKeywordMap = {
+  'test_top_blocks': 'blocks', 
   'test_blocks': 'blocks', 
   'test_program': 'block', 
   'program': 'decls', 
@@ -134,6 +148,14 @@ var listKeywordMap = {
 }
 
 var operatorMap = {
+  'andexpr': ['and'], 
+  'orexpr': ['or'], 
+  'mutablemulexpr': ['*'], 
+  'mutableaddexpr': ['+'], 
+  'subexpr': ['-'],
+  'divexpr': ['/'],
+  'powexpr': ['^'],
+  'mathcompareexpr': ['<', '<=', '=', '!=', '>=', '>'],
   'mutable_op': ['+', '*'], 
   'immutable_regular_case': ['-', '/', '^'],
   'compare_math_expr': ['<', '<=', '=', '!=', '>=', '>'],
@@ -209,10 +231,14 @@ function toToken(ctxOrToken) {
 function sexpString(listTree) {
 
   function sexpStrings(ltr, width) {
-    if ((typeof ltr) === 'string') {
+    if (['string', 'number'].includes(typeof ltr)) {
+      return [ltr];
+    } else if (! (ltr instanceof Array)) {
+      throw 'sexpString expected Array but found ' + (typeof ltr) 
+        + ': ' + ltr.toString();
       return [ltr];
     } else { // must be array
-      if (ltr.length == 0) {
+      if ((ltr.length === 0) || ((ltr[0] === 'core_expr') && ltr.length === 1)) {
         // list is empty
         return ['()'];
       } else {
@@ -266,6 +292,8 @@ function sexpString(listTree) {
   }
 
   // Return a single string with newlines between lines
+  // console.log('List tree input to sexpString:');
+  // console.log(listTree);
   return sexpStrings(listTree, 100).join('\n');
    
 }

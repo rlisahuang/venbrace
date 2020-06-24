@@ -1,0 +1,35 @@
+expr 10^3
+
+expr 4*9/35-29 // precedence wrong
+
+expr 45*absolute 18-31*6
+
+expr max 6*4 57 ()/3
+
+expr not Button1.Enabled or length "cat" >= num // precedence wrong
+
+stat
+set Label1.Text to 3*TextBox1.Text + score // precedence wrong
+
+stat
+if num > 3
+ then set Button1.Text to "Greater"
+      set num to num-1
+ else if num <3
+ then set Button1.Text to "Less"
+ else set Button1.Text to "Equal"
+
+decl
+when Switch1.Changed
+  do if length TextBox1.Text < 0
+      then if Switch1.On
+           then set Switch1.On to false
+
+decl 
+to SizeUpButton scale do
+  set Button1.Height to Button1.Height * scale
+  set Button1.Width to Button1.Width * scale]
+
+decl 
+to ConcatString s1 s2
+   result join s1 s2
