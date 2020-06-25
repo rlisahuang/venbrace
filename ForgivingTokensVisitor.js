@@ -347,7 +347,7 @@ function exprTreeToTokens(etr) {
     var rbraceToken = etr[3]; 
     // console.log('subnodeType for braces: ' + subnodeType);
     if (['parensExpr', 'curliesExpr', 'squaresExpr', 
-         'emptyExpr', 'getterAbbrev'].includes(nodeType)) {
+         'emptyExpr', 'getterAbbrev'].includes(subnodeType)) {
       // subexp already braced or is abbreviated getter, 
       // so outer braces are extra and should be deleted
       lbraceToken.deleted = true;
