@@ -601,8 +601,23 @@ str_reverse: REVERSE expr_block ;
 
 str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
 
-getter: ID             #getterAbbrev
-  | GET GLOBAL? ID     #getterVerbose
+getter: ID              #getterAbbrev
+  | GET GLOBAL? ID      #getterVerbose
+  | getter_inner_braces #getterInnerBraces
+  ;
+
+getter_inner_braces:   // Allow get(num) for (get num)
+                       // Note; unary operations like sin(num) already work 
+                       // because unary operand is an expr_block
+                       // and both num and (num) are expr_blocks.
+                       // But get is *not* like a unary operator, so we need
+                       // these special cases. 
+    GET LPAREN GLOBAL? ID RPAREN 
+  | GET LCURLY GLOBAL? ID RCURLY
+  | GET LSQR GLOBAL? ID RSQR
+  | GET GLOBAL? LPAREN ID RPAREN 
+  | GET GLOBAL? LCURLY ID RCURLY
+  | GET GLOBAL? LSQR ID RSQR
   ;
 
 call_procedure_expr:

@@ -450,6 +450,18 @@ VenbraceForgivingVisitor.prototype.visitGetterVerbose = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceForgivingParser#getterInnerBraces.
+VenbraceForgivingVisitor.prototype.visitGetterInnerBraces = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#getter_inner_braces.
+VenbraceForgivingVisitor.prototype.visitGetter_inner_braces = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceForgivingParser#call_procedure_expr.
 VenbraceForgivingVisitor.prototype.visitCall_procedure_expr = function(ctx) {
   return this.visitChildren(ctx);

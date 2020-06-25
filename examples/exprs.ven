@@ -3,7 +3,6 @@ expr 17
 expr (17)
 expr {17}
 expr [17]
-/*
 expr ((17))
 expr ({17})
 expr ([17])
@@ -13,7 +12,6 @@ expr {[17]}
 expr [(17)]
 expr [{17}]
 expr [[17]]
-*/
 
 // Abbreviated variable getters
 expr a
@@ -23,9 +21,16 @@ expr [a]
 
 // Unabbreviated variable getters
 expr (get a)
-expr {get a}
-expr [get a]
-expr get a
+expr {get b}
+expr [get c]
+expr get d
+expr get(e)
+expr get{f}
+expr get[g]
+expr (get global h)
+expr get global i
+expr get(global j)
+expr get global(k)
 
 // Simple arithmetic
 expr (a+b)
@@ -34,3 +39,11 @@ expr e+11
 expr 12+f
 expr g - 13
 expr h-14
+
+// Unary ops
+expr (sin 11)
+expr sin(12)
+expr sin 137
+expr (sin a)
+expr sin(b)
+expr sin c
