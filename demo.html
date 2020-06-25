@@ -137,7 +137,7 @@
   var valueTokens = undefined;
 
   var braces = new Set(['(', ')', '{', '}', '[', ']']);
-
+  var parsingError = false;
 
   class VenbraceErrorListener extends antlr4.error.ErrorListener {
     
@@ -150,6 +150,7 @@
       
       this.underlineError(recognizer, offendingSymbol, line, column);
       console.log(errorMsg);
+      parsingError = true;
     }
 
     underlineError(recognizer, offendingToken, line, column) {
@@ -185,6 +186,7 @@
     $("#inputParserTokens").val("");
     $("#modifiedInput").val("");
     
+    parsingError = false;
 
 
     if (tokenMarks.length) {
@@ -275,7 +277,7 @@
           // console.log(tam_table);
           var alignment = Backtrace(tam_table);
           console.log(alignment);
-          if (solutionCheck(alignment)) {
+          if (!parsingError) {
             console.log("correct!");
             document.getElementById("output").innerHTML = "Translation accepted.";
           } else {

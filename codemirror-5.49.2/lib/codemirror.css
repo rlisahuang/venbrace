@@ -175,11 +175,11 @@ div.CodeMirror span.CodeMirror-matchingbracket {
   100% {background-color: #e0e0e0;}
 }
 
-div.CodeMirror span.CodeMirror-invalidToken {color: red; background-color: pink; font-weight: bold; padding: 3px; border: red dotted 1px;}
+div.CodeMirror span.CodeMirror-invalidToken {color: red; font-weight: bold; border: red solid  1px; padding: 1px}
 div.CodeMirror span.CodeMirror-modifiedToken {background-color: rgb(223, 175, 71);}
 div.CodeMirror span.CodeMirror-deletedToken {background-color: rgb(0, 0, 0); opacity: 0.3; text-decoration: line-through;}
 
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22; background-color: pink; padding: 3px;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22; background-color: pink; padding: 3px; border: red dotted 1px;}
 .CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
 .CodeMirror-activeline-background {background: #e8f2ff;}
 
