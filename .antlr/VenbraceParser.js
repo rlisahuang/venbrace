@@ -1,7 +1,8 @@
-// Generated from /Users/lisa/Desktop/app_inventor/venbrace/Venbrace.g4 by ANTLR 4.7.1
+// Generated from /Users/lisa/Desktop/app_inventor/venbrace/Venbrace.g4 by ANTLR 4.8
 // jshint ignore: start
 var antlr4 = require('antlr4/index');
 var grammarFileName = "Venbrace.g4";
+
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0003}\u030e\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
@@ -802,6 +803,7 @@ VenbraceParser.RULE_atom = 44;
 VenbraceParser.RULE_atom_elements = 45;
 VenbraceParser.RULE_label = 46;
 
+
 function ProgramContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -874,6 +876,7 @@ VenbraceParser.prototype.program = function() {
     }
     return localctx;
 };
+
 
 function Test_programContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -964,6 +967,7 @@ VenbraceParser.prototype.test_program = function() {
     return localctx;
 };
 
+
 function Decl_blockContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -1032,6 +1036,7 @@ VenbraceParser.prototype.decl_block = function() {
     }
     return localctx;
 };
+
 
 function DeclContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -1128,6 +1133,7 @@ VenbraceParser.prototype.decl = function() {
     return localctx;
 };
 
+
 function Global_declContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -1214,6 +1220,7 @@ VenbraceParser.prototype.global_decl = function() {
     }
     return localctx;
 };
+
 
 function Procedure_doContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -1321,6 +1328,7 @@ VenbraceParser.prototype.procedure_do = function() {
     }
     return localctx;
 };
+
 
 function Procedure_resultContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -1431,6 +1439,7 @@ VenbraceParser.prototype.procedure_result = function() {
     }
     return localctx;
 };
+
 
 function Event_handlerContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -1545,6 +1554,7 @@ VenbraceParser.prototype.event_handler = function() {
     return localctx;
 };
 
+
 function SuiteContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -1644,6 +1654,7 @@ VenbraceParser.prototype.suite = function() {
     return localctx;
 };
 
+
 function Stat_blockContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -1714,6 +1725,7 @@ VenbraceParser.prototype.stat_block = function() {
     }
     return localctx;
 };
+
 
 function StatContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -1798,6 +1810,7 @@ VenbraceParser.prototype.stat = function() {
     return localctx;
 };
 
+
 function Control_statContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -1878,6 +1891,7 @@ VenbraceParser.prototype.control_stat = function() {
     }
     return localctx;
 };
+
 
 function If_statContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -2044,6 +2058,7 @@ VenbraceParser.prototype.if_stat = function() {
     return localctx;
 };
 
+
 function For_each_from_toContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -2207,6 +2222,7 @@ VenbraceParser.prototype.for_each_from_to = function() {
     return localctx;
 };
 
+
 function While_statContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -2310,6 +2326,7 @@ VenbraceParser.prototype.while_stat = function() {
     }
     return localctx;
 };
+
 
 function Call_procedure_statContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -2461,6 +2478,7 @@ VenbraceParser.prototype.call_procedure_stat = function() {
     return localctx;
 };
 
+
 function Var_statContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -2511,6 +2529,7 @@ VenbraceParser.prototype.var_stat = function() {
     }
     return localctx;
 };
+
 
 function SetterContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -2632,6 +2651,7 @@ VenbraceParser.prototype.setter = function() {
     return localctx;
 };
 
+
 function Expr_blockContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -2726,6 +2746,7 @@ VenbraceParser.prototype.expr_block = function() {
     }
     return localctx;
 };
+
 
 function ExprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -2896,6 +2917,7 @@ VenbraceParser.prototype.expr = function() {
     return localctx;
 };
 
+
 function Control_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -2966,6 +2988,7 @@ VenbraceParser.prototype.control_expr = function() {
     }
     return localctx;
 };
+
 
 function If_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -3077,6 +3100,7 @@ VenbraceParser.prototype.if_expr = function() {
     return localctx;
 };
 
+
 function Do_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -3171,6 +3195,7 @@ VenbraceParser.prototype.do_expr = function() {
     }
     return localctx;
 };
+
 
 function Logic_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -3282,6 +3307,7 @@ VenbraceParser.prototype.logic_expr = function() {
     return localctx;
 };
 
+
 function Not_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -3360,6 +3386,7 @@ VenbraceParser.prototype.not_expr = function() {
     }
     return localctx;
 };
+
 
 function Compare_eq_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -3470,6 +3497,7 @@ VenbraceParser.prototype.compare_eq_expr = function() {
     }
     return localctx;
 };
+
 
 function Compare_math_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -3620,6 +3648,7 @@ VenbraceParser.prototype.compare_math_expr = function() {
     }
     return localctx;
 };
+
 
 function Math_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -3776,6 +3805,7 @@ VenbraceParser.prototype.math_expr = function() {
     return localctx;
 };
 
+
 function Mutable_opContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -3924,6 +3954,7 @@ VenbraceParser.prototype.mutable_op = function() {
     }
     return localctx;
 };
+
 
 function Immutable_opContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -4080,6 +4111,7 @@ VenbraceParser.prototype.immutable_op = function() {
     return localctx;
 };
 
+
 function Min_maxContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -4194,6 +4226,7 @@ VenbraceParser.prototype.min_max = function() {
     }
     return localctx;
 };
+
 
 function Unary_opContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -4350,6 +4383,7 @@ VenbraceParser.prototype.unary_op = function() {
     return localctx;
 };
 
+
 function ModContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -4455,6 +4489,7 @@ VenbraceParser.prototype.mod = function() {
     }
     return localctx;
 };
+
 
 function RemainderContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -4562,6 +4597,7 @@ VenbraceParser.prototype.remainder = function() {
     return localctx;
 };
 
+
 function QuotientContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -4667,6 +4703,7 @@ VenbraceParser.prototype.quotient = function() {
     }
     return localctx;
 };
+
 
 function TrigContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -4805,6 +4842,7 @@ VenbraceParser.prototype.trig = function() {
     return localctx;
 };
 
+
 function Atan2Context(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -4936,6 +4974,7 @@ VenbraceParser.prototype.atan2 = function() {
     return localctx;
 };
 
+
 function Str_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -5031,6 +5070,7 @@ VenbraceParser.prototype.str_expr = function() {
     return localctx;
 };
 
+
 function Str_lengthContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -5109,6 +5149,7 @@ VenbraceParser.prototype.str_length = function() {
     }
     return localctx;
 };
+
 
 function Str_joinContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -5209,6 +5250,7 @@ VenbraceParser.prototype.str_join = function() {
     return localctx;
 };
 
+
 function Str_reverseContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -5288,6 +5330,7 @@ VenbraceParser.prototype.str_reverse = function() {
     return localctx;
 };
 
+
 function Str_split_at_spacesContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -5366,6 +5409,7 @@ VenbraceParser.prototype.str_split_at_spaces = function() {
     }
     return localctx;
 };
+
 
 function GetterContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -5489,6 +5533,7 @@ VenbraceParser.prototype.getter = function() {
     }
     return localctx;
 };
+
 
 function Call_procedure_exprContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -5656,6 +5701,7 @@ VenbraceParser.prototype.call_procedure_expr = function() {
     return localctx;
 };
 
+
 function AtomContext(parser, parent, invokingState) {
 	if(parent===undefined) {
 	    parent = null;
@@ -5747,6 +5793,7 @@ VenbraceParser.prototype.atom = function() {
     }
     return localctx;
 };
+
 
 function Atom_elementsContext(parser, parent, invokingState) {
 	if(parent===undefined) {
@@ -5863,6 +5910,7 @@ VenbraceParser.prototype.atom_elements = function() {
     }
     return localctx;
 };
+
 
 function LabelContext(parser, parent, invokingState) {
 	if(parent===undefined) {
