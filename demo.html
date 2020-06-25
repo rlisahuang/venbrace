@@ -39,6 +39,10 @@
     background-color: bisque;
   }
 
+  #output, #isBalanced{
+    font-size: 14px;
+  }
+
 
 
 </style>
@@ -60,36 +64,29 @@
 <script src="codemirror-5.49.2/mode/venbrace/venbrace.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style>
-      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black;}
+      .CodeMirror {border-top: 1px solid black; border-bottom: 1px solid black; font-size: 14px;}
       .highlighted-scope { background-color: #e0e0e0; }
 
     </style>
 </head>
 
 <body>
-  <textarea id="input" name="input" rows="10" cols="100"
-  placeholder="when Button1.Click do
-  initialize local num to 0 in 
-    (for each num from 1 to (10) by 1 do // wrong open brace
-      set sum to (sum + num)
-    ) // wrong close brace
-    set Label1.Text to (sum-17) // note NEGNUM use "></textarea>
+  <img src="demo.png" style="padding:5px"></img>
+  <br>
+  <b>Expected Solution (abbreviated):</b><br>
+  <textarea id="solution" name="solution" rows="5" cols="70">
+   
+   
+    (10 + (absolute (64 - 70)))
+  </textarea>
+  <textarea id="input" name="input" rows="10" cols="100" style="padding:10px"></textarea>
   <br>
   <button id="submit" onClick="parse();">Translate!</button>
   <pre id="isBalanced" style="color:orange">Paren balance indicator here...</pre>
   <pre id="error" style="display:none">Error will go here....</pre>
   <pre id="output">Output will go here....</pre>
-  <br><br><b>Solution:</b><br>
-  <textarea id="solution" name="solution" rows="5" cols="70">
-      [when Button1.Click do
-  {initialize local num to 0 in 
-    {for each num from 1 to (10) by 1 do 
-      {set sum to (sum + num)}
-    }
-    {set Label1.Text to (sum-17)}
-  }
-]
-  </textarea>
+
+  <br>
   <!-- (max ((6)*(4)) (57) (()/(3))) -->
   <br><b>Solution tokens from lexer before parsing:</b><br>
   <textarea id="solutionLexerTokens" name="solutionLexerTokens" rows="10" cols="65">
