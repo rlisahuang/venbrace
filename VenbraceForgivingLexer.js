@@ -1,6 +1,6 @@
-// Generated from VenbraceForgiving.g4 by ANTLR 4.8
+// Generated from VenbraceForgiving.g4 by ANTLR 4.7.2
 // jshint ignore: start
-var antlr4 = require('antlr4/index');
+var antlr4 = require('./antlr4/index');
 
 
 
@@ -791,24 +791,6 @@ var decisionsToDFA = atn.decisionToState.map( function(ds, index) { return new a
 function VenbraceForgivingLexer(input) {
 	antlr4.Lexer.call(this, input);
     this._interp = new antlr4.atn.LexerATNSimulator(this, atn, decisionsToDFA, new antlr4.PredictionContextCache());
-
-		var errors = [];
-
-	  var VenbraceLexer = VenbraceForgivingLexer;
-
-	  VenbraceLexer.prototype.emitErrorMessage = function(error) {
-	  	    //var hdr = getErrorHeader(e);
-	        //var msg = getErrorMessage(e, tokenNames);
-	        errors.push(error);
-	    }
-	  VenbraceLexer.prototype.getErrors = function() {
-	        return errors;
-	    }
-
-	  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
-	    factory = newFactory;
-	  }
-
     return this;
 }
 
@@ -1114,6 +1096,25 @@ VenbraceForgivingLexer.prototype.ruleNames = [ "T__0", "T__1", "T__2", "WS",
                                                "STRING" ];
 
 VenbraceForgivingLexer.prototype.grammarFileName = "VenbraceForgiving.g4";
+
+
+	var errors = [];
+
+  var VenbraceLexer = VenbraceForgivingLexer;
+
+  VenbraceLexer.prototype.emitErrorMessage = function(error) {
+  	    //var hdr = getErrorHeader(e);
+        //var msg = getErrorMessage(e, tokenNames);
+        errors.push(error);
+    }
+  VenbraceLexer.prototype.getErrors = function() {
+        return errors;
+    }
+
+  VenbraceLexer.prototype.setTokenFactory = function(newFactory) {
+    factory = newFactory;
+  }
+
 
 
 exports.VenbraceForgivingLexer = VenbraceForgivingLexer;

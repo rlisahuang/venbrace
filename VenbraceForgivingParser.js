@@ -1,6 +1,6 @@
-// Generated from VenbraceForgiving.g4 by ANTLR 4.8
+// Generated from VenbraceForgiving.g4 by ANTLR 4.7.2
 // jshint ignore: start
-var antlr4 = require('antlr4/index');
+var antlr4 = require('./antlr4/index');
 var VenbraceForgivingListener = require('./VenbraceForgivingListener').VenbraceForgivingListener;
 var VenbraceForgivingVisitor = require('./VenbraceForgivingVisitor').VenbraceForgivingVisitor;
 
@@ -846,7 +846,8 @@ VenbraceForgivingParser.prototype.program = function() {
         }
         this.state = 120;
         this.match(VenbraceForgivingParser.EOF);
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -942,7 +943,8 @@ VenbraceForgivingParser.prototype.test_program = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1026,7 +1028,8 @@ VenbraceForgivingParser.prototype.test_top_blocks = function() {
             this._errHandler.sync(this);
             _la = this._input.LA(1);
         } while((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << VenbraceForgivingParser.T__0) | (1 << VenbraceForgivingParser.T__1) | (1 << VenbraceForgivingParser.T__2))) !== 0));
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1126,7 +1129,8 @@ VenbraceForgivingParser.prototype.top_block = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1210,7 +1214,8 @@ VenbraceForgivingParser.prototype.test_blocks = function() {
             this._errHandler.sync(this);
             _la = this._input.LA(1);
         } while((((_la) & ~0x1f) == 0 && ((1 << _la) & ((1 << VenbraceForgivingParser.T__0) | (1 << VenbraceForgivingParser.T__1) | (1 << VenbraceForgivingParser.T__2) | (1 << VenbraceForgivingParser.LCURLY) | (1 << VenbraceForgivingParser.LPAREN) | (1 << VenbraceForgivingParser.LSQR) | (1 << VenbraceForgivingParser.TRUE) | (1 << VenbraceForgivingParser.FALSE) | (1 << VenbraceForgivingParser.WHEN) | (1 << VenbraceForgivingParser.IF) | (1 << VenbraceForgivingParser.FOREACH) | (1 << VenbraceForgivingParser.DO) | (1 << VenbraceForgivingParser.TO) | (1 << VenbraceForgivingParser.CALL) | (1 << VenbraceForgivingParser.GET) | (1 << VenbraceForgivingParser.SET) | (1 << VenbraceForgivingParser.GLOBAL) | (1 << VenbraceForgivingParser.INITIALIZE))) !== 0) || ((((_la - 32)) & ~0x1f) == 0 && ((1 << (_la - 32)) & ((1 << (VenbraceForgivingParser.INIT - 32)) | (1 << (VenbraceForgivingParser.WHILE - 32)) | (1 << (VenbraceForgivingParser.NOT - 32)))) !== 0) || ((((_la - 74)) & ~0x1f) == 0 && ((1 << (_la - 74)) & ((1 << (VenbraceForgivingParser.SQRT - 74)) | (1 << (VenbraceForgivingParser.ABS - 74)) | (1 << (VenbraceForgivingParser.NEG - 74)) | (1 << (VenbraceForgivingParser.LOG - 74)) | (1 << (VenbraceForgivingParser.EULER - 74)) | (1 << (VenbraceForgivingParser.ROUND - 74)) | (1 << (VenbraceForgivingParser.CEILING - 74)) | (1 << (VenbraceForgivingParser.FLOOR - 74)) | (1 << (VenbraceForgivingParser.MIN - 74)) | (1 << (VenbraceForgivingParser.MAX - 74)) | (1 << (VenbraceForgivingParser.MODULO - 74)) | (1 << (VenbraceForgivingParser.SIN - 74)) | (1 << (VenbraceForgivingParser.COS - 74)) | (1 << (VenbraceForgivingParser.TAN - 74)) | (1 << (VenbraceForgivingParser.ASIN - 74)) | (1 << (VenbraceForgivingParser.ACOS - 74)) | (1 << (VenbraceForgivingParser.ATAN - 74)) | (1 << (VenbraceForgivingParser.JOIN - 74)) | (1 << (VenbraceForgivingParser.LENGTH - 74)))) !== 0) || ((((_la - 111)) & ~0x1f) == 0 && ((1 << (_la - 111)) & ((1 << (VenbraceForgivingParser.SPLIT_AT_SPACES - 111)) | (1 << (VenbraceForgivingParser.REVERSE - 111)) | (1 << (VenbraceForgivingParser.NUMBER - 111)) | (1 << (VenbraceForgivingParser.NEG_NUM - 111)) | (1 << (VenbraceForgivingParser.COMPONENT_PROPERTY - 111)) | (1 << (VenbraceForgivingParser.ID - 111)) | (1 << (VenbraceForgivingParser.STRING - 111)))) !== 0));
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1331,7 +1336,8 @@ VenbraceForgivingParser.prototype.block = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1463,7 +1469,8 @@ VenbraceForgivingParser.prototype.decl_block = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1569,7 +1576,8 @@ VenbraceForgivingParser.prototype.decl = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1668,7 +1676,8 @@ VenbraceForgivingParser.prototype.global_decl = function() {
 
         this.state = 186;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1748,7 +1757,8 @@ VenbraceForgivingParser.prototype.init_keyword = function() {
         	this._errHandler.reportMatch(this);
             this.consume();
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1816,7 +1826,8 @@ VenbraceForgivingParser.prototype.global_decl_keyword = function() {
         this.enterOuterAlt(localctx, 1);
         this.state = 190;
         this.match(VenbraceForgivingParser.GLOBAL);
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -1931,7 +1942,8 @@ VenbraceForgivingParser.prototype.procedure_do = function() {
         }
         this.state = 203;
         this.suite();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2047,7 +2059,8 @@ VenbraceForgivingParser.prototype.procedure_result = function() {
 
         this.state = 216;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2165,7 +2178,8 @@ VenbraceForgivingParser.prototype.event_handler = function() {
         }
         this.state = 229;
         this.suite();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2340,7 +2354,8 @@ VenbraceForgivingParser.prototype.suite = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2475,7 +2490,8 @@ VenbraceForgivingParser.prototype.stat_block = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2581,7 +2597,8 @@ VenbraceForgivingParser.prototype.stat = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2675,7 +2692,8 @@ VenbraceForgivingParser.prototype.control_stat = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2833,7 +2851,8 @@ VenbraceForgivingParser.prototype.if_stat = function() {
             localctx.s3 = this.suite();
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -2982,7 +3001,8 @@ VenbraceForgivingParser.prototype.for_each_from_to = function() {
         }
         this.state = 324;
         this.suite();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3087,7 +3107,8 @@ VenbraceForgivingParser.prototype.while_stat = function() {
         }
         this.state = 334;
         this.suite();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3205,7 +3226,8 @@ VenbraceForgivingParser.prototype.call_procedure_stat = function() {
             _alt = this._interp.adaptivePredict(this._input,35,this._ctx);
         }
 
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3273,7 +3295,8 @@ VenbraceForgivingParser.prototype.var_stat = function() {
         this.enterOuterAlt(localctx, 1);
         this.state = 347;
         this.setter();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3441,7 +3464,8 @@ VenbraceForgivingParser.prototype.local_var_decl_stat = function() {
 
         this.state = 364;
         this.suite();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3509,7 +3533,8 @@ VenbraceForgivingParser.prototype.local_decl_keyword = function() {
         this.enterOuterAlt(localctx, 1);
         this.state = 366;
         this.match(VenbraceForgivingParser.LOCAL);
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3644,7 +3669,8 @@ VenbraceForgivingParser.prototype.setter = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3712,7 +3738,8 @@ VenbraceForgivingParser.prototype.expr_block = function() {
         this.enterOuterAlt(localctx, 1);
         this.state = 385;
         this.and_expr(0);
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -3748,6 +3775,41 @@ And_exprContext.prototype.constructor = And_exprContext;
 And_exprContext.prototype.copyFrom = function(ctx) {
     antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
 };
+
+function OrExprBogusContext(parser, ctx) {
+	And_exprContext.call(this, parser);
+    And_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+OrExprBogusContext.prototype = Object.create(And_exprContext.prototype);
+OrExprBogusContext.prototype.constructor = OrExprBogusContext;
+
+VenbraceForgivingParser.OrExprBogusContext = OrExprBogusContext;
+
+OrExprBogusContext.prototype.or_expr = function() {
+    return this.getTypedRuleContext(Or_exprContext,0);
+};
+OrExprBogusContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterOrExprBogus(this);
+	}
+};
+
+OrExprBogusContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitOrExprBogus(this);
+	}
+};
+
+OrExprBogusContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitOrExprBogus(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
 
 function AndExprContext(parser, ctx) {
 	And_exprContext.call(this, parser);
@@ -3789,41 +3851,6 @@ AndExprContext.prototype.exitRule = function(listener) {
 AndExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
         return visitor.visitAndExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function OrExprBogusContext(parser, ctx) {
-	And_exprContext.call(this, parser);
-    And_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-OrExprBogusContext.prototype = Object.create(And_exprContext.prototype);
-OrExprBogusContext.prototype.constructor = OrExprBogusContext;
-
-VenbraceForgivingParser.OrExprBogusContext = OrExprBogusContext;
-
-OrExprBogusContext.prototype.or_expr = function() {
-    return this.getTypedRuleContext(Or_exprContext,0);
-};
-OrExprBogusContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterOrExprBogus(this);
-	}
-};
-
-OrExprBogusContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitOrExprBogus(this);
-	}
-};
-
-OrExprBogusContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitOrExprBogus(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -4076,6 +4103,41 @@ Math_compare_exprContext.prototype.copyFrom = function(ctx) {
 };
 
 
+function AddSubExprBogusContext(parser, ctx) {
+	Math_compare_exprContext.call(this, parser);
+    Math_compare_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+AddSubExprBogusContext.prototype = Object.create(Math_compare_exprContext.prototype);
+AddSubExprBogusContext.prototype.constructor = AddSubExprBogusContext;
+
+VenbraceForgivingParser.AddSubExprBogusContext = AddSubExprBogusContext;
+
+AddSubExprBogusContext.prototype.add_sub_expr = function() {
+    return this.getTypedRuleContext(Add_sub_exprContext,0);
+};
+AddSubExprBogusContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterAddSubExprBogus(this);
+	}
+};
+
+AddSubExprBogusContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitAddSubExprBogus(this);
+	}
+};
+
+AddSubExprBogusContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitAddSubExprBogus(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 function MathCompareExprContext(parser, ctx) {
 	Math_compare_exprContext.call(this, parser);
     Math_compare_exprContext.prototype.copyFrom.call(this, ctx);
@@ -4122,41 +4184,6 @@ MathCompareExprContext.prototype.accept = function(visitor) {
 };
 
 
-function AddSubExprBogusContext(parser, ctx) {
-	Math_compare_exprContext.call(this, parser);
-    Math_compare_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-AddSubExprBogusContext.prototype = Object.create(Math_compare_exprContext.prototype);
-AddSubExprBogusContext.prototype.constructor = AddSubExprBogusContext;
-
-VenbraceForgivingParser.AddSubExprBogusContext = AddSubExprBogusContext;
-
-AddSubExprBogusContext.prototype.add_sub_expr = function() {
-    return this.getTypedRuleContext(Add_sub_exprContext,0);
-};
-AddSubExprBogusContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterAddSubExprBogus(this);
-	}
-};
-
-AddSubExprBogusContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitAddSubExprBogus(this);
-	}
-};
-
-AddSubExprBogusContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitAddSubExprBogus(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
 
 VenbraceForgivingParser.Math_compare_exprContext = Math_compare_exprContext;
 
@@ -4188,7 +4215,8 @@ VenbraceForgivingParser.prototype.math_compare_expr = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4284,7 +4312,8 @@ VenbraceForgivingParser.prototype.math_compare_op = function() {
         	this._errHandler.reportMatch(this);
             this.consume();
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -4320,52 +4349,6 @@ Add_sub_exprContext.prototype.constructor = Add_sub_exprContext;
 Add_sub_exprContext.prototype.copyFrom = function(ctx) {
     antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
 };
-
-function SubExprContext(parser, ctx) {
-	Add_sub_exprContext.call(this, parser);
-    Add_sub_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-SubExprContext.prototype = Object.create(Add_sub_exprContext.prototype);
-SubExprContext.prototype.constructor = SubExprContext;
-
-VenbraceForgivingParser.SubExprContext = SubExprContext;
-
-SubExprContext.prototype.add_sub_expr = function(i) {
-    if(i===undefined) {
-        i = null;
-    }
-    if(i===null) {
-        return this.getTypedRuleContexts(Add_sub_exprContext);
-    } else {
-        return this.getTypedRuleContext(Add_sub_exprContext,i);
-    }
-};
-
-SubExprContext.prototype.MINUS = function() {
-    return this.getToken(VenbraceForgivingParser.MINUS, 0);
-};
-SubExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterSubExpr(this);
-	}
-};
-
-SubExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitSubExpr(this);
-	}
-};
-
-SubExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitSubExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
 
 function MutableAddExprContext(parser, ctx) {
 	Add_sub_exprContext.call(this, parser);
@@ -4425,6 +4408,41 @@ MutableAddExprContext.prototype.accept = function(visitor) {
 };
 
 
+function MulDivExprBogusContext(parser, ctx) {
+	Add_sub_exprContext.call(this, parser);
+    Add_sub_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+MulDivExprBogusContext.prototype = Object.create(Add_sub_exprContext.prototype);
+MulDivExprBogusContext.prototype.constructor = MulDivExprBogusContext;
+
+VenbraceForgivingParser.MulDivExprBogusContext = MulDivExprBogusContext;
+
+MulDivExprBogusContext.prototype.mul_div_expr = function() {
+    return this.getTypedRuleContext(Mul_div_exprContext,0);
+};
+MulDivExprBogusContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterMulDivExprBogus(this);
+	}
+};
+
+MulDivExprBogusContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitMulDivExprBogus(this);
+	}
+};
+
+MulDivExprBogusContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitMulDivExprBogus(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 function SubNegNumExprContext(parser, ctx) {
 	Add_sub_exprContext.call(this, parser);
     Add_sub_exprContext.prototype.copyFrom.call(this, ctx);
@@ -4464,35 +4482,46 @@ SubNegNumExprContext.prototype.accept = function(visitor) {
 };
 
 
-function MulDivExprBogusContext(parser, ctx) {
+function SubExprContext(parser, ctx) {
 	Add_sub_exprContext.call(this, parser);
     Add_sub_exprContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
 
-MulDivExprBogusContext.prototype = Object.create(Add_sub_exprContext.prototype);
-MulDivExprBogusContext.prototype.constructor = MulDivExprBogusContext;
+SubExprContext.prototype = Object.create(Add_sub_exprContext.prototype);
+SubExprContext.prototype.constructor = SubExprContext;
 
-VenbraceForgivingParser.MulDivExprBogusContext = MulDivExprBogusContext;
+VenbraceForgivingParser.SubExprContext = SubExprContext;
 
-MulDivExprBogusContext.prototype.mul_div_expr = function() {
-    return this.getTypedRuleContext(Mul_div_exprContext,0);
+SubExprContext.prototype.add_sub_expr = function(i) {
+    if(i===undefined) {
+        i = null;
+    }
+    if(i===null) {
+        return this.getTypedRuleContexts(Add_sub_exprContext);
+    } else {
+        return this.getTypedRuleContext(Add_sub_exprContext,i);
+    }
 };
-MulDivExprBogusContext.prototype.enterRule = function(listener) {
+
+SubExprContext.prototype.MINUS = function() {
+    return this.getToken(VenbraceForgivingParser.MINUS, 0);
+};
+SubExprContext.prototype.enterRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterMulDivExprBogus(this);
+        listener.enterSubExpr(this);
 	}
 };
 
-MulDivExprBogusContext.prototype.exitRule = function(listener) {
+SubExprContext.prototype.exitRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitMulDivExprBogus(this);
+        listener.exitSubExpr(this);
 	}
 };
 
-MulDivExprBogusContext.prototype.accept = function(visitor) {
+SubExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitMulDivExprBogus(this);
+        return visitor.visitSubExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -4889,41 +4918,6 @@ Pow_exprContext.prototype.copyFrom = function(ctx) {
     antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
 };
 
-function CoreExprBogusContext(parser, ctx) {
-	Pow_exprContext.call(this, parser);
-    Pow_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-CoreExprBogusContext.prototype = Object.create(Pow_exprContext.prototype);
-CoreExprBogusContext.prototype.constructor = CoreExprBogusContext;
-
-VenbraceForgivingParser.CoreExprBogusContext = CoreExprBogusContext;
-
-CoreExprBogusContext.prototype.core_expr = function() {
-    return this.getTypedRuleContext(Core_exprContext,0);
-};
-CoreExprBogusContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterCoreExprBogus(this);
-	}
-};
-
-CoreExprBogusContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitCoreExprBogus(this);
-	}
-};
-
-CoreExprBogusContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitCoreExprBogus(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
 function PowExprContext(parser, ctx) {
 	Pow_exprContext.call(this, parser);
     Pow_exprContext.prototype.copyFrom.call(this, ctx);
@@ -4964,6 +4958,41 @@ PowExprContext.prototype.exitRule = function(listener) {
 PowExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
         return visitor.visitPowExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function CoreExprBogusContext(parser, ctx) {
+	Pow_exprContext.call(this, parser);
+    Pow_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+CoreExprBogusContext.prototype = Object.create(Pow_exprContext.prototype);
+CoreExprBogusContext.prototype.constructor = CoreExprBogusContext;
+
+VenbraceForgivingParser.CoreExprBogusContext = CoreExprBogusContext;
+
+CoreExprBogusContext.prototype.core_expr = function() {
+    return this.getTypedRuleContext(Core_exprContext,0);
+};
+CoreExprBogusContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterCoreExprBogus(this);
+	}
+};
+
+CoreExprBogusContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitCoreExprBogus(this);
+	}
+};
+
+CoreExprBogusContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitCoreExprBogus(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -5053,6 +5082,76 @@ Core_exprContext.prototype.copyFrom = function(ctx) {
 };
 
 
+function StrExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+StrExprContext.prototype = Object.create(Core_exprContext.prototype);
+StrExprContext.prototype.constructor = StrExprContext;
+
+VenbraceForgivingParser.StrExprContext = StrExprContext;
+
+StrExprContext.prototype.str_expr = function() {
+    return this.getTypedRuleContext(Str_exprContext,0);
+};
+StrExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterStrExpr(this);
+	}
+};
+
+StrExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitStrExpr(this);
+	}
+};
+
+StrExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitStrExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function NotExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+NotExprContext.prototype = Object.create(Core_exprContext.prototype);
+NotExprContext.prototype.constructor = NotExprContext;
+
+VenbraceForgivingParser.NotExprContext = NotExprContext;
+
+NotExprContext.prototype.not_expr = function() {
+    return this.getTypedRuleContext(Not_exprContext,0);
+};
+NotExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterNotExpr(this);
+	}
+};
+
+NotExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitNotExpr(this);
+	}
+};
+
+NotExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitNotExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
 function MathExprContext(parser, ctx) {
 	Core_exprContext.call(this, parser);
     Core_exprContext.prototype.copyFrom.call(this, ctx);
@@ -5082,84 +5181,6 @@ MathExprContext.prototype.exitRule = function(listener) {
 MathExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
         return visitor.visitMathExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function SquaresExprContext(parser, ctx) {
-	Core_exprContext.call(this, parser);
-    Core_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-SquaresExprContext.prototype = Object.create(Core_exprContext.prototype);
-SquaresExprContext.prototype.constructor = SquaresExprContext;
-
-VenbraceForgivingParser.SquaresExprContext = SquaresExprContext;
-
-SquaresExprContext.prototype.LSQR = function() {
-    return this.getToken(VenbraceForgivingParser.LSQR, 0);
-};
-
-SquaresExprContext.prototype.expr_block = function() {
-    return this.getTypedRuleContext(Expr_blockContext,0);
-};
-
-SquaresExprContext.prototype.RSQR = function() {
-    return this.getToken(VenbraceForgivingParser.RSQR, 0);
-};
-SquaresExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterSquaresExpr(this);
-	}
-};
-
-SquaresExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitSquaresExpr(this);
-	}
-};
-
-SquaresExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitSquaresExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function GetterExprContext(parser, ctx) {
-	Core_exprContext.call(this, parser);
-    Core_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-GetterExprContext.prototype = Object.create(Core_exprContext.prototype);
-GetterExprContext.prototype.constructor = GetterExprContext;
-
-VenbraceForgivingParser.GetterExprContext = GetterExprContext;
-
-GetterExprContext.prototype.getter = function() {
-    return this.getTypedRuleContext(GetterContext,0);
-};
-GetterExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterGetterExpr(this);
-	}
-};
-
-GetterExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitGetterExpr(this);
-	}
-};
-
-GetterExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitGetterExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -5221,113 +5242,35 @@ EmptyExprContext.prototype.accept = function(visitor) {
 };
 
 
-function ParensExprContext(parser, ctx) {
+function CallProcedureExprContext(parser, ctx) {
 	Core_exprContext.call(this, parser);
     Core_exprContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
 
-ParensExprContext.prototype = Object.create(Core_exprContext.prototype);
-ParensExprContext.prototype.constructor = ParensExprContext;
+CallProcedureExprContext.prototype = Object.create(Core_exprContext.prototype);
+CallProcedureExprContext.prototype.constructor = CallProcedureExprContext;
 
-VenbraceForgivingParser.ParensExprContext = ParensExprContext;
+VenbraceForgivingParser.CallProcedureExprContext = CallProcedureExprContext;
 
-ParensExprContext.prototype.LPAREN = function() {
-    return this.getToken(VenbraceForgivingParser.LPAREN, 0);
+CallProcedureExprContext.prototype.call_procedure_expr = function() {
+    return this.getTypedRuleContext(Call_procedure_exprContext,0);
 };
-
-ParensExprContext.prototype.expr_block = function() {
-    return this.getTypedRuleContext(Expr_blockContext,0);
-};
-
-ParensExprContext.prototype.RPAREN = function() {
-    return this.getToken(VenbraceForgivingParser.RPAREN, 0);
-};
-ParensExprContext.prototype.enterRule = function(listener) {
+CallProcedureExprContext.prototype.enterRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterParensExpr(this);
+        listener.enterCallProcedureExpr(this);
 	}
 };
 
-ParensExprContext.prototype.exitRule = function(listener) {
+CallProcedureExprContext.prototype.exitRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitParensExpr(this);
+        listener.exitCallProcedureExpr(this);
 	}
 };
 
-ParensExprContext.prototype.accept = function(visitor) {
+CallProcedureExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitParensExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function StrExprContext(parser, ctx) {
-	Core_exprContext.call(this, parser);
-    Core_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-StrExprContext.prototype = Object.create(Core_exprContext.prototype);
-StrExprContext.prototype.constructor = StrExprContext;
-
-VenbraceForgivingParser.StrExprContext = StrExprContext;
-
-StrExprContext.prototype.str_expr = function() {
-    return this.getTypedRuleContext(Str_exprContext,0);
-};
-StrExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterStrExpr(this);
-	}
-};
-
-StrExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitStrExpr(this);
-	}
-};
-
-StrExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitStrExpr(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
-function ControlExprContext(parser, ctx) {
-	Core_exprContext.call(this, parser);
-    Core_exprContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-ControlExprContext.prototype = Object.create(Core_exprContext.prototype);
-ControlExprContext.prototype.constructor = ControlExprContext;
-
-VenbraceForgivingParser.ControlExprContext = ControlExprContext;
-
-ControlExprContext.prototype.control_expr = function() {
-    return this.getTypedRuleContext(Control_exprContext,0);
-};
-ControlExprContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterControlExpr(this);
-	}
-};
-
-ControlExprContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitControlExpr(this);
-	}
-};
-
-ControlExprContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitControlExpr(this);
+        return visitor.visitCallProcedureExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -5371,6 +5314,41 @@ CurliesExprContext.prototype.exitRule = function(listener) {
 CurliesExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
         return visitor.visitCurliesExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function GetterExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+GetterExprContext.prototype = Object.create(Core_exprContext.prototype);
+GetterExprContext.prototype.constructor = GetterExprContext;
+
+VenbraceForgivingParser.GetterExprContext = GetterExprContext;
+
+GetterExprContext.prototype.getter = function() {
+    return this.getTypedRuleContext(GetterContext,0);
+};
+GetterExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterGetterExpr(this);
+	}
+};
+
+GetterExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitGetterExpr(this);
+	}
+};
+
+GetterExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitGetterExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -5447,70 +5425,121 @@ LocaVarDeclExprContext.prototype.accept = function(visitor) {
 };
 
 
-function CallProcedureExprContext(parser, ctx) {
+function ParensExprContext(parser, ctx) {
 	Core_exprContext.call(this, parser);
     Core_exprContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
 
-CallProcedureExprContext.prototype = Object.create(Core_exprContext.prototype);
-CallProcedureExprContext.prototype.constructor = CallProcedureExprContext;
+ParensExprContext.prototype = Object.create(Core_exprContext.prototype);
+ParensExprContext.prototype.constructor = ParensExprContext;
 
-VenbraceForgivingParser.CallProcedureExprContext = CallProcedureExprContext;
+VenbraceForgivingParser.ParensExprContext = ParensExprContext;
 
-CallProcedureExprContext.prototype.call_procedure_expr = function() {
-    return this.getTypedRuleContext(Call_procedure_exprContext,0);
+ParensExprContext.prototype.LPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.LPAREN, 0);
 };
-CallProcedureExprContext.prototype.enterRule = function(listener) {
+
+ParensExprContext.prototype.expr_block = function() {
+    return this.getTypedRuleContext(Expr_blockContext,0);
+};
+
+ParensExprContext.prototype.RPAREN = function() {
+    return this.getToken(VenbraceForgivingParser.RPAREN, 0);
+};
+ParensExprContext.prototype.enterRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterCallProcedureExpr(this);
+        listener.enterParensExpr(this);
 	}
 };
 
-CallProcedureExprContext.prototype.exitRule = function(listener) {
+ParensExprContext.prototype.exitRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitCallProcedureExpr(this);
+        listener.exitParensExpr(this);
 	}
 };
 
-CallProcedureExprContext.prototype.accept = function(visitor) {
+ParensExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitCallProcedureExpr(this);
+        return visitor.visitParensExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
 };
 
 
-function NotExprContext(parser, ctx) {
+function ControlExprContext(parser, ctx) {
 	Core_exprContext.call(this, parser);
     Core_exprContext.prototype.copyFrom.call(this, ctx);
     return this;
 }
 
-NotExprContext.prototype = Object.create(Core_exprContext.prototype);
-NotExprContext.prototype.constructor = NotExprContext;
+ControlExprContext.prototype = Object.create(Core_exprContext.prototype);
+ControlExprContext.prototype.constructor = ControlExprContext;
 
-VenbraceForgivingParser.NotExprContext = NotExprContext;
+VenbraceForgivingParser.ControlExprContext = ControlExprContext;
 
-NotExprContext.prototype.not_expr = function() {
-    return this.getTypedRuleContext(Not_exprContext,0);
+ControlExprContext.prototype.control_expr = function() {
+    return this.getTypedRuleContext(Control_exprContext,0);
 };
-NotExprContext.prototype.enterRule = function(listener) {
+ControlExprContext.prototype.enterRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterNotExpr(this);
+        listener.enterControlExpr(this);
 	}
 };
 
-NotExprContext.prototype.exitRule = function(listener) {
+ControlExprContext.prototype.exitRule = function(listener) {
     if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitNotExpr(this);
+        listener.exitControlExpr(this);
 	}
 };
 
-NotExprContext.prototype.accept = function(visitor) {
+ControlExprContext.prototype.accept = function(visitor) {
     if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitNotExpr(this);
+        return visitor.visitControlExpr(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
+};
+
+
+function SquaresExprContext(parser, ctx) {
+	Core_exprContext.call(this, parser);
+    Core_exprContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+SquaresExprContext.prototype = Object.create(Core_exprContext.prototype);
+SquaresExprContext.prototype.constructor = SquaresExprContext;
+
+VenbraceForgivingParser.SquaresExprContext = SquaresExprContext;
+
+SquaresExprContext.prototype.LSQR = function() {
+    return this.getToken(VenbraceForgivingParser.LSQR, 0);
+};
+
+SquaresExprContext.prototype.expr_block = function() {
+    return this.getTypedRuleContext(Expr_blockContext,0);
+};
+
+SquaresExprContext.prototype.RSQR = function() {
+    return this.getToken(VenbraceForgivingParser.RSQR, 0);
+};
+SquaresExprContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterSquaresExpr(this);
+	}
+};
+
+SquaresExprContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitSquaresExpr(this);
+	}
+};
+
+SquaresExprContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitSquaresExpr(this);
     } else {
         return visitor.visitChildren(this);
     }
@@ -5648,7 +5677,8 @@ VenbraceForgivingParser.prototype.core_expr = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5733,7 +5763,8 @@ VenbraceForgivingParser.prototype.control_expr = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5833,7 +5864,8 @@ VenbraceForgivingParser.prototype.if_expr = function() {
         this.match(VenbraceForgivingParser.ELSE);
         this.state = 508;
         localctx.e2 = this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5919,7 +5951,8 @@ VenbraceForgivingParser.prototype.do_expr = function() {
         this.match(VenbraceForgivingParser.RESULT);
         this.state = 513;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -5993,7 +6026,8 @@ VenbraceForgivingParser.prototype.not_expr = function() {
         this.match(VenbraceForgivingParser.NOT);
         this.state = 516;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6109,7 +6143,8 @@ VenbraceForgivingParser.prototype.math_expr = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6213,7 +6248,8 @@ VenbraceForgivingParser.prototype.min_max = function() {
             _alt = this._interp.adaptivePredict(this._input,58,this._ctx);
         }
 
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6287,7 +6323,8 @@ VenbraceForgivingParser.prototype.unary_operation = function() {
         this.unary_op();
         this.state = 532;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6391,7 +6428,8 @@ VenbraceForgivingParser.prototype.unary_op = function() {
         	this._errHandler.reportMatch(this);
             this.consume();
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6486,7 +6524,8 @@ VenbraceForgivingParser.prototype.mod = function() {
         this.match(VenbraceForgivingParser.DIV);
         this.state = 540;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6560,7 +6599,8 @@ VenbraceForgivingParser.prototype.trig = function() {
         this.trig_op();
         this.state = 543;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6656,7 +6696,8 @@ VenbraceForgivingParser.prototype.trig_op = function() {
         	this._errHandler.reportMatch(this);
             this.consume();
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6759,7 +6800,8 @@ VenbraceForgivingParser.prototype.str_expr = function() {
         default:
             throw new antlr4.error.NoViableAltException(this);
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6833,7 +6875,8 @@ VenbraceForgivingParser.prototype.str_length = function() {
         this.match(VenbraceForgivingParser.LENGTH);
         this.state = 554;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6925,7 +6968,8 @@ VenbraceForgivingParser.prototype.str_join = function() {
             _alt = this._interp.adaptivePredict(this._input,60,this._ctx);
         }
 
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -6999,7 +7043,8 @@ VenbraceForgivingParser.prototype.str_reverse = function() {
         this.match(VenbraceForgivingParser.REVERSE);
         this.state = 564;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7073,7 +7118,8 @@ VenbraceForgivingParser.prototype.str_split_at_spaces = function() {
         this.match(VenbraceForgivingParser.SPLIT_AT_SPACES);
         this.state = 567;
         this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7108,6 +7154,41 @@ GetterContext.prototype.constructor = GetterContext;
  
 GetterContext.prototype.copyFrom = function(ctx) {
     antlr4.ParserRuleContext.prototype.copyFrom.call(this, ctx);
+};
+
+
+function GetterInnerBracesContext(parser, ctx) {
+	GetterContext.call(this, parser);
+    GetterContext.prototype.copyFrom.call(this, ctx);
+    return this;
+}
+
+GetterInnerBracesContext.prototype = Object.create(GetterContext.prototype);
+GetterInnerBracesContext.prototype.constructor = GetterInnerBracesContext;
+
+VenbraceForgivingParser.GetterInnerBracesContext = GetterInnerBracesContext;
+
+GetterInnerBracesContext.prototype.getter_inner_braces = function() {
+    return this.getTypedRuleContext(Getter_inner_bracesContext,0);
+};
+GetterInnerBracesContext.prototype.enterRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.enterGetterInnerBraces(this);
+	}
+};
+
+GetterInnerBracesContext.prototype.exitRule = function(listener) {
+    if(listener instanceof VenbraceForgivingListener ) {
+        listener.exitGetterInnerBraces(this);
+	}
+};
+
+GetterInnerBracesContext.prototype.accept = function(visitor) {
+    if ( visitor instanceof VenbraceForgivingVisitor ) {
+        return visitor.visitGetterInnerBraces(this);
+    } else {
+        return visitor.visitChildren(this);
+    }
 };
 
 
@@ -7193,41 +7274,6 @@ GetterVerboseContext.prototype.accept = function(visitor) {
 };
 
 
-function GetterInnerBracesContext(parser, ctx) {
-	GetterContext.call(this, parser);
-    GetterContext.prototype.copyFrom.call(this, ctx);
-    return this;
-}
-
-GetterInnerBracesContext.prototype = Object.create(GetterContext.prototype);
-GetterInnerBracesContext.prototype.constructor = GetterInnerBracesContext;
-
-VenbraceForgivingParser.GetterInnerBracesContext = GetterInnerBracesContext;
-
-GetterInnerBracesContext.prototype.getter_inner_braces = function() {
-    return this.getTypedRuleContext(Getter_inner_bracesContext,0);
-};
-GetterInnerBracesContext.prototype.enterRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.enterGetterInnerBraces(this);
-	}
-};
-
-GetterInnerBracesContext.prototype.exitRule = function(listener) {
-    if(listener instanceof VenbraceForgivingListener ) {
-        listener.exitGetterInnerBraces(this);
-	}
-};
-
-GetterInnerBracesContext.prototype.accept = function(visitor) {
-    if ( visitor instanceof VenbraceForgivingVisitor ) {
-        return visitor.visitGetterInnerBraces(this);
-    } else {
-        return visitor.visitChildren(this);
-    }
-};
-
-
 
 VenbraceForgivingParser.GetterContext = GetterContext;
 
@@ -7281,7 +7327,8 @@ VenbraceForgivingParser.prototype.getter = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7504,7 +7551,8 @@ VenbraceForgivingParser.prototype.getter_inner_braces = function() {
             break;
 
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7653,7 +7701,8 @@ VenbraceForgivingParser.prototype.call_procedure_expr = function() {
             _alt = this._interp.adaptivePredict(this._input,73,this._ctx);
         }
 
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7821,7 +7870,8 @@ VenbraceForgivingParser.prototype.local_var_decl_expr = function() {
 
         this.state = 655;
         localctx.body = this.expr_block();
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7917,7 +7967,8 @@ VenbraceForgivingParser.prototype.atom = function() {
         	this._errHandler.reportMatch(this);
             this.consume();
         }
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
@@ -7985,7 +8036,8 @@ VenbraceForgivingParser.prototype.label = function() {
         this.enterOuterAlt(localctx, 1);
         this.state = 659;
         this.match(VenbraceForgivingParser.ID);
-    } catch (re) {
+        }
+    catch (re) {
     	if(re instanceof antlr4.error.RecognitionException) {
 	        localctx.exception = re;
 	        this._errHandler.reportError(this, re);
