@@ -4,6 +4,21 @@ Forgiving grammar for Venbrace.
 Author: Lyn Turbak, based on Qianqian's Venbrace.g4
 
 History: 
+
+* [2020/06/24, lyn] Allow `global var` in getterAbbreviated (bug noticed by Qianqian).
+
+* [2020/06/24, lyn] Modify handling of get to allow `get(a)`, 
+  `get (global a)`, `get global (a)` and variants with different braces. 
+
+* [2020/06/23-24, lyn] Handle insertion/deletion/correction of expression braces. 
+  This requires naming some productions to be able to refer to them in 
+  ForgivingTokensVisitor. 
+
+* [2020/06/21-22, lyn] Added forgiving handling of expressions, including operator 
+  precedence, base on my experimentation with a smaller expression grammar in 
+  ~fturbak/Projects/antlr4/Prec/Prec8.g4. However, neglected to handle
+  insertion/deletion/correction of expression braces 
+
 * [2020/06/21, lyn] Added forgiving handling of expressions, including operator 
   precedence, base on my experimentation with a smaller expression grammar in 
   ~fturbak/Projects/antlr4/Prec/Prec8.g4.
@@ -601,7 +616,7 @@ str_reverse: REVERSE expr_block ;
 
 str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
 
-getter: ID              #getterAbbrev
+getter: GLOBAL? ID      #getterAbbrev
   | GET GLOBAL? ID      #getterVerbose
   | getter_inner_braces #getterInnerBraces
   ;

@@ -7,7 +7,12 @@
    conversions from listTrees rather than mutating accumulators of tokens. 
  
  History:
- * [2020/06/24, lyn] 
+
+ * [2020/06/24, lyn] At Qianqian's request, modify handling of get to allow `get(a)`,
+   (as well as `get (global a)`, `get global (a)` and variants with different braces).
+   Also mark outer braces and `get` as optional in these cases, and deleter inner braces.
+
+ * [2020/06/23-24, lyn] 
    + Added inserting/deleting/correcting braces for expressions via a combination
      of ListTreeVisitor, exprTreeToTokensWithParens, and exprTreeToTokens
    + NEG_NUM special case is now handled by exprTreeToTokens
