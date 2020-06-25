@@ -29,17 +29,24 @@
  
  
    + tok.deleted is true if tok is a deleted token (undefined otherwise)
-      Currently, only brace tokens are deleted (when used around a suite). 
+      Currently, only brace tokens are deleted, in these situations: 
+      - when used around a suite
+      - 
+
  
    + tok.corrected has the previous token text if tok has been corrected 
       (undefined otherwise). Currently, the only tokens corrected are 
-     wrong-type braces and the NEG_NUM in expr_block NEG_NUM. 
+      wrong-type braces and the NEG_NUM in expr_block NEG_NUM. 
  ===== Qianqian Jun. 20, 2020 =====
  - removed the `corrected' tag for corrected NEG_NUM
  
    + tok.optional is true if tok is optional in the grammar (undefined otherwise).
-     Inserted and deleted tokens are never marked optional, 
-     but corrected tokens may be optional. 
+     As a special case, an explicit GET token is also optional, as are parens
+     wrapping a getter with an explicit GET. 
+     Deleted tokens are never marked optional. 
+     The only inserted tokens marked optional are those inserted 
+       around a getter with an explicit GET. 
+     Corrected braces may also be optional, e.g. when {17} is corrected to 17.
  
  In cases where expr NEG_NUM is converted to expr MINUS <positive version of NEG_NUM>,
  the new MINUS token is marked as inserted and the <positive version of NEG_NUM>
@@ -313,8 +320,15 @@ function exprTreeToTokensWithParens(etr) {
          'parensExpr', 'curliesExpr', 'squaresExpr'].includes(nodeType)) {
     // Need to insert paren tokens
     // console.log('inserting parens for ' + subtokens.map( t => t.toString() ));
-    subtokens.unshift(newToken('LPAREN'));
-    subtokens.push(newToken('RPAREN'));
+    var lparen = newToken('LPAREN');
+    var rparen = newToken('RPAREN');
+    subtokens.unshift(lparen);
+    subtokens.push(rparen);
+    if (['getterVerbose', 'getter_inner_braces'].includes(nodeType)) {
+      // Parens always optional with `get` keyword
+      lparen.optional = true;
+      rparen.optional = true;
+    }
   }
   // console.log('exprTreeToTokensWithParens returns:');
   // subtokens.forEach( tok=> console.log(tok.toString()) );
@@ -355,6 +369,11 @@ function exprTreeToTokens(etr) {
     } else { // subexp isn't braced; make sure innermost braces are parens
       ensureTokenType('LPAREN', lbraceToken);
       ensureTokenType('RPAREN', rbraceToken);
+      if (subnodeType === 'getterVerbose') {
+        // parens for verbose getter are considered optional
+        lbraceToken.optional = true;
+        rbraceToken.optional = true;
+      }
     }
     if (subnodeType === 'atom') {
       // parens around atoms are optional 
@@ -387,6 +406,12 @@ function exprTreeToTokens(etr) {
     
     subtokens.push(newMinusToken, newNumberToken);
     return subtokens;
+  } else if (['getterVerbose', 'getter_inner_braces'].includes(nodeType)) {
+    return etr.slice(1) // remove nodeType
+      .map ( tok => (tok.text === 'get') 
+             ? optionalToken(tok)
+             : ((isBrace(tok)) ? deletedToken(tok) : tok ) 
+             );
   } else {
     // General case: collect tokens for *parenthesized* subexpressions from below
     return Utils.concatArrays(// Combine array of arrays into one arraya
@@ -457,13 +482,17 @@ CommonToken.prototype.clone = function() {
   return t;
 };
 
-function isBrace(text) {
-  return ['(', ')', '{', '}', '[',']'].includes(text);
+function isBrace(tok) {
+  return ['(', ')', '{', '}', '[',']'].includes(tok.text);
 }
 
 function isOpenBrace(tok) {
   // console.log("isOpenBrace('" + tok.text + "')=" + ['(', '[', '{'].includes(tok.text));2
   return ['(', '[', '{'].includes(tok.text);
+}
+
+function markDeleted(tok) {
+
 }
 
 function isOptional (ctx, token) {
@@ -491,7 +520,8 @@ var optionalTokens = { // Dictionary for optional tokens
   // Does *not* handle proc/method call labels as optional
   'setter': ['to'], 
   'local_var_decl_stat': ['to', 'in'], // Should 'local' be optional? Lyn sez NO!
-  'getter': ['(', 'get', ')'], 
+  'getterVerbose': ['get'], 
+  'getter_inner_braces': ['get'], 
   'local_var_decl_expr': ['to', 'in'], // Should 'local' be optional? Lyn sez NO!
   'atom': ['(', ')']
   // Does *not* handle expression operation labels as optional
@@ -541,9 +571,14 @@ function toToken(ctxOrToken) {
   }
 }
 
-function deletedToken(token) {
-  token.deleted = true;
-  return token;
+function deletedToken(tok) {
+  tok.deleted = true;
+  return tok;
+}
+
+function optionalToken(tok) {
+  tok.optional= true;
+  return tok;
 }
 
 function getClassName(object) {

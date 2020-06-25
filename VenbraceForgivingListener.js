@@ -668,6 +668,24 @@ VenbraceForgivingListener.prototype.exitGetterVerbose = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceForgivingParser#getterInnerBraces.
+VenbraceForgivingListener.prototype.enterGetterInnerBraces = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#getterInnerBraces.
+VenbraceForgivingListener.prototype.exitGetterInnerBraces = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#getter_inner_braces.
+VenbraceForgivingListener.prototype.enterGetter_inner_braces = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#getter_inner_braces.
+VenbraceForgivingListener.prototype.exitGetter_inner_braces = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceForgivingParser#call_procedure_expr.
 VenbraceForgivingListener.prototype.enterCall_procedure_expr = function(ctx) {
 };

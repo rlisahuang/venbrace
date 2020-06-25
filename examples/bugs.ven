@@ -1,6 +1,6 @@
-// The first four expressions below are fixed
+// All five of the expressions below (flagged by Qianqian earlier) are fixed
 expr {1 + 2}
 expr (get b)
 stat {set a to (get b)}
 expr (10 + (absolute (a - b)))
-// expr get(b) // Not fixed yet
+expr get(b) 
