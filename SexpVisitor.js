@@ -195,7 +195,7 @@ SexpVisitor.prototype.visitTerminal = function(ctx) {
   var token = ctx.getSymbol(); // Returns the token at the terminal 
   var text = token.text;
   // console.log('visitTerminal ' + text);
-  var parentNameWithContext = ctx.getParent().constructor.name;
+  // var parentNameWithContext = ctx.getParent().constructor.name;
   // if (isBrace(text)) {
   //   console.log('Brace token ' + text + ' with parent ' + parentNameWithContext);
   // 

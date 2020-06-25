@@ -168,8 +168,8 @@ VenbraceForgivingVisitor.prototype.visitSetter = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#andExprBogus.
-VenbraceForgivingVisitor.prototype.visitAndExprBogus = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#expr_block.
+VenbraceForgivingVisitor.prototype.visitExpr_block = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -270,8 +270,74 @@ VenbraceForgivingVisitor.prototype.visitPowExpr = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#core_expr.
-VenbraceForgivingVisitor.prototype.visitCore_expr = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#getterExpr.
+VenbraceForgivingVisitor.prototype.visitGetterExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#controlExpr.
+VenbraceForgivingVisitor.prototype.visitControlExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#notExpr.
+VenbraceForgivingVisitor.prototype.visitNotExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#mathExpr.
+VenbraceForgivingVisitor.prototype.visitMathExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#strExpr.
+VenbraceForgivingVisitor.prototype.visitStrExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#callProcedureExpr.
+VenbraceForgivingVisitor.prototype.visitCallProcedureExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#locaVarDeclExpr.
+VenbraceForgivingVisitor.prototype.visitLocaVarDeclExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#atomExpr.
+VenbraceForgivingVisitor.prototype.visitAtomExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#emptyExpr.
+VenbraceForgivingVisitor.prototype.visitEmptyExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#parensExpr.
+VenbraceForgivingVisitor.prototype.visitParensExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#curliesExpr.
+VenbraceForgivingVisitor.prototype.visitCurliesExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#squaresExpr.
+VenbraceForgivingVisitor.prototype.visitSquaresExpr = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -372,8 +438,14 @@ VenbraceForgivingVisitor.prototype.visitStr_split_at_spaces = function(ctx) {
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#getter.
-VenbraceForgivingVisitor.prototype.visitGetter = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#getterAbbrev.
+VenbraceForgivingVisitor.prototype.visitGetterAbbrev = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#getterVerbose.
+VenbraceForgivingVisitor.prototype.visitGetterVerbose = function(ctx) {
   return this.visitChildren(ctx);
 };
 

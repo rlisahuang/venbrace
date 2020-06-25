@@ -400,7 +400,8 @@ local_decl_keyword: LOCAL // Actually required due to reasoning above.
 
 // 05/04/2020: although GLOBAL setter is implemented, it is not used in the translation tasks of study 1
 setter:
-  SET GLOBAL? target=(ID | COMPONENT_PROPERTY) TO? expr_block
+    SET GLOBAL? ID TO? expr_block // Only allow global with ID
+  | SET COMPONENT_PROPERTY TO? expr_block
   ;
 
 // [2020/06/21] Parens-optional version of expression with a relatively standard 
@@ -408,7 +409,8 @@ setter:
 // parenthesization of low-precedence operators. May want to revisit this
 // decision based on testing with bad Round 1 and Round 2 inputs. 
 expr_block: 
-    and_expr                 #andExprBogus // lowest precedence level 
+    and_expr                 // Dont name this: #andExprBogus // lowest precedence level 
+                             // Want this rule still name expr_block!
   ; 
 
 and_expr: 
@@ -428,7 +430,7 @@ or_expr:
   ; 
 
 math_compare_expr: 
-    add_sub_expr              #addSubExprBogus // ascend to higher precedence level 
+    add_sub_expr             #addSubExprBogus // ascend to higher precedence level 
   | add_sub_expr math_compare_op add_sub_expr  #mathCompareExpr
     // No recursion with math_rel_op since doesn't make sense 
     // for relops to have other relops as args.
@@ -454,7 +456,7 @@ add_sub_expr:
     mul_div_expr             #mulDivExprBogus // ascend to higher precedence level 
   | mul_div_expr (PLUS add_sub_expr)+  #mutableAddExpr // addition with >=2 args (can't handle <= arg
                                                        // but it's silly for AppInventor to support this!)
-  | add_sub_expr NEG_NUM #subNegNumExpr // special case binary subtraction
+  | add_sub_expr NEG_NUM     #subNegNumExpr // special case binary subtraction
   | <assoc=right> add_sub_expr MINUS add_sub_expr #subExpr // binary subtraction
     // Lyn thinks right associativity here is more natural in App Inventor than 
     // standard left associativity. But this can be easily changed to left associativity 
@@ -472,24 +474,26 @@ mul_div_expr:
   ;
 
 pow_expr: 
-    core_expr                   #coreExprBogus // ascend to higher precedence level 
+    core_expr                #coreExprBogus // ascend to higher precedence level 
   | <assoc=right> pow_expr POW pow_expr #powExpr // Right associativity is standard for exponentiation
   ; 
 
 // Core expressions with optional (due to "forgivingness")  braces
 core_expr: 
-    getter 
-  | control_expr
-  | not_expr
-  | math_expr
-  | str_expr
-  | call_procedure_expr
-  | local_var_decl_expr // [2020/06/15, lyn] Added for testing (not used in Round 2)
-  | atom
-  | LPAREN RPAREN            // special case for empty expression 
-  | LPAREN expr_block RPAREN // Explict parens
-  | LCURLY expr_block RCURLY // Explict curlies; wrong, but allowed by forgiving parser
-  | LSQR expr_block RSQR // Explict squares; wrong, but allowed by forgiving parser
+    getter                   #getterExpr
+  | control_expr             #controlExpr
+  | not_expr                 #notExpr
+  | math_expr                #mathExpr
+  | str_expr                 #strExpr
+  | call_procedure_expr      #callProcedureExpr
+  | local_var_decl_expr      #locaVarDeclExpr // [2020/06/15, lyn] Added for testing (not used in Round 2)
+  | atom                     #atomExpr
+  | ((LPAREN RPAREN) 
+     | (LCURLY RCURLY)
+     | (LSQR RSQR))          #emptyExpr // special case for empty expression 
+  | LPAREN expr_block RPAREN #parensExpr // Explict parens
+  | LCURLY expr_block RCURLY #curliesExpr // Explict curlies; wrong, but allowed by forgiving parser
+  | LSQR expr_block RSQR     #squaresExpr // Explict squares; wrong, but allowed by forgiving parser
   ;
 
 control_expr: if_expr
@@ -597,8 +601,8 @@ str_reverse: REVERSE expr_block ;
 
 str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
 
-getter: ID
-  | GET GLOBAL? ID 
+getter: ID             #getterAbbrev
+  | GET GLOBAL? ID     #getterVerbose
   ;
 
 call_procedure_expr:
