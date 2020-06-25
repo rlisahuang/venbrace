@@ -15,9 +15,18 @@ expr [[17]]
 
 // Abbreviated variable getters
 expr a
-expr (a)
-expr {a}
-expr [a]
+expr (b)
+expr {c}
+expr [d]
+expr global e
+expr (global f)
+expr {global g}
+expr [global h]
+/* // doesn't handle these; should it? 
+expr global(i) 
+expr global{j}
+expr global[k]
+*/
 
 // Unabbreviated variable getters
 expr (get a)
