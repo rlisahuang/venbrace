@@ -132,6 +132,10 @@ ForgivingTokensVisitor.prototype.visitTop = function(ctx) {
 }
 
 // Visit a parse tree produced by #test_top_blocks.
+ForgivingTokensVisitor.prototype.visitTest_decl_blocks = function(ctx) {
+  return this.visitTop(ctx);
+}
+// Visit a parse tree produced by #test_top_blocks.
 ForgivingTokensVisitor.prototype.visitTest_top_blocks = function(ctx) {
   return this.visitTop(ctx);
 }

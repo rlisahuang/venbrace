@@ -45,6 +45,10 @@ SexpVisitor.prototype.visitTop = function(ctx) {
   return sexpString(listTree);
 }
 
+SexpVisitor.prototype.visitTest_decl_blocks = function(ctx) {
+  return this.visitTop(ctx);
+}
+
 SexpVisitor.prototype.visitTest_top_blocks = function(ctx) {
   return this.visitTop(ctx);
 }
