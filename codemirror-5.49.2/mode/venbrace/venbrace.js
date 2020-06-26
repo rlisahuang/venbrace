@@ -58,6 +58,7 @@ CodeMirror.defineMode("venbrace", function () {
     "'of'", "'spaces'", "'segment'", 
     "'replace'", "'all'", "'replacement'", 
     "'reverse'", "'mappings'", "'in'",  
+    "'index'","'list'", "'thing'",
     "'preferring'", "'longest string first'", "'dictionary'" ];
     // var VenbraceKeywords = [ null, null, "'{'", "'}'", "'('", "')'", "'['", "']'", 
     //                  "','", "'==='", "'.'", "'<-'", "':'", "'true'", "'false'", 
