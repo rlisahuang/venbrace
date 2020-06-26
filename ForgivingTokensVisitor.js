@@ -11,6 +11,9 @@
  * [2020/06/26, lyn]
    + Remove EOF token from parsed tokens. 
    + Mark suite tokens in empty suite as optional 
+   + Handle optional socket labels: 
+     - THING/LIST for INDEX_IN_LIST, and 
+     - TEXT/SEGMENT/REPLACEMENT for REPLACE_ALL
 
  * [2020/06/24, lyn] At Qianqian's request, modify handling of get to allow `get(a)`,
    (as well as `get (global a)`, `get global (a)` and variants with different braces).
@@ -433,19 +436,31 @@ function exprTreeToTokens(etr) {
     return subtokens;
   } else if (['getterVerbose', 'getter_inner_braces'].includes(nodeType)) {
     return etr.slice(1) // remove nodeType
-      .map ( tok => (tok.text === 'get') 
+      .map ( tok => (isOptional(nodeType, tok))
              ? optionalToken(tok)
              : ((isBrace(tok)) ? deletedToken(tok) : tok ) 
              );
+    /*
+  } else if (['str_replace_all', 'index_in_list'].includes(nodeType)) {
+    return etr.slice(1) // remove nodeType
+      .map ( tok => (isOptional(nodeType, tok)) ? display(optionalToken(tok)) : display(tok) )
+    */
   } else {
     // General case: collect tokens for *parenthesized* subexpressions from below
     return Utils.concatArrays(// Combine array of arrays into one arraya
                               etr.slice(1) // Remove nodeType
-                              .map(exprTreeToTokensWithParens) // convert subparts to token lists. 
+                              .map(// convert subparts to token lists. 
+                                   function (part) {
+                                     if (part instanceof CommonToken) {
+                                       return [isOptional(nodeType, part) 
+                                               ? optionalToken(part)
+                                               : part];
+                                     } else {
+                                       return exprTreeToTokensWithParens(part);
+                                     }
+                                   })
                               );
-    
   }
-
 }
 
 ForgivingTokensVisitor.prototype.visitTerminal = function(ctx) {
@@ -458,7 +473,7 @@ ForgivingTokensVisitor.prototype.visitTerminal = function(ctx) {
   //   console.log('Brace token ' + text + ' with parent ' + parentNameWithContext);
   // 
   if (isOptional(ctx, token)) {
-    token['optional'] = true;
+    token.optional = true;
   }
   this.tokens.push(token); // Add this token to end of visitor's tokens list
 };
@@ -520,21 +535,31 @@ function markDeleted(tok) {
 
 }
 
-function isOptional (ctx, token) {
-  var parentNameWithContext = ctx.getParent().constructor.name;
-  // console.log('Debug: ' + token + ' ' + parentNameWithContext);
-  // Turn names like 'Decl_blockContext' into 'decl_block'
-  var parentNameWithoutContext = Utils.uncapitalizeFirstLetter(parentNameWithContext.split('Context')[0]);
-  optionalTexts = optionalTokens[parentNameWithoutContext]; 
+function isOptional (ctxOrString, token) {
+  var nodeType; 
+  // console.log('(typeof ctxOrString)=' + ctxOrString);
+  if ((typeof ctxOrString) === 'string') {
+    nodeType = ctxOrString;
+  } else {
+    var parentNameWithContext = ctxOrString.getParent().constructor.name;
+    // console.log('Debug: ' + token + ' ' + parentNameWithContext);
+    // Turn names like 'Decl_blockContext' into 'decl_block'
+    nodeType = Utils.uncapitalizeFirstLetter(parentNameWithContext.split('Context')[0]);
+  }
+  optionalTexts = optionalTokens[nodeType]; 
   if (optionalTexts === undefined) {
     // not in dictionary
+    // console.log("isOptional(" + nodeType + ", '" + token.text + "')=" + false);
     return false;
   } else {
+    // console.log("isOptional(" + nodeType + ", '" + token.text + "')=" 
+    //            + optionalTexts.includes(token.text));
     return optionalTexts.includes(token.text);
   }
 }
 
-var optionalTokens = { // Dictionary for optional tokens
+var optionalTokens = { // Dictionary for optional tokens 
+                       // (only works for decls/suites/stats, not exprs
   'global_decl': ['to'], // Lyn sez `global` should *not* be optional
   'event_handler': ['do'], // What about params? 
   // Note for proc_decl: are 'do' and 'result' necessary for distinguishing noreturn and return cases?
@@ -545,11 +570,16 @@ var optionalTokens = { // Dictionary for optional tokens
   // Does *not* handle proc/method call labels as optional
   'setter': ['to'], 
   'local_var_decl_stat': ['to', 'in'], // Should 'local' be optional? Lyn sez NO!
+
+  // [2020/06/26] These are used by exptTreeToTokens
   'getterVerbose': ['get'], 
   'getter_inner_braces': ['get'], 
+  'index_in_list': ['thing', 'list'],
+  'str_replace_all': ['text', 'segment', 'replacement'],
+  // [2020/06/26] These are currently unused: 
   'local_var_decl_expr': ['to', 'in'], // Should 'local' be optional? Lyn sez NO!
-  'atom': ['(', ')'],
-  'str_segment': ['text', 'start', 'length']
+  // 'str_segment': ['text', 'start', 'length'],
+  'atom': ['(', ')']
   // Does *not* handle expression operation labels as optional
 };
 
@@ -607,6 +637,11 @@ function optionalToken(tok) {
   tok.optional = true;
   // console.log('Result of optionalToken is ' + tok.toString());
   return tok;
+}
+
+function display(thing) {
+  console.log(thing.toString());
+  return thing;
 }
 
 function getClassName(object) {
