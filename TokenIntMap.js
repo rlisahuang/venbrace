@@ -11,7 +11,8 @@ var tokenIntMap = {
   'LOCAL': 33, 
   'MINUS': 64, 
   'NUMBER': 122, 
-  'NEG_NUM': 123
+  'NEG_NUM': 123,
+  'ID': 125
 }
 
 exports.tokenIntMap = tokenIntMap; 

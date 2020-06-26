@@ -11,7 +11,8 @@ var tokenTextMap = {
   'LOCAL': 'local', 
   'MINUS': '-', 
   'NUMBER': undefined, 
-  'NEG_NUM': undefined
+  'NEG_NUM': undefined,
+  'ID': undefined
 }
 
 exports.tokenTextMap = tokenTextMap; 
