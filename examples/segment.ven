@@ -1,0 +1,1 @@
+(split at spaces (join "I like") (segment text "green eggs" start 6 length 5))
