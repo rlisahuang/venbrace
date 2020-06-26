@@ -452,6 +452,15 @@ VenbraceForgivingListener.prototype.exitStrExpr = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceForgivingParser#listExpr.
+VenbraceForgivingListener.prototype.enterListExpr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#listExpr.
+VenbraceForgivingListener.prototype.exitListExpr = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceForgivingParser#callProcedureExpr.
 VenbraceForgivingListener.prototype.enterCallProcedureExpr = function(ctx) {
 };
@@ -650,6 +659,15 @@ VenbraceForgivingListener.prototype.exitStr_reverse = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceForgivingParser#str_downcase.
+VenbraceForgivingListener.prototype.enterStr_downcase = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#str_downcase.
+VenbraceForgivingListener.prototype.exitStr_downcase = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceForgivingParser#str_split_at_spaces.
 VenbraceForgivingListener.prototype.enterStr_split_at_spaces = function(ctx) {
 };
@@ -659,12 +677,30 @@ VenbraceForgivingListener.prototype.exitStr_split_at_spaces = function(ctx) {
 };
 
 
-// Enter a parse tree produced by VenbraceForgivingParser#str_segment.
-VenbraceForgivingListener.prototype.enterStr_segment = function(ctx) {
+// Enter a parse tree produced by VenbraceForgivingParser#str_replace_all.
+VenbraceForgivingListener.prototype.enterStr_replace_all = function(ctx) {
 };
 
-// Exit a parse tree produced by VenbraceForgivingParser#str_segment.
-VenbraceForgivingListener.prototype.exitStr_segment = function(ctx) {
+// Exit a parse tree produced by VenbraceForgivingParser#str_replace_all.
+VenbraceForgivingListener.prototype.exitStr_replace_all = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#list_expr.
+VenbraceForgivingListener.prototype.enterList_expr = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#list_expr.
+VenbraceForgivingListener.prototype.exitList_expr = function(ctx) {
+};
+
+
+// Enter a parse tree produced by VenbraceForgivingParser#index_in_list.
+VenbraceForgivingListener.prototype.enterIndex_in_list = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#index_in_list.
+VenbraceForgivingListener.prototype.exitIndex_in_list = function(ctx) {
 };
 
 

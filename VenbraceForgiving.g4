@@ -5,6 +5,14 @@ Author: Lyn Turbak, based on Qianqian's Venbrace.g4
 
 History: 
 
+* [2020/06/26, lyn] 
+  + Added test_decl_blocks for multiple top-level decls in Venbrace translation task
+  + Add the following (and associated socket labels)
+     REPLACE_ALL 
+     DOWNCASE
+     INDEX_IN_LIST 
+  + Remove SEGMENT added yesterday by Qianqian
+
 * [2020/06/24, lyn] Allow `global var` in getterAbbreviated (bug noticed by Qianqian).
 
 * [2020/06/24, lyn] Modify handling of get to allow `get(a)`, 
@@ -504,6 +512,7 @@ core_expr:
   | not_expr                 #notExpr
   | math_expr                #mathExpr
   | str_expr                 #strExpr
+  | list_expr                #listExpr
   | call_procedure_expr      #callProcedureExpr
   | local_var_decl_expr      #locaVarDeclExpr // [2020/06/15, lyn] Added for testing (not used in Round 2)
   | atom                     #atomExpr
@@ -609,8 +618,10 @@ atan2:
 str_expr: str_join 
   | str_length  
   | str_reverse  
+  | str_downcase
   | str_split_at_spaces 
-  | str_segment // added by Qianqian
+  // | str_segment // added by Qianqian
+  | str_replace_all
   ;
 
 str_length: LENGTH expr_block ;
@@ -619,10 +630,29 @@ str_join:JOIN expr_block* ;
 
 str_reverse: REVERSE expr_block ; 
 
+str_downcase: DOWNCASE expr_block ; 
+
 str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
 
 // 06-25-2020 added by Qianqian based on material update
-str_segment: SEGMENT label? expr_block label? expr_block label? expr_block;
+// [2020-06/26, lyn] Commented out because uses SEGMENT operator as socket label
+//   and SEGMENT itself is a string operator
+// str_segment: SEGMENT label? expr_block label? expr_block label? expr_block;
+
+// [2020-06/26, lyn] added for Round 2
+str_replace_all: 
+    REPLACE_ALL TEXT? expr_block 
+                SEGMENT? expr_block 
+                REPLACEMENT? expr_block ;
+
+// [2020-06/26, lyn] added for Round 2
+list_expr: index_in_list; 
+
+// [2020-06/26, lyn] added for Round 2
+// Warning: LIST socket label could also be shortened keyword
+// for MAKE_A_LIST and EMPTY_LIST
+index_in_list: INDEX_IN_LIST THING? expr_block LIST? expr_block ; 
+
 
 getter: GLOBAL? ID      #getterAbbrev
   | GET GLOBAL? ID      #getterVerbose
@@ -826,9 +856,11 @@ SPLIT_AT_FIRST_OF_ANY: 'split at first of any';
 // AT: 'at';
 // AT_LIST: 'at (list)';
 SPLIT_AT_SPACES: 'split at spaces';
-SEGMENT: 'segment';
+// SEGMENT: 'segment';
 // START: 'start';
 REPLACE_ALL: 'replace all';
+TEXT: 'text';
+SEGMENT: 'segment';
 REPLACEMENT: 'replacement';
 OBFUSCATED_TEXT: 'Obfuscated Text';
 IS_A_STR: 'is a string?';
@@ -843,6 +875,10 @@ DICTIONARY: 'dictionary';
 
 
 //lists
+INDEX_IN_LIST: 'index in list';
+THING: 'thing';
+LIST: 'list';
+
 // CREATE_EMPTY_LIST: ('create empty ')? 'list';
 // MAKE_LIST: 'make a list';
 // // LIST: 'list';
@@ -852,7 +888,6 @@ DICTIONARY: 'dictionary';
 // LENGTH_OF_LIST: 'length of list';
 // IS_LIST_EMPTY: 'is list empty?';
 // PICK_A_RANDOM_ITEM: 'pick a random item';
-// INDEX_IN_LIST: 'index in list';
 // SELECT_LIST_ITEM: 'select list item';
 // // INDEX: 'index';
 // REPLACE_LIST_ITEM: 'replace list item';

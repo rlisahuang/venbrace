@@ -306,6 +306,12 @@ VenbraceForgivingVisitor.prototype.visitStrExpr = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceForgivingParser#listExpr.
+VenbraceForgivingVisitor.prototype.visitListExpr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceForgivingParser#callProcedureExpr.
 VenbraceForgivingVisitor.prototype.visitCallProcedureExpr = function(ctx) {
   return this.visitChildren(ctx);
@@ -438,14 +444,32 @@ VenbraceForgivingVisitor.prototype.visitStr_reverse = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceForgivingParser#str_downcase.
+VenbraceForgivingVisitor.prototype.visitStr_downcase = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceForgivingParser#str_split_at_spaces.
 VenbraceForgivingVisitor.prototype.visitStr_split_at_spaces = function(ctx) {
   return this.visitChildren(ctx);
 };
 
 
-// Visit a parse tree produced by VenbraceForgivingParser#str_segment.
-VenbraceForgivingVisitor.prototype.visitStr_segment = function(ctx) {
+// Visit a parse tree produced by VenbraceForgivingParser#str_replace_all.
+VenbraceForgivingVisitor.prototype.visitStr_replace_all = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#list_expr.
+VenbraceForgivingVisitor.prototype.visitList_expr = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by VenbraceForgivingParser#index_in_list.
+VenbraceForgivingVisitor.prototype.visitIndex_in_list = function(ctx) {
   return this.visitChildren(ctx);
 };
 
