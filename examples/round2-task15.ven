@@ -11,14 +11,22 @@ expr
 split at spaces join "it is a" replace all "fit bit" "i" "a"
 
 expr 
-(index in list thing "cannot" list (join "I can" (downcase "NOT GO")))
+(index in list 
+ thing "cannot" 
+ list (split at spaces (join "I can" (downcase "NOT GO"))))
 
 expr 
-(index in list "cannot" (join "I can" (downcase "NOT GO")))
+(index in list 
+ "cannot" 
+ (split at spaces (join "I can" (downcase "NOT GO"))))
 
 expr 
-index in list thing "cannot" list join "I can" downcase "NOT GO"
+index in list 
+thing "cannot" 
+list split at spaces join "I can" downcase "NOT GO"
 
 expr 
-index in list "cannot" join "I can" downcase "NOT GO"
+index in list 
+"cannot" 
+split at spaces join "I can" downcase "NOT GO"
 
