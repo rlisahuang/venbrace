@@ -650,6 +650,15 @@ VenbraceForgivingListener.prototype.exitStr_split_at_spaces = function(ctx) {
 };
 
 
+// Enter a parse tree produced by VenbraceForgivingParser#str_segment.
+VenbraceForgivingListener.prototype.enterStr_segment = function(ctx) {
+};
+
+// Exit a parse tree produced by VenbraceForgivingParser#str_segment.
+VenbraceForgivingListener.prototype.exitStr_segment = function(ctx) {
+};
+
+
 // Enter a parse tree produced by VenbraceForgivingParser#getterAbbrev.
 VenbraceForgivingListener.prototype.enterGetterAbbrev = function(ctx) {
 };

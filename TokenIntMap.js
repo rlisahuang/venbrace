@@ -9,9 +9,9 @@ var tokenIntMap = {
   'RSQR': 10,
   'GLOBAL': 30, 
   'LOCAL': 33, 
-  'MINUS': 65, 
-  'NUMBER': 123, 
-  'NEG_NUM': 124
+  'MINUS': 64, 
+  'NUMBER': 122, 
+  'NEG_NUM': 123
 }
 
 exports.tokenIntMap = tokenIntMap; 

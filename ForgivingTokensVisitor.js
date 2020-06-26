@@ -528,7 +528,8 @@ var optionalTokens = { // Dictionary for optional tokens
   'getterVerbose': ['get'], 
   'getter_inner_braces': ['get'], 
   'local_var_decl_expr': ['to', 'in'], // Should 'local' be optional? Lyn sez NO!
-  'atom': ['(', ')']
+  'atom': ['(', ')'],
+  'str_segment': ['text', 'start', 'length']
   // Does *not* handle expression operation labels as optional
 };
 

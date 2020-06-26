@@ -438,6 +438,12 @@ VenbraceForgivingVisitor.prototype.visitStr_split_at_spaces = function(ctx) {
 };
 
 
+// Visit a parse tree produced by VenbraceForgivingParser#str_segment.
+VenbraceForgivingVisitor.prototype.visitStr_segment = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by VenbraceForgivingParser#getterAbbrev.
 VenbraceForgivingVisitor.prototype.visitGetterAbbrev = function(ctx) {
   return this.visitChildren(ctx);

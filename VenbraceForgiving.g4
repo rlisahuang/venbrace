@@ -606,6 +606,7 @@ str_expr: str_join
   | str_length  
   | str_reverse  
   | str_split_at_spaces 
+  | str_segment // added by Qianqian
   ;
 
 str_length: LENGTH expr_block ;
@@ -615,6 +616,9 @@ str_join:JOIN expr_block* ;
 str_reverse: REVERSE expr_block ; 
 
 str_split_at_spaces: SPLIT_AT_SPACES expr_block ; 
+
+// 06-25-2020 added by Qianqian based on material update
+str_segment: SEGMENT label? expr_block label? expr_block label? expr_block;
 
 getter: GLOBAL? ID      #getterAbbrev
   | GET GLOBAL? ID      #getterVerbose
@@ -727,7 +731,7 @@ CLOSE_SCREEN_WITH_PLAIN_TEXT: 'close screen with plain text';
 CLOSE_APPLICATION: 'close application';
 SCREEN_NAME: 'screenName';
 START_VALUE: 'startValue';
-TEXT: 'text';
+// TEXT: 'text';
 BREAK: 'break';
 
 GET_START_VALUE: 'get start value';

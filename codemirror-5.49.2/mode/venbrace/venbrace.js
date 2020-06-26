@@ -43,8 +43,7 @@ CodeMirror.defineMode("venbrace", function () {
     "'else if'", "'for'", "'each'", "'do'", "'result'", "'to'", 
     "'call'", "'get'", "'set'", "'global'", "'initialize'", 
     "'local'", "'in'", "'by'", "'from'", "'while'", "'test'", 
-    "'screenName'", "'startValue'", 
-    "'text'", "'break'", 
+    "'screenName'", "'startValue'", "'break'", 
     "'not'", "'and'", "'or'", "'xor'", "'<'", "'>'", "'<='", 
     "'>='", "'='", "'!='", null, null, "'+'", "'-'", "'*'", 
     "'/'", "'^'", "'decimal'", "'binary'", "'octal'", "'hexadecimal'", 
@@ -58,7 +57,7 @@ CodeMirror.defineMode("venbrace", function () {
     "'contains'", "'split'", "'first'", "'any'", 
     "'of'", "'spaces'", "'segment'", 
     "'replace'", "'all'", "'replacement'", 
-    "'reverse'", "'mappings'", "'in'", "'text'", 
+    "'reverse'", "'mappings'", "'in'",  
     "'preferring'", "'longest string first'", "'dictionary'" ];
     // var VenbraceKeywords = [ null, null, "'{'", "'}'", "'('", "')'", "'['", "']'", 
     //                  "','", "'==='", "'.'", "'<-'", "':'", "'true'", "'false'", 
