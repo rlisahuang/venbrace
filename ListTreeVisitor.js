@@ -28,7 +28,9 @@ var antlr4;
 if (inBrowser) {
   antlr4 = require('./antlr4/index.js');
 } else {
-  antlr4 = require('antlr4');
+  // antlr4 = require('antlr4');
+  antlr4 = require('./antlr4/index.js');
+
 }
 
 // var CommonToken = antlr4.CommonToken;

@@ -1,4 +1,4 @@
-var antlr4 = require('antlr4/index');
+var antlr4 = require('./antlr4/index');
 var CommonTokenFactory = require('antlr4/CommonTokenFactory.js').CommonTokenFactory;
 var VenbraceToken = require('VenbraceToken.js').VenbraceToken;
 

@@ -224,6 +224,10 @@ options
 program: (decl_block)* EOF
   ;
 
+// For Venbrace study testing of top-level decl blocks w/o EOF 
+test_decl_blocks: (decl_block)*
+  ;
+
 // rule for testing single blocks
 test_program: 
     decl_block 

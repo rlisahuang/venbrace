@@ -8,6 +8,10 @@
  
  History:
 
+ * [2020/06/26, lyn]
+   + Remove EOF token from parsed tokens. 
+   + Mark suite tokens in empty suite as optional 
+
  * [2020/06/24, lyn] At Qianqian's request, modify handling of get to allow `get(a)`,
    (as well as `get (global a)`, `get global (a)` and variants with different braces).
    Also mark outer braces and `get` as optional in these cases, and deleter inner braces.
@@ -87,7 +91,8 @@ var antlr4;
 if (inBrowser) {
   antlr4 = require('./antlr4/index.js');
 } else {
-  antlr4 = require('antlr4');
+  // antlr4 = require('antlr4');
+  antlr4 = require('./antlr4/index.js');
 }
 
 var CommonToken = antlr4.CommonToken;
@@ -221,10 +226,10 @@ ForgivingTokensVisitor.prototype.visitSuite = function(ctx) {
   // console.log('rbraceToken:');
   // console.log(rbraceToken);
   if (emptyStatBlocks && lbraceToken && rbraceToken) {
-    // console.log('empty suite branch');
+    console.log('empty suite branch');
     // special case for explicit empty suite braces
-    this.tokens.push(ensureTokenType('LCURLY', lbraceToken));
-    this.tokens.push(ensureTokenType('RCURLY', rbraceToken));
+    this.tokens.push(ensureTokenType('LCURLY', optionalToken(lbraceToken)));
+    this.tokens.push(ensureTokenType('RCURLY', optionalToken(rbraceToken)));
   } else {
     // all other cases have no explicit suite braces
     if (lbraceToken) {
@@ -309,7 +314,15 @@ function getNodeType(listTree) {
   if (listTree instanceof CommonToken) {
     return 'token';
   } else if (! (listTree instanceof Array)) {
-    throw 'getNodeType expects token or Array; found ' + (typeof listTree);
+    var nodeTypeString = (typeof listTree).toString();
+    if (nodeTypeString === 'object') {
+      nodeTypeString = Utils.className(listTree);
+    }
+    if (nodeTypeString === 'CommonToken') {
+      return 'token'; 
+    } else {
+      throw 'getNodeType expects token or Array; found ' + nodeTypeString;
+    }
   } else if (listTree.length == 0) {
     throw 'getNodeType expects nonempty array;';
   } else {
@@ -347,16 +360,17 @@ function exprTreeToTokens(etr) {
   // a string context type followed by subtrees. 
   // Return a nonempty list of (possibly annotated) tokens
   // Does not necessarily include outer parens (but might)
-  if (etr instanceof CommonToken) {
+  var nodeType = getNodeType(etr);
+  if (etr instanceof CommonToken 
+      || nodeType === 'token') {
     return [etr]; 
   } else if (! (etr instanceof Array)) {
-    throw 'exprBlockTreeToTokens expects token or Array; found ' + (typeof etr);
+    throw 'exprTreeToTokens expects token or Array; found ' + (typeof etr);
   }
   if (etr.length <= 1) {
-    throw 'exprBlockTreeToTokens expects Array length >= 2 ' + etr;
+    throw 'exprTreeToTokens expects Array length >= 2 ' + etr;
   }
   // Invariant: etr is Array of length >= 2
-  var nodeType = getNodeType(etr);
   if (nodeType == 'emptyExpr') {
     return [ensureTokenType('LPAREN', etr[1]), // left brace, might not be paren
             ensureTokenType('RPAREN', etr[2])] // right brace, might not be paren
@@ -585,7 +599,9 @@ function deletedToken(tok) {
 }
 
 function optionalToken(tok) {
-  tok.optional= true;
+  // console.log('Calling optionalToken on' + tok.toString());
+  tok.optional = true;
+  // console.log('Result of optionalToken is ' + tok.toString());
   return tok;
 }
 

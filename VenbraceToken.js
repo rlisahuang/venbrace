@@ -1,4 +1,4 @@
-var antlr4 = require('antlr4/index');
+var antlr4 = require('./antlr4/index');
 var CommonToken = antlr4.CommonToken;
 // var Token = antlr4.Token;
 

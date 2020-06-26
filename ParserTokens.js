@@ -31,7 +31,8 @@ if (inBrowser) {
 } else {
   console.log("Running in node.js");
   fs = require('fs');
-  antlr4 = require('antlr4');
+  // antlr4 = require('antlr4');
+  antlr4 = require('./antlr4/index.js');
 }
 
 var VenbraceNoCodeLexer = require('./VenbraceNoCodeLexer').VenbraceNoCodeLexer;
