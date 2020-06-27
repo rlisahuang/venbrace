@@ -231,7 +231,7 @@
     }
     // console.log(stack);
     if (stack.length) {
-      console.log(stack);
+      // console.log(stack);
       for (var s = 0; s < stack.length; s++) {
         var where = stack[s].where;
         marks.push(cm.markText(where, Pos(where.line, where.ch + 1), {className: style}));
