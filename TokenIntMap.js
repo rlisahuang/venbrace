@@ -10,9 +10,9 @@ var tokenIntMap = {
   'GLOBAL': 30, 
   'LOCAL': 33, 
   'MINUS': 64, 
-  'NUMBER': 122, 
-  'NEG_NUM': 123,
-  'ID': 125
+  'NUMBER': 126, 
+  'NEG_NUM': 127,
+  'ID': 129
 }
 
 exports.tokenIntMap = tokenIntMap; 
