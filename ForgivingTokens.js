@@ -115,7 +115,8 @@ function displayLexerTokens(tokenStream) {
 }
 
 function tokensToString(tokens) {
-  tokensString = ''; 
+  let tokensString = ''; // Added `let` to Fix bug discovered in 2020/08/05 debugging sesssion 
+                         // between Lyn, Lucy, and Zhining
   tokens.forEach( tok => (tokensString += tok.toString() + "\n") );
   return tokensString;
 }
