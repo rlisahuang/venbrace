@@ -92,6 +92,7 @@ var VenbraceForgivingLexer = require('./VenbraceForgivingLexer').VenbraceForgivi
 var VenbraceForgivingParser = require('./VenbraceForgivingParser').VenbraceForgivingParser;
 var SexpVisitor = require('./SexpVisitor').SexpVisitor;
 var Utils = require('./Utils');
+var sexpVisitor = new SexpVisitor();
 
 function getAndDisplaySexp() {
   getInput (function (input) {
@@ -121,15 +122,18 @@ function getAndDisplaySexp() {
         // parser.program // Top-level decls only 
       );
 
-      var sexpVisitor = new SexpVisitor();
-
       // Collect and return list of terminal tokens via visitor. 
-      var sexpString = sexpVisitor.visit(tree); 
-      displaySexp(sexpString);
+      var listTree = sexpVisitor.visit(tree);
+      displaySexp(listTree);
     });
 }
 
-function displaySexp(sexpString) {
+function displaySexp(listTree) {
+  // [2021/01/29, lyn] moved the call of sexpString from .visitTop 
+  // in SexpVisitor.js to here, in order to make sexpVisitor.visit
+  // more modular (and more useful) by returning a listTree as opposed
+  // to an sexpString. 
+  var sexpString = sexpVisitor.sexpString(listTree);
   if (inBrowser) {
     document.getElementById('sexp').innerHTML = sexpString;
   } else {
