@@ -40,9 +40,18 @@ SexpVisitor.prototype = Object.create(VenbraceForgivingVisitor.prototype);
 SexpVisitor.prototype.constructor = SexpVisitor;
 // -----------------------------------------
 
+// [2021/01/29, lyn] Modified visitTop to return the listTree rather
+// than an sexpString. This makes the visitor more modular for
+// use in other Venbrace contexts, such as creating an XML tree
+// from the sexp listTree, which is easier than creating and XML
+// tree directly via another visitor. 
+//
+// To keep the behavior of Sexp.js the same, the call to sexpString
+// has been moved there. 
 SexpVisitor.prototype.visitTop = function(ctx) {
   var listTree = this.visitChildren(ctx);
-  return sexpString(listTree);
+  // return sexpString(listTree);
+  return listTree; 
 }
 
 SexpVisitor.prototype.visitTest_decl_blocks = function(ctx) {
@@ -302,5 +311,8 @@ function sexpString(listTree) {
   return sexpStrings(listTree, 100).join('\n');
    
 }
+
+// [2021/01/29, lyn] "export" sexpString as a functionality of an sexp visitor
+SexpVisitor.prototype.sexpString = sexpString; 
 
 exports.SexpVisitor = SexpVisitor;
