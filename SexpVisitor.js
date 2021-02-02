@@ -98,6 +98,13 @@ SexpVisitor.prototype.visitChildren = function(ctx) {
       sublist[2] = Math.abs(sublist[2]); // position of negative number
       sublist[0] = '-'; 
       return sublist;
+    } else if (sublist[0].startsWith('proc')) {
+      // collect param names in parens
+      var lastIndex = sublist.length-1;
+      var procName = sublist[1];
+      var params = sublist.slice(2,lastIndex);
+      var body = sublist[lastIndex];
+      return [sublist[0], procName, params, body];
     } else if (sublist[0] === 'if_stat') {
       if (sublist.length <= 4) { // if/then or if/then/else
         sublist.shift();
