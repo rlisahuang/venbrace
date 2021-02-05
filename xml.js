@@ -54,9 +54,9 @@ if ((typeof inBrowser) === 'undefined') {
   
         // Collect and return list of terminal tokens via visitor. 
         sexpList = sexpVisitor.visit(tree);
-        console.log("the length of the sexpList is "+sexpList.length);
+        //console.log("the length of the sexpList is "+sexpList.length);
         var sexpString = sexpVisitor.sexpString(sexpList);
-        console.log("the sexp String is "+ sexpString);
+        //console.log("the sexp String is "+ sexpString);
         displayXml(sexpList);
       });
   }
@@ -104,31 +104,42 @@ if ((typeof inBrowser) === 'undefined') {
   function sexp2XML(sexpList){
     var xml = builder.begin().ele('xml',{'xmlns':'http://www.w3.org/1999/xhtm'});
     var sexpListProcessed = sexpList[1]; // remove (block ())
-    console.log("processed sexp String is " + sexpVisitor.sexpString(sexpListProcessed))
+    //console.log("proessed sexp String is " + sexpVisitor.sexpString(sexpListProcessed))
     
-    function xmlNode(parentNode, ltr, index){
-      if((typeof ltr) === 'string'){ // there is only one element in the array
-        if (parseInt(ltr)){ // if the ele is a number
-          var num = parseInt(ltr);
-          var node = builder.begin().ele('value',{'name': 'NUM'+index.toString()})
-                                    .ele('block',{'type': 'math_number'})
-                                    .ele('field', {'name': 'NUM'}, num);          
+    function xmlNode(parentNode, ltr){
+      if(['string', 'number'].includes(typeof ltr)){ // there is only one element in the array, number is when the value is negative
+        if (parseInt(ltr) || ltr < 0){ // if the ele is a number, pos or neg
+          var num = parseInt(ltr) || ltr ;
+          var node = builder.begin().ele('block',{'type': 'math_number'})
+                                    .ele('field', {'name': 'NUM'}, num);  
+          // Zhining: another way to create an element
+          // var element = {
+          //   'block' : {'@type':'math_number'},  --> <block type="math_number">
+          //   'field' : {#text': num, '@name':'NUM'} --> <field name="NUM"> num </field>
+          // }
           parentNode.importDocument(node);
-          // console.log("---------------the current node is---------------");
-          // console.log(parentNode.end({pretty:true}));
         }
       }else{
         var blockType = operatorMap.get(ltr[0]);
-        var block = builder.begin().ele('block').att('type', blockType)
-                                    .ele('mutation').att('items', ltr.length-1);
-        for (let i = 1; i<ltr.length; i++){
-          xmlNode(block,ltr[i],i-1);
-        }
-        parentNode.importDocument(block);
+        var childrenList = ltr.slice(1); // remove the first keyword from ltr by making a copy of ltr starting at index 1
+        // console.log("childrenList is " + sexpVisitor.sexpString(childrenList));
+        var blockNode = builder.begin().ele('block').att('type', blockType)
+                                      .ele('mutation',{'items': ltr.length-1}, ' ').up();
+        childrenList.map(function(child, index){ // every time a blockNode is created, create valueNodes for each child
+          var valueNode = builder.begin().ele('value',{'name': 'NUM'+index.toString()});
+          xmlNode(valueNode, child);
+          blockNode.importDocument(valueNode);
+          // console.log("----------------------blockNode and each Child print out----------------------");
+          // console.log(blockNode.end({pretty:true}));
+        });
+        // children.pop(); otherwise, c.end reports an error--> unable to use end 
+        // children.map(c => console.log(c.end({pretty:true})));
+
+        parentNode.importDocument(blockNode);
       }
     }
 
-    xmlNode(xml,sexpListProcessed,0)
+    xmlNode(xml,sexpListProcessed)
     return xml.end({ pretty: true});
   }
   
