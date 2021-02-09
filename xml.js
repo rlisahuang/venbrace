@@ -120,13 +120,45 @@ if ((typeof inBrowser) === 'undefined') {
           parentNode.importDocument(node);
         }
       }else{
-        var blockType = operatorMap.get(ltr[0]);
-        var childrenList = ltr.slice(1); // remove the first keyword from ltr by making a copy of ltr starting at index 1
-        // console.log("childrenList is " + sexpVisitor.sexpString(childrenList));
-        var blockNode = builder.begin().ele('block').att('type', blockType)
-                                      .ele('mutation',{'items': ltr.length-1}, ' ').up();
+        var blockType;
+        var childrenList;
+        var blockNode;
+        if (ltr[0] === 'unary_operation'){
+          blockType = unary_operationMap.get(ltr[1]); // example: (unary_operation absolute (.....))
+          childrenList = ltr.slice(2);
+          var opName = unary_operationNameMap.get(blockType);
+          blockNode = builder.begin().ele('block').att('type', blockType)
+                                          .ele('field', {'name': 'OP'}, opName).up();
+        }else{ 
+          blockType = operatorMap.get(ltr[0]);
+          var opName = ltr[0];
+          childrenList = ltr.slice(1); // remove the first keyword from ltr by making a copy of ltr starting at index 1
+
+          if (blockType === 'math_add' || blockType === 'math_multiply'){ // only add and multiply has mutation
+            blockNode = builder.begin().ele('block').att('type', blockType)
+                                        .ele('mutation',{'items': ltr.length-1}, ' ').up();
+          }else if (blockType === 'math_on_list'){
+            blockNode = builder.begin().ele('block').att('type', blockType)
+                                        .ele('mutation',{'items': ltr.length-1}, ' ').up()
+                                        .ele('field', {'name': 'OP'}, opName.toUpperCase()).up();
+          }else{
+            blockNode = builder.begin().ele('block').att('type', blockType);
+          }
+
+        }
+
         childrenList.map(function(child, index){ // every time a blockNode is created, create valueNodes for each child
-          var valueNode = builder.begin().ele('value',{'name': 'NUM'+index.toString()});
+          var valueType;
+          if(childrenList.length === 1){
+            valueType = 'NUM';
+          }else if(blockType === 'math_division'|| blockType === 'math_subtract'){
+              valueType = capLetters[index];
+          } 
+          else{
+            valueType = 'NUM'+index.toString();
+          }
+          
+          var valueNode = builder.begin().ele('value',{'name': valueType});
           xmlNode(valueNode, child);
           blockNode.importDocument(valueNode);
           // console.log("----------------------blockNode and each Child print out----------------------");
@@ -147,8 +179,18 @@ if ((typeof inBrowser) === 'undefined') {
   operatorMap.set('+','math_add');
   operatorMap.set('-','math_subtract');
   operatorMap.set('*', 'math_multiply');
-  operatorMap.set('/', 'math_divide');
+  operatorMap.set('/', 'math_division');
+  operatorMap.set('max','math_on_list');
+  operatorMap.set('min','math_on_list');
 
+  var unary_operationMap = new Map();
+  unary_operationMap.set('absolute', 'math_abs');
+
+  var unary_operationNameMap = new Map();
+  unary_operationNameMap.set('math_abs', 'ABS');
+
+  var capLetters = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
+ 
   if (!inBrowser) {
     getAndDisplayXml(); // Perform getAndDisplayXml() in node.js 
   } // Otherwise, it will be performed by button click in HTML file 
