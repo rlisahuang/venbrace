@@ -126,21 +126,24 @@ if ((typeof inBrowser) === 'undefined') {
         if (ltr[0] === 'unary_operation'){
           blockType = unary_operationMap.get(ltr[1]); // example: (unary_operation absolute (.....))
           childrenList = ltr.slice(2);
-          var opName = unary_operationNameMap.get(blockType);
+          var opName = opNameMap.get(blockType);
           blockNode = builder.begin().ele('block').att('type', blockType)
                                           .ele('field', {'name': 'OP'}, opName).up();
-        }else{ 
+        }else{ // math ops, math_on_list, logic_operation
           blockType = operatorMap.get(ltr[0]);
-          var opName = ltr[0];
+          var opName = opNameMap.get(ltr[0]);
           childrenList = ltr.slice(1); // remove the first keyword from ltr by making a copy of ltr starting at index 1
 
           if (blockType === 'math_add' || blockType === 'math_multiply'){ // only add and multiply has mutation
             blockNode = builder.begin().ele('block').att('type', blockType)
                                         .ele('mutation',{'items': ltr.length-1}, ' ').up();
-          }else if (blockType === 'math_on_list'){
+          }else if (blockType === 'math_on_list' || blockType === 'logic_operation'){
             blockNode = builder.begin().ele('block').att('type', blockType)
                                         .ele('mutation',{'items': ltr.length-1}, ' ').up()
-                                        .ele('field', {'name': 'OP'}, opName.toUpperCase()).up();
+                                        .ele('field', {'name': 'OP'}, opName).up();
+          }else if (blockType === 'math_compare'){
+            blockNode = builder.begin().ele('block').att('type', blockType)
+                                        .ele('field', {'name': 'OP'}, opName).up();
           }else{
             blockNode = builder.begin().ele('block').att('type', blockType);
           }
@@ -151,8 +154,8 @@ if ((typeof inBrowser) === 'undefined') {
           var valueType;
           if(childrenList.length === 1){
             valueType = 'NUM';
-          }else if(blockType === 'math_division'|| blockType === 'math_subtract'){
-              valueType = capLetters[index];
+          }else if(['math_division','math_subtract','logic_operation','math_compare'].includes(blockType)){
+            valueType = capLetters[index];
           } 
           else{
             valueType = 'NUM'+index.toString();
@@ -164,9 +167,6 @@ if ((typeof inBrowser) === 'undefined') {
           // console.log("----------------------blockNode and each Child print out----------------------");
           // console.log(blockNode.end({pretty:true}));
         });
-        // children.pop(); otherwise, c.end reports an error--> unable to use end 
-        // children.map(c => console.log(c.end({pretty:true})));
-
         parentNode.importDocument(blockNode);
       }
     }
@@ -182,13 +182,23 @@ if ((typeof inBrowser) === 'undefined') {
   operatorMap.set('/', 'math_division');
   operatorMap.set('max','math_on_list');
   operatorMap.set('min','math_on_list');
+  operatorMap.set('and','logic_operation');
+  operatorMap.set('or','logic_operation');
+  operatorMap.set('=','math_compare');
+  operatorMap.set('<','math_compare');
+  operatorMap.set('>','math_compare');
 
   var unary_operationMap = new Map();
   unary_operationMap.set('absolute', 'math_abs');
 
-  var unary_operationNameMap = new Map();
-  unary_operationNameMap.set('math_abs', 'ABS');
-
+  var opNameMap = new Map();
+  opNameMap.set('math_abs', 'ABS');
+  opNameMap.set('and', 'AND');
+  opNameMap.set('or', 'OR');
+  opNameMap.set('=', 'EQ');
+  opNameMap.set('<', 'LT');
+  opNameMap.set('>', 'GT');
+  
   var capLetters = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
  
   if (!inBrowser) {
